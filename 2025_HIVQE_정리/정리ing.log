@@ -1,10 +1,10 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.7.1)  9 JUL 2025 13:10
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.7.1)  9 JUL 2025 13:54
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
  %&-line parsing enabled.
-**/Users/choeyunho/Desktop/연구실/정리/2025_HIVQE_정리/정리ing
-(/Users/choeyunho/Desktop/연구실/정리/2025_HIVQE_정리/정리ing.tex
+**/Users/choeyunho/Documents/mygit/2025_HIVQE_정리/정리ing
+(/Users/choeyunho/Documents/mygit/2025_HIVQE_정리/정리ing.tex
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
 (/usr/local/texlive/2025/texmf-dist/tex/latex/base/article.cls
@@ -717,6 +717,9 @@ LaTeX Warning: Label `fig:example2' multiply defined.
 
 LaTeX Warning: Label `fig:example2' multiply defined.
 
+
+LaTeX Warning: Label `fig:example2' multiply defined.
+
 )
 \openout1 = `정리ing.aux'.
 
@@ -890,15 +893,20 @@ File: fig/idet3.png Graphic file (type bmp)
 [12]
 
 [13]
+File: fig/1to2.png Graphic file (type bmp)
+<fig/1to2.png>
+
+
+[14]
 File: fig/Moecular-Orbital-DiagramH2.png Graphic file (type bmp)
 <fig/Moecular-Orbital-DiagramH2.png>
 
 
-[14]
-
 [15]
 
-[16] (./정리ing.aux)
+[16]
+
+[17] (./정리ing.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2022/08/05>
@@ -909,12 +917,12 @@ LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 23788 strings out of 473832
- 555674 string characters out of 5729482
+ 23797 strings out of 473832
+ 555829 string characters out of 5729482
  1027553 words of memory out of 5000000
- 46414 multiletter control sequences out of 15000+600000
+ 46422 multiletter control sequences out of 15000+600000
  568678 words of font info for 107 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 98i,16n,105p,509b,1163s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 98i,16n,105p,510b,1163s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on 정리ing.pdf (16 pages).
+Output written on 정리ing.pdf (17 pages).

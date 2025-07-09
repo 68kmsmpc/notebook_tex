@@ -702,8 +702,6 @@ s_i &: \text{Spin coordinate of i-th Electron} \in \left\{-\frac{1}{2}, \frac{1}
 그리고 마찬가지로 선형대수의 지식을 끌어오면, 두 열이 같으면, 행렬식은 0이된다. 
 즉, 파울리의 배타원리를 위배하도록 파동함수를 작성하면, 자동으로 파동함수는 0이된다. 
 \end{enumerate}
-
-\subsubsection{Occupation number Representation}
 이제 이러한 Slater Determinant를 일일히 적을 수 없으니 아래와같이 표현한다. 
 \begin{align*}
 \Psi(\mathbf{r}_1, \dots, \mathbf{r}_N) 
@@ -716,8 +714,25 @@ s_i &: \text{Spin coordinate of i-th Electron} \in \left\{-\frac{1}{2}, \frac{1}
 & \equiv \vert \phi_a \phi_b \dots \phi_M\rangle
 \end{align*}
 즉, 각 전자들이 점유한 오비탈을 통해 Determinant 를 표현할 수 있다. 
-그런데, 지금 이러한 표현들은 Spin-orbital을 통해 표현되어있는데, 이때 연산을 더 편하게 하기위해 spin-orbital basis의 생성/소멸 연산자를 정의하여 헤밀토니안을 그 연산자를 통해 표현할것이다. 
-그러기 위하여 아래와같이 number operator를 정의하자. 
+
+
+
+\subsubsection{Occupation number Representation}
+
+
+Slater Determinant의 표현을 지금은 \enquote{어떤 전자가} 어떤 오비탈을 점유했는가를 통해 표현하고 있는데, 
+사실 모든 전자는 Identical 하므로, 이를 \enquote{어떤 오비탈}이 전자가 점유 되었나 안되었나 만을 표기하면 될 것이라는 맥락에서 이렇게 표현을 바꿔보자는 것이다. 
+이렇게 하면, 이전의 표현 \(\vert \phi_a \phi_b \dots \phi_M\rangle\)에서는 두 \(\phi\)를 바꾸는것이, 결국 전자 두개를 교환하는것 이므로, 상태 자체에서 Anti Symmetry를 갖게된다. 
+하지만 미리 스포를 하자면, 이후의 설명에서는 모든 전자를 정말로 Identical 하게 보아, 상태에서는 전자의 교환이 정의 될 수 없고, 이러한 교환을 operator 로써 표현하여, 이 operator에 Anti Symmetry를 부여하여 시스템을 다루게 될것이다. 
+이후 헤밀토니안도 이 basis에 맞춰 생성/소멸 연산자를 정의하여 헤밀토니안을 그 연산자를 통해 표현할것이다. 
+이러한 과정을 Second Quantization 이라고 한다. 
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{fig/1to2.png}
+  \caption{Second Quantization diagram}
+  \label{fig:example2}
+\end{figure}
+그러기 위하여 아래와같이 number operator를 정의하자.
 \[
 \hat{n}_i : \text{number operator}
 \]
@@ -726,13 +741,15 @@ s_i &: \text{Spin coordinate of i-th Electron} \in \left\{-\frac{1}{2}, \frac{1}
 \[
 \hat{n}_i | \Phi \rangle = n_i | \Phi \rangle, \quad n_i \in \{0,1\}
 \]
-이제 이 연산자를 왜 정의했냐 하면, Slater Determinant의 표현을 지금은 "어떤 전자가" 어떤 오비탈을 점유했는가를 통해 표현하고 있는데, 
-사실 모든 전자는 Identical 하므로, 이를 "어떤 오비탈"이 전자가 점유 되었나 안되었나 만을 표기하면 될 것이라는 맥락에서 이렇게 표현을 바꿔보자는 것이다. 
+이제 이 연산자를 왜 정의했냐 하면, 
 지금의 \(\vert \phi_a \phi_b \dots \phi_M\rangle\) 이 표현은 
 \[
 = \vert \phi_a \phi_b \dots \phi_M \rangle \\
 \hat{n}_i = \hat{a}_i^{\dagger}\hat{a}_i
 \]
+
+
+
 
 
 \subsubsection{Construct Molecular Wave Function}
