@@ -999,9 +999,75 @@ FCI에 관한 이야기를 다뤄보자. 그중에 FCI 는 모든 계산방법�
 H2 분자는 총 스핀오비탈 4개, 전자 2개인 시스템이다. 
 따라서 비트스트링은 총 4개의 길이 일텐데, 그럼 이 계산에서 아래와같이 0000 ~ 1111 까지 모든 비트스트링에 대응되는 Slater Determinant를 고려해야할까? 
 
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.8\textwidth]{fig/Cofig.png}
+  \caption{all Slater Determinant of H2}
+  \label{fig:example2}
+\end{figure}
 
-\subsection{SCI}
+그림에서 표현되어있지만, Occupation number Representation 으로 표현된 상태에서 1은 해당 오비탈에 전자가 점유되어있음을 의미한다. 
+그래서 스트링에서 총 1의 갯수는 해당 스트링이 나타내는 Configuration에서의 전자의 개수를 의미한다. 
+그렇다면 우리가 다루고자 하는 시스템은 전자가 2개인 시스템이므로, 전자의 개수가 2가 아닌 스트링 , 즉 총 1의 개수가 2가 아닌 스트링은 우리가 다루는 시스템을 기술하기에 적합하지 않을것이다. 
+그래서 이러한 Configuration에 대해서는 FCI 계산에서 고려하지 않는다. 
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.8\textwidth]{fig/Elec_cons.png}
+  \caption{Validate Determinant of H2}
+  \label{fig:example2}
+\end{figure}
+여기에 우리가 다루는 오비탈이 스핀오비탈이라는점을 고려하면 몇개의 Slater Determinant를 추가로 지울 수 있다. 
+스핀오비탈은 하나의 Spartial orbital 당 2개가 있다. 즉, 이는 up-spin 에 대응되는 오비탈과 down-spin에 대응되는 오비탈이 있다는 의미이고, 
+이 계산에서 관습적으로 앞의 절반은 up-spin 에 대응되는 오비탈을 표기하고, 뒤의 절반은 down-spin 에 대응되는 오비탈로 표기한다. 즉 우리의 그림에서는,
+\begin{align*}
+\phi_1, \phi_2 &: \text{up-spin orbital} \\
+\phi_3, \phi_4 &: \text{down-spin orbital}
+\end{align*}
+그렇다고 했을때, 우리는 총 시스템의 Multiplicity를 고려할 수 있다. 이는 시스템이 Singlet인지, Doublet 등등 인지에 대한 정보이며, 이는 분자를 구성하는 원자의 결합상태등에 의존하는 값이다. 
+\(H_2\) 분자는 최외각 오비탈이 닫혀있는 결합을 취하므로, Singlet이 되며, 따라서 이경우 두 전자의 스핀이 모두 up 이거나, 모두 down 인 경우는 고려되지 않는다. 따라서 아래의 두 경우를 지울 수 있다. 
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.45\textwidth]{fig/spin_cons.png}
+  \caption{Validate Determinant of H2}
+  \label{fig:example2}
+\end{figure}
 
-\subsection{HIVQE}
+"전자의 수", "Multiplicity" 조건에 의해 유효한 Slater Determinant만을 추렸다. 따라서 H2의 파동함수는 해당 시스템에서 유효한 모든 Slater Determinant들을 basis로 표현될것이므로, 
+파동함수를 아래와같이 기술 할 수 있다. 
+\[
+|\Psi_{FCI} \rangle = c_1|0101\rangle + c_2|0110\rangle + c_3|1001\rangle+ c_4|1010\rangle
+\]
+
+이렇게 기술해서 우리가 하고자 하는것은, 저 파동함수를 통해 \(\langle \Psi|\hat{H}|\Psi \rangle\)를 계산해서 가장 낮은 값을 구성하는 \(c_1, c_2, c_3, c_4 \) 를 찾으면 된다.
+그리고 이러한 문제는 바로 고유값 문제를 통해 해결할 수 있다. 
+그러기 위해 연산자꼴로 주어져있는 헤밀토니안 \(\hat{H}\) 를 저 4개의 basis로 구성된 공간에 사영시켜 헤밀토니안 행렬 \(\mathbf{H}\) 를 만들고, 
+\begin{align*}
+\mathbf{H}_{ab} &= \langle \Phi_a \vert \hat{H} \vert \Phi_b \rangle \\
+\mathbf{H} &= \sum_a \sum_b \vert \Phi_a \rangle \langle \Phi_a \vert \hat{H} \vert \Phi_b \rangle \langle \Phi_b \vert
+\end{align*}
+그 행렬을 대각화하여 가장 낮은 값을 구성하는 \(c_1, c_2, c_3, c_4 \) 를 찾을 수 있고, 시스템이 가질 수 있는 가장 낮은 에너지(Ground-State Energy)를 계산할 수 있다. 
+\[
+\mathbf{H}\mathbf{c} = E\mathbf{c}
+\]
+이러한 계산방식을 FCI 방식 이라고 한다. 
+
+\subsection{SCI(Selective Configuration Interaction)}
+FCI 방식은 알려진 모든 계산방법중에 가장 정확한 계산을 수행한다. 하지만, 그 계산량이 매우 크다 \(H_2\) 시스템에 대해서 예시로써는 4개의 Slater Determinant 만을 사용했지만, 
+일반적으로 스핀오비탈 M개, 전자 N개에 Singlet 인 시스템에 대해서 필요한 Slater Determinant의 개수는 아래와같다. 
+\[
+\text{number of Slater Determinant} = \binom{M/2}{N/2}\cdot\binom{M/2}{N/2}
+\]
+
+이것을 몇가지 시스템에 대해서 정리한것이 아래와 같다. 
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.8\textwidth]{fig/numofdet.png}
+  \caption{number of Slater Determinant}
+  \label{fig:example2}
+\end{figure}
+즉, 계산에 필요한 Slater Determinant 의 개수가 지수적으로 증가하게 된다. 따라서 이러한 방식은 실제 계산이 필요한 분자에는 적용할 수 없다. 그래서 제안된것이 SCI 방식이다.
+
+
 
 \end{document}
