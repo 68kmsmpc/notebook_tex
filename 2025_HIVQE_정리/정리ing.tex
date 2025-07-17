@@ -493,7 +493,7 @@ E_{VQE} =\min_\theta E(\theta) = \min_\theta \sum_{a} \omega_a \langle \psi(\the
 \end{enumerate}
 \newpage
 
-\section{Method}
+\section{background}
 HIVQE는 양자화학 계산중 하나인 SCI로 부터 아이디어를 얻은 알고리즘이며, 이 SCI는 FCI의 단점을 보완하기위해 제안된 알고리즘이다. 
 따라서 HIVQE를 이해하기 위해서는 FCI등, 기존의 양자화학 계산은 어떻게 진행되는지 이해해야 수월할것이다. 따라서 그러한 내용을 먼저 다뤄보자. 
 
@@ -1067,6 +1067,89 @@ FCI 방식은 알려진 모든 계산방법중에 가장 정확한 계산을 수
   \label{fig:example2}
 \end{figure}
 즉, 계산에 필요한 Slater Determinant 의 개수가 지수적으로 증가하게 된다. 따라서 이러한 방식은 실제 계산이 필요한 분자에는 적용할 수 없다. 그래서 제안된것이 SCI 방식이다.
+이러한 계산들에서 계산량을 줄이기 위해서는 파동함수를 기술하는데에 필요한 Basis를 줄여야한다. 그러면서 동시에 비슷한 정밀도를 가져야한다. 
+그래서 FCI 에서 파동함수를 기술했던 방식을 생각해보자. 
+\[
+|\Psi\rangle = \sum_I c_I |\Phi_I\rangle
+\]
+이는, 시스템의 조건들을 만족하는 모든 Slater Determinant를 basis로 사용한다. 분자에서의 임의의 양자상태를 표현하기에는 저렇게 해야만 할것이다. 
+하지만, 우리의 계산에서 대부분의 목적은 바닥상태 에너지이다. 즉, 시스템이 가질 수 있는 가장 작은 에너지를 찾아보고자 하는 입장에서, 분명 그 바닥상태를 기술하는데에 기여가 적은 Slater Determinant가 있을것이다. 
+그래서 그러한 상태들에 대해서는 무시하고, 정말로 바닥상태에 대해 기여가 큰 Slater Determinant만을 사용하여 파동함수를 표현하자는것이 바로 SCI 의 계산이다. 
+\[
+|\Psi\rangle = \sum_{I}^{D} c_I |\Phi_I\rangle \longrightarrow  |\Psi'\rangle = \sum_{I}^{D'} c'_I |\Phi_I\rangle 
+\]
+\[
+\text{where,} \quad D' < D \left(= \text{number of Slater Determinant} = \binom{M/2}{N/2}\binom{M/2}{N/2}\right)
+\]
+
+Slater Determinant의 개수는 결국 파동함수를 나타내기 위한 basis의 개수이고, basis가 정의되므로, 그 basis로 구성되는 공간들을 생각해볼 수 있으며, SCI 에서 찾고자 하는것은, 아래의 모식도에서의 Core Space 이다. 
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.6\textwidth]{fig/space.png}
+  \caption{Relation of Space}
+  \label{fig:example2}
+\end{figure}
+
+M개의 스핀오비탈을 갖고있는 시스템에 대해서 구성할 수 있는 Slater Determinant 의 개수는 \(2^M\) 개 이고, 이러한 모든 Slater Determinant를 basis로 하여 구성되는 공간을 Hilbert Space 라고 정의해보자. 
+하지만, 여기에 시스템이 갖는 전자수 보존, Multiplicity 조건, 등을 이용하면, 물리적으로 맞지 않는 Slater Determinant를 제외하여, \(\binom{M/2}{N/2}\binom{M/2}{N/2}\)개 만을 basis로 사용하여 파동함수를 
+표현 할 수 있게된다. 즉 기존의 Hilbert Space의 부분공간 Symmetry Space를 정의할 수 있게되며, 이 공간은 시스템을 효율적으로 표현할 수 있는 공간을 의미한다.
+이렇게 Hilbert Space중에서도 유의미한 Basis만을 택하여 symmetry Space를 정의한 것 처럼, symmetry Space안에서도 그중에서 바닥상태를 더 잘 기술할 수 있는 basis들로 구성된 Core Space가 있을것이라는 
+기대로 여러 방법을 통해 Core Space를 찾고자 하는 방식이 SCI 이다. 하지만, 어떤 basis(Slater Determinant)가 기여가 클지, 작을지를 판단하는것이 간단한 일은 아니다.
+따라서 여기에다가 양자컴퓨터를 사용해보자 라는 아이디어를 이용해서, FCI 에서의 Hilbert Space 보다 더 작은 부분공간을 구성해보자 하는시도가 바로 이어서 설명할 QSCI 계산방법이다. 
+
+
+\subsection{QSCI(Quantum Selected Configuration Interaction)}
+이부분에서 어쩔수없이 계속 들고오고 있는데, 분자의 파동함수는 결국 아래와같이 기술될것이다. 
+\[
+|\Psi\rangle = \sum_I c_I |\Phi_I\rangle
+\]
+이제 여기서부터는 양자컴퓨팅과 관련된 이야기가 들어가기 시작한다. 결국 \(|\Phi_I\rangle\) 는 한 Slater Determinant이자, binary String 으로 표현된다. 
+그리고 이러한 양자상태를 양자컴퓨터에서 계산을 하기위해 양자 회로로 구현하게 되는데, 이때 저 binary String 을 그대로 큐비트의 0과 1상태로 매핑할 수 있다.(Jordan-Wigner Mapping)
+이제 그럼 예를 들어 아래와같이 표현할 수 있는데, 이게 둘다 0,1로 표현되고 Braket Notation을 사용하고 있어 표현되는 방식이 같다. 
+\begin{align*}
+|\Phi\rangle  &= \vert 10011010 \rangle \quad \text{(Occupation number Representation of Slater Determinant)} \\
+|\Phi\rangle  &= \vert 10011010 \rangle = \vert 1 \rangle \otimes \vert 0 \rangle \otimes \cdots \otimes \vert 0 \rangle \quad \text{(Qubit States corresponded to Slater Determinant)}
+\end{align*}
+그런데 이렇게하면 이제 저 파동함수의 표현에 있어서 하나의 Slater Determinant \(|\Phi_I\rangle\) 에 대한 선형계수 \(c_I\) 를 
+하나의 큐비트상태 \(|\Phi_I\rangle\)에 대한 선형계수로써 해석할 수 있게되고, 이는 확률로써 해석 할 수 있게된다. 
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\textwidth]{fig/QSCI3.png}
+  \label{fig:example2}
+\end{figure}
+
+즉, 어떤 다른 알고리즘들을 이용하여 바닥상태에 대응되는 파동함수를 양자 회로로써 얼추 비슷하게만 표현 해두면, 그 회로를 여러번 측정하여, 각 스트링들에 대한 확률을 얻을 수 있고, 
+그 확률을 통해 각 Slater Determinant(양자 회로에서는 Qubit State)에 대응되는 선형 계수를 구할 수 있게된다. 
+그리고 그 선형 계수를 사전에 지정할 수 있는 \(\epsilon\) 이라는 값과 비교하여 이보다 작을경우, 그 basis를 무시하여 더 적은 basis로 효율적으로 상태를 표현할 수있는 Core Space 를 구성 할 수 있고, 
+\[
+|\Psi_{QSCI}\rangle = \sum_{I=1}^{n'} c_I |\Phi_I\rangle 
+\]
+\[
+\text{where,} \qquad n'<<n, \qquad c_i \geq \epsilon
+\]
+더 작은 차원에서 헤밀토니안 행렬을 구성하여 
+\begin{align*}
+\mathbf{H} = \sum_{a,b=1}^{n'} \vert \Phi_a \rangle \langle \Phi_a \vert \hat{H} \vert \Phi_b \rangle \langle \Phi_b \vert
+\end{align*}
+대각화 문제를 통해 문제를 해결 할 수 있다. 이렇게 계산을 하는방식이 바로 QSCI 이다. 하지만, 이또한 한가지 문제점이 있는데, 
+저 \enquote{얼추 비슷한 상태} 를 어떻게 만들것인가 이다. 결국 VQE 쓸건지, 아니면 다른 획기적인 방식이 있는가에 대해서는 여전히 잘 모르는 부분이다. 
+그래서 이러한 문제점을 보완하기 위해 이제 드디어 이 논문에서 제안한 방식을 다룰것이다. 
+
+Second q이게 무한한 QHo 로 근사를 하는걸일까??
+공액변수의 각각의 제곱의 합이 아니여도 저기 점유상태만을 가지고 표현할 수 없으면 
+그건 Second q 임
+"입자의 생성/소멸 연산자로 헤밀토니안을 기술하겠다. "
+생성/소멸 연산자로 있으면, 걔들은 언제나 자신과 자신의 공액변수의 꼴로 주어진다. 
+전자기장, .....
+생성/ 소멸 연산자로 쓰여지는 애들은 모두 그러한 형태를 가진다. 
+아 1/r 이랑은 상관이 없는이야기인가? 
+Interaction term 은 항상 기본 + 임.
+
+VQE에서의 Second Q:
+원래의 헤밀토니안을 sigma operato로 바꾸기 위해 
+그 중간 과정으로써 생성/소멸 연산자를 이용해서 바꿔치기를 하는 과정/ 
+굳이 헤밀토니안 생성/소멸 연산자 자체가 엄청 중요한것은 아닐지도. Just 중간다리. 
 
 
 
