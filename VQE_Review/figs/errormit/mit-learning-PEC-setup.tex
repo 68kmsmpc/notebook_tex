@@ -1,0 +1,11 @@
+$
+\Qcircuit @C=1.0em @R=0.8em @!R { \\
+\lstick{\ket{0}} & \gate{P_1} & \gate{R_1} & \gate{P_5} & \qw & \gate{P_9} & \gate{R_5} & \gate{P_{13}} & \multigate{1}{G_2} & \gate{P_{17}} & \gate{R_9} & \gate{P_{21}} & \meter \\
+\lstick{\ket{0}} & \gate{P_2} & \gate{R_2} & \gate{P_6} & \multigate{1}{G_1} & \gate{P_{10}} & \gate{R_6} & \gate{P_{14}} & \ghost{G_2} & \gate{P_{18}} & \gate{R_{10}} & \gate{P_{22}} & \meter \\
+\lstick{\ket{0}} & \gate{P_3} & \gate{R_3} & \gate{P_7} & \ghost{G_1} & \gate{P_{11}} & \gate{R_7} & \gate{P_{15}} & \multigate{1}{G_3} & \gate{P_{19}} & \gate{R_{11}} & \gate{P_{23}} & \meter \\
+\lstick{\ket{0}} & \gate{P_4} & \gate{R_4} & \gate{P_8} & \qw & \gate{P_{12}} & \gate{R_8} & \gate{P_{16}} & \ghost{G_3} & \gate{P_{20}} & \gate{R_{12}} & \gate{P_{24}} & \meter 
+\gategroup{2}{5}{5}{5}{2.5em}{--}
+\gategroup{2}{9}{5}{9}{1em}{--}
+\\
+}
+$

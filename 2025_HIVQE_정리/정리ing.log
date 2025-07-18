@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.7.1)  17 JUL 2025 12:46
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.7.1)  18 JUL 2025 15:11
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -738,6 +738,12 @@ LaTeX Warning: Label `fig:example2' multiply defined.
 
 LaTeX Warning: Label `fig:example2' multiply defined.
 
+
+LaTeX Warning: Label `fig:example2' multiply defined.
+
+
+LaTeX Warning: Label `fig:example2' multiply defined.
+
 )
 \openout1 = `정리ing.aux'.
 
@@ -952,11 +958,18 @@ File: fig/space.png Graphic file (type bmp)
 [23]
 File: fig/QSCI3.png Graphic file (type bmp)
 <fig/QSCI3.png>
+File: fig/VQE,QSCI2.png Graphic file (type bmp)
+<fig/VQE,QSCI2.png>
 
 
 [24]
+File: fig/HIVQE_table.png Graphic file (type bmp)
+<fig/HIVQE_table.png>
 
-[25] (./정리ing.aux)
+
+[25]
+
+[26] (./정리ing.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2022/08/05>
@@ -967,12 +980,12 @@ LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 23850 strings out of 473832
- 556889 string characters out of 5729482
- 1027561 words of memory out of 5000000
- 46470 multiletter control sequences out of 15000+600000
+ 23868 strings out of 473832
+ 557301 string characters out of 5729482
+ 1027554 words of memory out of 5000000
+ 46486 multiletter control sequences out of 15000+600000
  568678 words of font info for 107 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
  98i,16n,105p,510b,1163s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on 정리ing.pdf (25 pages).
+Output written on 정리ing.pdf (26 pages).

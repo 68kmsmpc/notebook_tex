@@ -1,0 +1,49 @@
+\documentclass[a4paper,fleqn]{../cas-sc}
+
+\input{../00_preamble/preamble.tex}
+\graphicspath{{../}}
+\renewcommand{\ProjectRoot}{..}
+
+\begin{document}
+% Main title of the paper
+\title[mode=title]{The Variational Quantum Eigensolver: a review of recent research and best practices}
+
+% ------------------------ Authors -----------------------------
+\author[1]{A B}[type=editor,orcid=0000-0001-5034-474X]
+\address[1]{Rahko  Limited,  N4 3JP London,  United  Kingdom}
+% --------------------------------------------------------------
+
+% ------------------- Abstract ---------------------------------
+\begin{abstract}
+AAA
+\end{abstract}
+% --------------------------------------------------------------
+
+% TODO: Keywords. Each keyword is seperated by \sep
+\begin{keywords}
+Some very \sep cool \sep keywords
+\end{keywords}
+
+\maketitle
+\tableofcontents 
+
+% \input{\ProjectRoot/02_Overview_of_VQE.tex}
+% \input{\ProjectRoot/03_hamiltonian_main.tex}
+% \input{\ProjectRoot/08_error-mit.tex}
+\input{\ProjectRoot/07_optimization_main}
+
+% \begin{appendices}
+% \input{\ProjectRoot/08_error-mit_appendix.tex}
+% \end{appendices}
+
+\clearpage
+\input{\ProjectRoot/10_List_of_symbols.tex}
+
+\clearpage
+% Loading bibliography style file
+% https://www.elsevier.com/__data/assets/file/0007/56842/elsarticle-template.zip
+\bibliographystyle{elsarticle-num}
+% Loading bibliography database
+\bibliography{\ProjectRoot/references}
+
+\end{document}

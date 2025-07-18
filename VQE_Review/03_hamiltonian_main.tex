@@ -1,0 +1,254 @@
+\section{Hamiltonian Representation}\label{sec:Hamiltonian_representation}
+
+Before studying any methods relating directly to implementing the VQE, we must turn towards the definition of the problem itself. As written before, our aim is to find the lowest eigenvalue of a Hermitian matrix, or stated in quantum chemistry terms, we are trying to find an approximation of the ground state energy of an interacting Hamiltonian. 
+In this section, we provide details about how Hamiltonian can be constructed, and how choices in certain freedoms in expressing this Hamiltonian may impact the remainder of the VQE pipeline. Many different forms of Hamiltonians exist in physics and chemistry; we begin with a presentation of the electronic structure Hamiltonian and construction of the eigenvalue problem. This is followed by examples of other applications, namely lattice models, vibrational spectroscopy, and periodic adaption of electronic structure problems. Unlike the other models, the electronic structure Hamiltonian is in general known and the choices related to its construction are aiming at reducing the complexity of the eigenvalue problem. In the case of lattice models, and vibrational spectroscopy Hamiltonian assumptions are made to define the Hamiltonian. 
+
+\subsection{The electronic structure Hamiltonian}
+
+\subsubsection{The \textit{ab initio} molecular Hamiltonian}
+
+This represents the operator for the total energy of an arbitrary molecular system defined in terms of its atomic composition, and the relative positions of the nuclei. From this geometrical definition, also referred to as a conformation, one must determine the correlated probability amplitudes of the electrons in the space surrounding the nuclei, i.e. the electronic wavefunction, which has the lowest energy: the ground state energy. %A Hamiltonian describes the motion of the electrons and nuclei within a molecule.
+ 
+In a non-relativistic settings and following the Born–Oppenheimer approximation (which assumes that the motion of the nuclei can be neglected, as they are much heavier than the electrons) the electronic Hamiltonian depends parametrically
+on the nuclear positions $\mathbf{R}_{k}$.
+Up to a constant (given by the nuclear-nuclear repulsion energy) the electronic Hamiltonian can be written as
+\begin{equation}
+\label{eq:molecularhamiltonian3}
+\hat{H} = \hat{T}_e + \hat{V}_{ne} + \hat{V}_{ee},
+\end{equation}
+where
+\begin{align} \label{eq:molecularhamiltonian2}
+&\hat{T}_e = -\sum_{i} \frac{\hbar^{2}}{2 M_{i}} \nabla_{i}^{2}, \\
+&\hat{V}_{ne} = -\sum_{i, k} \frac{e^{2}}{4 \pi \epsilon_{0}} \frac{Z_{k}}{\left|\mathbf{r}_{i}-\mathbf{R}_{k}\right|}, \\
+&\hat{V}_{ee} = \frac{1}{2} \sum_{i \neq j} \frac{e^{2}}{4 \pi \epsilon_{0}} \frac{1}{\left|\mathbf{r}_{i}-\mathbf{r}_{j}\right|},
+\end{align} 
+with, $\mathbf{r}_{i}$ is the position of electron $i$, $M_{i}$ its mass, $Z_k$ is the atomic number of nucleus $k$, $e$ is the elementary charge, $\hbar$ is the reduced Plank constant, and $\nabla_{i}^2$ is the Laplace operator for electron $i$. 
+
+\subsubsection{Construction of the wavefunction}
+
+One needs to define a basis in which to represent the electronic wavefunction. A number of possible types of basis functions exist. Given the number of qubits required scales as a function of the number of basis functions (see Sec.~ \ref{sec:Encoding}), choosing a basis that is compact, but yet provides an accurate description of the system studied, is critical for an efficient implementation of VQE. 
+Basis elements, functions or orbitals describe the probability distribution of a single electron. %They can also be referred to as atomic orbitals. 
+For {\em ab initio} systems, these have primarily been built from parameterized atom-centered Gaussian (`atomic') orbitals, with the majority of research to date in VQE using minimal sized Stater Type Orbitals (STO) (for example \cite{Peruzzo2014, Kandala2017, Lee2019}). These basis functions are defined as a weighted sum of Gaussian functions to provide approximately the right radial distribution, long-range behaviour, and nuclear cusp conditions for each atom \cite{Hehre1969,Stewart1970}. %This approximation results in a family of basis sets called STO-nG \cite{Hehre1969}, or minimal basis sets. 
+As an illustration, the radial component of the minimal STO-3G basis for each atom is constructed from three Gaussians such that an atomic orbital is given by 
+\begin{equation}
+    \chi(r) = c_1 \gamma_1(r) + c_2 \gamma_2(r) + c_3 \gamma_3(r)
+\end{equation}
+where $\gamma_i$ are Gaussian functions, $r$ the distance of the electron from the nucleus, and $c_i$ are fitted weight parameters. % fitted to approximate a STO (examples of STO-nG bases approximation can for instance be found in Ref.~ \cite{Stewart1970}). 
+These basis sets are often called minimal basis sets as they only include orbitals necessary to represent the valence shell of an atom. For an appropriate treatment of the correlation, it is essential in real systems to enlarge the basis set to include higher energy atomic orbitals, allowing for additional polarization and diffuse functions, and higher angular momentum functions which are required to build in flexibility to describe the correlated positions of the electrons \cite{Helgaker2000}.
+An example of these larger basis sets commonly used for correlated calculations are the correlation-consistent polarized Valence n-Zeta (cc-pVnZ) basis sets \cite{Dunning1989}, which allow for a systematic (and extrapolatable) expansion in terms of the cardinal number of the basis set \cite{Varandas2000}. These basis sets have been used in some VQE research (for example \cite{Kuhn2019, Kottmann2021_1, Tilly2021}), but their additional size can limit the size of the systems treated. Alternative basis sets have been considered in the context of VQE. For example, plane wave basis have been used as a mean to construct a compact ansatz for certain models which naturally exploit the translational symmetry of certain models \cite{Babbush2018}. Alternatively, a grid of points in real space make a natural representation to enforce locality and enable a sparse representation of the Hamiltonian. However grid representations of these basis functions generally require a significantly larger qubit count, and therefore their use is limited in NISQ applications and for the VQE \cite{mcardleQuantumComputationalChemistry2018,Wiesner1996, Zalka1998, Lidar1999, Kassal2008, Ward2009, Jones2012, Kivlichan2017}.
+
+These non-orthogonal atomic orbitals are generally linearly combined into `molecular' orbitals before use, which constitutes an orthonormal set of delocalized basis functions which can no longer be assigned to a particular atomic site. The Hamiltonian is then expressed within this molecular basis by way of a transformation of the matrix elements. Overwhelmingly, this transformation is obtained via a mean-field (generally Hartree-Fock) calculation, which produces this rotation to the molecular orbital basis, and additionally provide an energy measure for each single-particle molecular orbital (for a description of this, see Ref.~\cite{Jensen2017}). However, given the constraints on qubit numbers and therefore the size of the single particle basis, there is also research in the use of further contractions of molecular orbitals to a more suitable and compact basis for subsequent correlated calculations. These are often based on approximate correlated treatments in order to truncate to frozen natural orbitals, which has been favorably suggested by Verma \textit{et al.} \cite{Verma2021}, Mochizuki \textit{et al.} \cite{Mochizuki2019} and showed to potentially resulting in computation cost reductions for VQE by Gonthier \textit{et al.} \cite{Gonthier2020}. Furthermore, self-consistent active space approaches also optimize the set of molecular orbitals within the correlated treatment, to optimally span this correlated physics, and are considered further in Sec.~\ref{sec:multiscale}.
+
+Once the single-particle basis functions have been selected, the many-body basis for the electronic wavefunction is constructed from products of these functions. For a non-interacting Hamiltonian, the solution is given as a single many-body basis function with optimized orbitals, which is the principle behind the Hartree-Fock and other mean-field methods. 
+In addition, following the Pauli exclusion principle, the electronic wavefunction must be antisymmetric, meaning that the exchange of any two electrons changes the sign of the wavefunction. 
+To account for this, these many-body basis functions can be formally written as Slater determinants, which for a wavefunction of $n$ occupied orbitals can be formally written as
+\begin{equation}
+ \psi(\mathbf{x}_1, \mathbf{x}_2, \ldots, \mathbf{x}_n) =
+  \frac{1}{\sqrt{n!}}
+  \begin{vmatrix} \phi_1(\mathbf{x}_1) & \phi_2(\mathbf{x}_1) & \cdots & \phi_n(\mathbf{x}_1) \\
+                      \phi_1(\mathbf{x}_2) & \phi_2(\mathbf{x}_2) & \cdots & \phi_n(\mathbf{x}_2) \\
+                      \vdots & \vdots & \ddots & \vdots \\
+                      \phi_1(\mathbf{x}_n) & \phi_2(\mathbf{x}_n) & \cdots & \phi_n(\mathbf{x}_n)
+  \end{vmatrix} ,
+\label{eq:slaterdeterminant}
+\end{equation}
+where $\phi_j(\mathbf{x}_j)$ denotes a spin-orbital of the chosen basis, with the variable $\mathbf{x}_j = (\mathbf{r}_j, \sigma_j)$ subsuming both the associated spatial and spin indices. As a shorthand for this, we can write an $n$-electron many-body basis function as
+\begin{equation} \label{eq:slaterdeterminant_wf}
+    \ket{\mathbf{\psi}} = \ket{\phi_{1} \phi_{2} \ldots \phi_{n}},
+\end{equation}
+where $\phi_j = 1$ means that the $j$-th basis function $\phi_j(\mathbf{x})$ is occupied, and $\phi_j = 0$ is unoccupied. This representation can be simply encoded in the qubit register, with an occupied spin-orbital denoted by an up-spin, and an unoccupied orbital by a down spin. This defines a many-body Hilbert space in which the correlated wavefunction can be expanded, since the correlations will ensure that the state can no longer be written as a single Slater determinant, but rather a linear combination over the space. This Hilbert space of electron configurations has a well-defined inner product between these many-body basis states, as $\braket{\mathbf{\psi}_a | \mathbf{\psi}_b} = \delta_{a,b}$.
+
+There are commonly two ways that antisymmetry condition can be met in practice: one can do so by enforcing it in the construction of the wavefunction, where the Schrodinger equation is typically written in real space and is generally referred to as first quantization; alternatively, one can enforce antisymmetry through enforcing antisymmetry within the commutation relations of the operators for expectation values, and is traditionally referred to as second quantization. The choice of representation has significant implications for the resources required to implement VQE, and is the topic we turn to in Sec. \ref{sec:Encoding}. 
+
+\subsubsection{Hamiltonian quantization}
+
+\paragraph{First quantization: } \label{sec:first_quantization}
+
+First quantization is most commonly used in quantum mechanics and is a direct adaption of classical mechanics to quantum theory by quantizing variables such as energy and momentum. It was the method of used in early quantum computing research of Hamiltonian simulation  \cite{Lloyd1996, Abrams1997, Zalka1998, Boghosian1998, Lidar1999, Wiesner1996, Kassal2008}, and has seen a resurgence in recent years due to promising scaling \cite{Babbush2019, Su2021}.
+Following the definition of the wavefunction in terms of Slater determinant Eq. (\ref{eq:slaterdeterminant_wf}), one must ensure that the antisymmetry of the wavefunction is verified:
+
+\begin{equation}
+    \ket{\mathbf{\sigma}(\phi_{1} \phi_{2} \ldots \phi_{n})} = (-1)^{\pi(\mathbf{\sigma})}\ket{\phi_{1} \phi_{2} \ldots \phi_{n}}, 
+\end{equation}
+where $\pi(\mathbf{\sigma})$ is the parity of a given permutation $\sigma$ on a set of basis functions.
+
+As the antisymmetry is addressed in the wavefunction, the Hamiltonian can be constructed by simple projection onto the single particle basis function. If we project the Hamiltonian over the space spanned by  $\{\phi_i(\mathbf{x}_i)\}$ which we assume to be orthonormal, we obtain (using the Slater–Condon rules \citep{Slater1929, Condon1930}) the one and two body integrals. For the one-electron terms matrix elements $h_{p q}$:
+\begin{equation}
+\label{eq:HFintegral1}
+\begin{aligned}
+h_{p q} &= \bra{\phi_{p}} \hat{T}_e + \hat{V}_{ne} \ket{\phi_{q}}\\
+&=\int \mathrm{d} \mathbf{x~} \phi_{p}^{*}(\mathbf{x})\left(-\frac{\hbar^{2}}{2 m_{e}} \nabla^{2}-\sum_{k} \frac{e^{2}}{4 \pi \epsilon_{0}} \frac{Z_{k}}{\left|\mathbf{r}-\mathbf{R}_{k}\right|}\right) \phi_{q}(\mathbf{x})
+\end{aligned}
+\end{equation}
+And for the two-electron interaction terms we obtain the matrix elements $h_{p q r s}$:
+\begin{equation}
+\label{eq:HFintegral2}
+\begin{aligned}
+h_{p q r s} &= \bra{\phi_{p} \phi_{q}}\hat{V}_{ee}\ket{\phi_{r} \phi_{s}}\\
+&= \frac{e^{2}}{4 \pi \epsilon_{0}} \int \mathrm{d} \mathbf{x}_{1} \mathrm{d} \mathbf{x}_{2} \frac{\phi_{p}^{*}\left(\mathbf{x}_{1}\right) \phi_{q}^{*}\left(\mathbf{x}_{2}\right) \phi_{r}\left(\mathbf{x}_{2}\right) \phi_{s}\left(\mathbf{x}_{1}\right)}{\left|\mathbf{r}_{1}-\mathbf{r}_{2}\right|}.
+\end{aligned}
+\end{equation}
+
+The first quantized form of the Hamiltonian can therefore be written directly in the single particle basis:
+
+\begin{equation} \label{eq:first_quantized_hamiltonian}
+    \hat{H} = \sum_{i=1}^m \sum_{p, q = 1}^n h_{p q} \ket{\phi_p^{(i)}} \bra{\phi_q^{(i)}} + \frac{1}{2} \sum_{i \neq j}^m \sum_{p, q, r, s = 1}^n  h_{p q r s} \ket{\phi_p^{(i)}\phi_q^{(j)}} \bra{\phi_r^{(i)}\phi_s^{(j)}}.
+\end{equation}
+
+Following the method described in \cite{Abrams1997}, one can map these $n$ single-particle basis functions binary numbers and to $\log_2(n)$ qubits. For instance, qubit state $\ket{\phi_1} = \ket{00...00}$ would represent function $\phi_1(\mathbf{x}_1)$, $\ket{\phi_2} = \ket{10...00}$ would represent function $\phi_2(\mathbf{x}_2)$, and so on. Given $m$ electrons in the wavefunction we are trying to model, and given each electron can occupy at most one basis function (represented by $\log_2(n)$ qubits), one can model any product state with $N=m\log_2(n)$ qubits. 
+As discussed before however, in first quantization the antisymmetry is enforced directly through the wavefunction. Procedures have been developed to maintain this requirement using an ancilla qubit register of $\mathcal{O}(m\log_2(n))$ qubits, and a circuit depth of $\mathcal{O}(\log^c_2(m)\log_2(\log_2(n)))$, where $c \geq 1$ depends on a choice of sorting network \cite{Berry2018}. This additional depth would be considered acceptable in contrast to the scaling of most VQE ans\"atze (see Sec. \ref{sec:Ansatz}).  
+
+Translation of the Hamiltonian operators (e.g. $\ket{\phi_p^{(i)}} \bra{\phi_q^{(i)}}$) into operators that can be measured directly on quantum computers is fairly straightforward (also clearly explained in Ref.~\cite{mcardleQuantumComputationalChemistry2018}). Each operator can be re-written into a tensor product of four types of single qubit operators: $|0 \rangle \langle 0 |$, $|0 \rangle \langle 1 |$, $|1 \rangle \langle 0 |$, and $|1 \rangle \langle 1|$ which can be mapped to Pauli operators as follows: 
+\begin{equation} \label{eq:first_quantized_paulis}
+    \begin{aligned}
+        &|0 \rangle \langle 0 | = \frac{1}{2} (I + Z) \\
+        &|0 \rangle \langle 1 | = \frac{1}{2} (X + iY) \\
+        &|1 \rangle \langle 0 | = \frac{1}{2} (X - iY) \\
+        &|1 \rangle \langle 1 | = \frac{1}{2} (I - Z).
+    \end{aligned}
+\end{equation}
+From Eq. (\ref{eq:first_quantized_hamiltonian}) one can see that the number of operators in the Hamiltonian will scale with the number of two body terms $\mathcal{O}(n^4m^2)$, as there is one term for each combination of $4$ spin-orbitals and $2$ electrons. Each spin-orbital is represented by $\log_2(n)$ qubits, hence for the two body terms we have $2\log_2(n)$ tensored qubit outer products (e.g. $|0 \rangle \langle 1 |$), each of them composed of two Pauli operators. This results in a sum of $2^{2\log_2(n)}= n^2$ Pauli strings each acting on up to $2\log_2(n)$ qubits (hence the Pauli weight in first quantization), for every operator in the Hamiltonian. This implies that the scaling of Pauli strings of the Hamiltonian in first quantization is $\mathcal{O}(n^6m^2)$.
+
+A few points are worth noting with respect to the use of first quantization for quantum computing. Firstly, to the best of our knowledge, there are no publications studying the usage of this method within the context of VQE or any other NISQ algorithm. Secondly, it is very clear that while the ancilla qubits do not change the overall scaling of the method, it bears a significant cost for NISQ devices, in addition to having to compute all spatial integrals on the quantum computer \cite{Moll2018}. Finally it is very important to note that in general first quantization can be advantageous on systems which require a very large number of basis functions compared to the number of electrons (due to the logarithmic scaling of the number of qubits in $n$). This is the case in particular when a plane wave basis is selected, as it usually requires several orders of magnitude more functions than the molecular basis to achieve equivalent accuracy \cite{Babbush2018} - plane wave basis in first quantization has been shown to bring significant scaling advantages for in fault tolerant quantum simulation of chemical systems \cite{Babbush2019}. Overall, despite offering clear promise for fault tolerant quantum computing, it appears for the moment that first quantization is on balance too costly for the NISQ era.
+
+\paragraph{Second quantization: } \label{sec:second_quantization}
+
+Second quantization distinguishes itself from first quantization in that it enforces antisymmetry through the construction of its operators, rather than through the wavefunction. As such, the operators used to construct the Hamiltonian must abide by certain properties. %The wavefunction in second quantization is similarly constructed using Slater determinants, as presented in Eq.~(\ref{eq:slaterdeterminant}). 
+The action of the operators must also allow moving a particle from one basis function to another (e.g. from an occupied orbital to a virtual orbital). In particular, while in first quantization this action (e.g. $\ket{\phi_p^{(i)}} \bra{\phi_q^{(i)}}$) straightforwardly acts as moving an electron, operators in second quantization additionally need to verify antisymmetric properties. These operators are often referred to as fermionic creation ($\hat{a}^{\dagger}_p$) and annhiliation ($\hat{a}_p$) operators.  In their 1928 paper \cite{Jordan1928}, Jordan and Wigner introduced the canonical fermionic anti-commutation relation:
+\begin{equation} \label{eq:anticommutation}
+\begin{aligned}
+&\left\{\hat{a}_p, \hat{a}_q^{\dagger}\right\}= \delta_{pq}, \\
+&\left\{\hat{a}_p^{\dagger}, \hat{a}_q^{\dagger}\right\} = \left\{\hat{a}_p, \hat{a}_q\right\} = 0, 
+\end{aligned}
+\end{equation}
+
+from where one can also derive the commutation relations:
+
+\begin{equation}
+\begin{aligned}
+&\left[\hat{a}_p, \hat{a}_q \right] = -2\hat{a}_q\hat{a}_p, \\
+&\left[\hat{a}_p, \hat{a}_q^{\dagger} \right] = \delta_{pq} - 2\hat{a}_q\hat{a}_p.
+\end{aligned}
+\end{equation}
+
+These allow to re-write the Slater determinants as
+\begin{equation}
+    \ket{\psi} = \prod_i (\hat{a}_i^\dagger)^{\phi_i} \ket{\mathrm{vac}} 
+    = (\hat{a}_1^\dagger)^{\phi_1} (\hat{a}_2^\dagger)^{\phi_2} \cdots (\hat{a}_n^\dagger)^{\phi_n} \ket{\mathrm{vac}},
+\end{equation}
+where $\ket{\mathrm{vac}}$ is the special vacuum state which disappears after any operation by the annihilation operator, 
+\begin{equation}
+    \hat{a}_j\ket{\mathrm{vac}}=0.
+\end{equation}
+With such definition, $\hat{a}_{p}^{\dagger}$ acts on the unoccupied $p$-th orbital to make it occupied, and $\hat{a}_{p}$ acts on the occupied $p$-th orbital to make it unoccupied. Specifically, it is straightforward to show that
+\begin{equation} \label{eq:JWladder}
+\begin{split}
+    \hat{a}_{j}^{\dagger }\ket{\phi_{1} \phi_{2} \cdots } & =\begin{cases}
+    0 , &\phi_{j} =1\\
+    s_p \ket{\phi_1\phi_2\cdots 1_j \cdots} , &\phi_{j} =0
+    \end{cases}\\
+    \hat{a}_{j}\ket{\phi_{1} \phi_{2} \cdots } & =\begin{cases}
+    0 , &\phi_{j} =0\\
+    s_p \ket{\phi_1 \phi_2 \cdots 0_j \cdots}, &\phi_{j} =1
+    \end{cases}
+\end{split}
+\end{equation}
+where $s_p$ is the parity of $p$-th orbital, i.e. $s_p$ is $1$ or $-1$ when the number of occupied orbitals up to and not including the $p$-th orbital is even or odd:
+\begin{equation}
+    p = ( -1)^{\sum _{i=1,2,\cdots j-1} \phi_{i}}.
+\end{equation}
+
+Fermionic operators allow re-writing the Hamiltonian presented in Eq. (\ref{eq:first_quantized_hamiltonian}), using the one and two body integrals given in Eq.~(\ref{eq:HFintegral1}) and Eq.~(\ref{eq:HFintegral2}):
+\begin{equation}
+\label{eq:molecularhamiltonianladder}
+\hat{H} =\sum_{p q} h_{p q} \hat{a}_{p}^{\dagger} \hat{a}_{q}+\frac{1}{2} \sum_{p q r s} h_{p q r s} \hat{a}_{p}^{\dagger} \hat{a}_{q}^{\dagger} \hat{a}_{r} \hat{a}_{s},
+\end{equation}
+providing a second quantized form of the molecular Hamiltonian. Lattice Hamiltonians can also be written using these operators. We can  project the electronic coordinates into a basis set in order to define the two-body reduced density matrix (RDM):
+\begin{equation}
+    \Gamma_{pqrs}
+    \equiv
+    \bra{\psi} \hat{a}_p^{\dagger}\hat{a}_q^{\dagger} \hat{a}_r \hat{a}_s \ket{\psi},
+    \label{eq:two_body_rdm}
+\end{equation}
+with other rank RDMs defined equivalently, and where the indices $p, q, \dots$ label spin-orbital degrees of freedom. In this example, the partial trace down to the one-body RDM can then be written as
+\begin{equation} \label{eq:one_body_rdm}
+    \gamma_{pr} = \frac{1}{n-1}\sum_q\Gamma_{pq,rq}.
+\end{equation}
+Despite tracing out large numbers of degrees of freedom, these two-body RDMs still contain all the information about a quantum system required for physical observables of interest which depend on (up to) pairwise operators, including the total energy.
+
+Because, unlike first quantization operators, the fermionic operators are not defined explicitly, there could be a number of different ways to define them in terms of explicit Pauli operators (the reference to Jordan and Wigner's 1928 research is one of them). We have dedicated Sec. \ref{sec:Encoding} to detailing numerous methods used to explicitly defined these operators. 
+
+\subsection{Other Hamiltonian models}
+
+\subsubsection{Lattice Hamiltonians} 
+
+Rather than defining a Hamiltonian based on atomic configurations, lattice models assumes a number of sites organized along a lattice, which could be a one-dimensional chain, a two-dimensional lattice of various geometries, or any higher dimensional graph. Here we consider electrons as the “particles moving in this discretized space. Note that if one considers bosonic instead of fermionic particles, this would result in much simpler representation and encoding, since the fermionic antisymmetry relationships described in the following section are not required. 
+%Lattice model problems are not concerned about the probability distribution of electrons, but rather the spin of electrons at each site on the lattice. 
+Lattice models are widely used in condensed matter physics to model phenomenological properties of certain materials, such as electronic band structures \cite{nemoshkalenko1998computational, Harrison2004, Marder2010} or phase transitions \cite{Vojta2003, Sachdev2009}. There exist a number of lattice models, here we only describe a few examples briefly: 
+\begin{itemize}
+    \item Hubbard / Fermi-Hubbard~\cite{Simon2013}:
+    \begin{equation}
+    \label{eq:Hubbardmodel_maintext}
+    \hat{H} = -t \sum_{\sigma} \sum_{\langle p, q \rangle} ( \hat{a}_{p,\sigma}^{\dagger} \hat{a}_{q,\sigma} + \hat{a}_{q,\sigma}^{\dagger} \hat{a}_{p,\sigma}) + U \sum_{p} \hat{a}_{p,\uparrow}^{\dagger}
+    \hat{a}_{p,\uparrow} \hat{a}_{p,\downarrow}^{\dagger} \hat{a}_{p,\downarrow},
+    \end{equation}
+    where the sum $\langle p, q \rangle$ is only taken for neighboring lattice sites, with $\hat{a}_{p,\sigma}$ denoting second quantized electron annihilation operators on site $p$ with $\sigma \in \{\alpha, \beta\}$ an index for the spin of the electron, as discussed in more detail in Sec.~\ref{sec:second_quantization}.
+    
+    \item The Anderson impurity model used within the dynamical mean field theory~\cite{Bauer2016} (see Sec. \ref{sec:Extensions_of_VQE}):
+    \begin{equation}
+    \begin{aligned}
+    \hat{H} & =\hat{H}_{\mathrm{imp}} +\hat{H}_{\mathrm{bath}} +\hat{H}_{\mathrm{mix}}\\
+    \hat{H}_{\mathrm{imp}} & =\sum _{\alpha \beta } t_{\alpha \beta } a_{\alpha }^{\dagger } a_{\beta } +\sum _{\alpha \beta \gamma \delta } U_{\alpha \beta \gamma \delta } a_{\alpha }^{\dagger } a_{\beta }^{\dagger } a_{\gamma } a_{\delta }\\
+    \hat{H}_{\mathrm{mix}} & =\sum _{\alpha i}\left( V_{\alpha i} a_{\alpha }^{\dagger } a_{i} +\overline{V}_{\alpha i} a_{i}^{\dagger } a_{\alpha }\right)\\
+    \hat{H}_{\mathrm{bath}} & =\sum _{i} t'_{i} a_{i}^{\dagger } a_{i}
+    \end{aligned}
+    \end{equation}
+    where indices $\{\alpha ,\beta ,\gamma ,\delta \}$ refer to the impurity sites, index $i$ refers to bath sites, and$\{t_{\alpha \beta } ,U_{\alpha \beta \gamma \delta } V_{\alpha i} ,t'_{i}\}$ parameterize the impurity model. $\hat{H}_{\mathrm{imp}}$ is a general Hamiltonian describing the local correlation of the impurity, though this is also often approximated to have Hubbard-like interactions. $\displaystyle \hat{H}_{\mathrm{mix}}$ describes the hopping between the impurity and the bath, which is taken in this example in a particular `star' geometry, and $\hat{H}_{\mathrm{bath}}$ is the non-interacting Hamiltonian of the bath sites. 
+    
+    \item Spin Hamiltonians, such as the Heisenberg model~\cite{bosse2021probing,kattemolle2021variational}:
+    \begin{equation}
+        \hat{H} = J \sum_{\langle p,q \rangle} \hat{\boldsymbol{S}}_p \cdot \hat{\boldsymbol{S}}_q
+    \end{equation}
+    where again $ \langle p,q \rangle$ denotes a sum over neighboring pairs of sites on the lattice, $J$ is the positive exchange constant, $\hat{\boldsymbol{S}}_p = (\hat{S}^x_p, \hat{S}^y_p, \hat{S}^z_p)$ is the three spin-$1/2$ angular momentum operators on site $p$. Note that the spin-$1/2$ matrices are related to Pauli matrices by $(\hat{S}^x, \hat{S}^y, \hat{S}^z)=\frac{\hbar}{2}(X, Y, Z)$.
+
+\end{itemize}
+
+\subsubsection{Vibrational Hamiltonian model} 
+
+The vibrational Hamiltonian is the nuclear-motion counterpart to the electronic Hamiltonian within the Born-Oppenheimer approximation. The Hamiltonian describes the nuclear motions resulting from bond vibration or rotation of the whole molecule. Example of vibrations will include bond stretching, or bending. The vibrationals modes is the number of possibility for a molecule to undergo vibrational tensions. For a molecule with $N$ atoms, each atom can move along three dimensions resulting in a total of $3N$ degrees of freedom. However, three degrees of freedom correspond to translations of the molecule in 3D space, and three degrees of freedom correspond to rotations of the molecule (of course, if the molecule is linear, there are only two rotational modes). This results in a $3N - 6$ for molecules ($3N - 5$ for linear molecule). 
+
+Vibrational Hamiltonian have far more options in their constructions than molecular Hamiltonians \cite{03PeHa} resulting in a large variety of Hamiltonian representations. The simplest example, presented here is that of the harmonic oscillator, suppose a molecule with $V = 3N - 6$ vibrational modes. We can provide an example of an effective nuclear Hamiltonian following McArdle \textit{et al.} \cite{McArdle2019_vibra}, once the electronic Hamiltonian has been solved (or estimated), as: 
+\begin{equation}
+\label{eq:vibrational_Hamiltonian}
+\hat{H} = \frac{\boldsymbol{p}^2}{2} + V_s(\boldsymbol{q}),
+\end{equation}
+where $\boldsymbol{q}$ represent the nuclear positions, $\boldsymbol{p}$ the nuclear momenta, and $V_s(.)$ the nuclear potential which is dependent on the electronic potential energy surface. Noting $\omega_i$ the harmonic frequency of vibrational mode $i$, the Hamiltonian in Eq. \ref{eq:vibrational_Hamiltonian} can be approximated as a sum of independent harmonic oscillators: 
+
+\begin{equation}
+\label{eq:vibrational_Hamiltonian_harmonic}
+\hat{H} = \sum_i \omega_i \hat{a}^{\dagger}_i \hat{a}_i.
+\end{equation}
+
+The accuracy of results can be improved by adding anharmonic terms, however raising the complexity of the computation. In this case, the annhiliation and creation act differently than in the case of fermionic operators, instead they represent transitions between different eigenstate of a single mode harmonic oscillator Hamiltonian. Suppose we consider $d$ eigenstates of $\hat{h}_i = \omega_i \hat{a}^{\dagger}_i \hat{a}_i$. In Ref. \cite{McArdle2019_vibra}, two means of encoding such Hamiltonians in qubits are proposed: in the first one (called the direct mapping) each eigenstate $\ket{s}$, $s \in \{0, d - 1\}$ requires $d$ qubits, and only qubit $s$ is equal to $1$ for state $\ket{s}$. The resulting creation operator is: 
+\begin{equation}
+\label{eq:vibrational_direct_creation}
+\hat{a} = \sum_0^{d - 2} \sqrt{s + 1} \ket{0}\bra{1}_s \otimes \ket{1}\bra{0}_{s + 1}.
+\end{equation}
+In the second case (called the compact mapping), each eigenstate is encoded in binary form, with each requiring $\log_2(d)$ qubits. Which results in the following creation operator: 
+\begin{equation}
+\label{eq:vibrational_compact_creation}
+\hat{a} = \sum_0^{d - 2} \sqrt{s + 1} \ket{s + 1}\bra{s}.
+\end{equation}
+From this representation, the Hamiltonian of Eq.~(\ref{eq:vibrational_Hamiltonian_harmonic}) (or its extension to anharmonic terms) can be mapped to Pauli operators in the same way as the electronic Hamiltonian in first quantization (see Sec. \ref{sec:first_quantization}). Given $V$ vibrational modes, the direct mapping requires $Vd$ qubits, and if the anharmonic terms up to order $k$ are included the Hamiltonian will have $\mathcal{O}(V^kd^k)$ Pauli terms. The compact mapping requires $V\log_2(d)$ qubits, and $\mathcal{O}(V^kd^{2k})$ terms in the Hamiltonian \cite{McArdle2019_vibra}. 
+
+\subsubsection{Periodic systems} 
+
+Periodic system Hamiltonians aim at representing the energetic behavior of solid state systems, and periodic materials. As such, they are very similar to the definition of the molecular electronic structure Hamiltonian, but with the addition of boundary conditions defining the periodicity of the system. In second-quantized form (as described in Ref. \cite{Yoshioka2022, Manrique2020}), the crystal Hamiltonian is given by: 
+
+\begin{equation}
+\label{eq:molecularhamiltonianladder_periodic}
+\hat{H} =\sum_{p q} \sum_{\boldsymbol{k}} h_{p q}^{\boldsymbol{k}} \hat{a}_{p\boldsymbol{k}}^{\dagger} \hat{a}_{q\boldsymbol{k}}+\frac{1}{2} \sum_{p q r s} \sum_{\boldsymbol{k}_p\boldsymbol{k}_q\boldsymbol{k}_r\boldsymbol{k}_s} h_{p q r s}^{\boldsymbol{k}_p\boldsymbol{k}_q\boldsymbol{k}_r\boldsymbol{k}_s} \hat{a}_{p\boldsymbol{k}_p}^{\dagger} \hat{a}_{q\boldsymbol{k}_q}^{\dagger} \hat{a}_{r\boldsymbol{k}_r} \hat{a}_{s\boldsymbol{k}_s},
+\end{equation}
+
+where $h_{p q}^{\boldsymbol{k}}$, and $h_{p q r s}^{\boldsymbol{k}_p\boldsymbol{k}_q\boldsymbol{k}_r\boldsymbol{k}_s}$ are the one and two body integrals of the periodic system. In this representation, the one electron integrals is diagonal in $\boldsymbol{k}$ and the two-electron integrals follows $\boldsymbol{k}_p + \boldsymbol{k}_q - \boldsymbol{k}_r - \boldsymbol{k}_s = \boldsymbol{G}$, where $\boldsymbol{G}$ is a reciprocal lattice vector \cite{Manrique2020, McClain2017}.
+

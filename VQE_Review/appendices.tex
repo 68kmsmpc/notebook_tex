@@ -1,0 +1,167 @@
+%\section{Introductory concepts in Quantum Chemistry} \label{sec:intro_q_chem}
+
+%\subsection{The Hartree-Fock (HF) method} \label{sec:hartree-fock}
+
+%The Hartree-Fock (HF) method \cite{Hartree1928, Slater1928, Gaunt1928, Hartree1935, Jensen2017} gives a first approximation of the ground state molecular wavefunction, as well as being a usual starting point for more accurate approximations. It is a mean field method, in that it treats a multi-particle problem as a single particle problem averaging the electron-electron interaction. 
+
+%The method starts from the assumption that the electronic wavefunction has the form of a Slater determinant as given by Eq. (\ref{eq:slaterdeterminant}). The goal of the Hartree-Fock method is to find an expression for the molecular orbitals $\{ \Phi_i(\mathbf{x}) \}$ as linear combinations of a given set of basis functions $\{ \chi_j(\mathbf{x}) \}$ (conventionally called atomic orbitals: these could be for instance hydrogen-like wavefunctions), thus giving the Slater determinant that best approximates the ground state for a given set of basis functions
+%\begin{equation}
+%\Phi_i(\mathbf{r}) = \sum_j U_{ij} \chi_j(\mathbf{r}).
+%\end{equation}
+%That is, given a basis set of atomic orbitals $\{ \chi_j(\mathbf{r}) \}$, the Hartree-Fock method gives us the unitary matrix, with coefficients $U_{ij}$ that define the molecular orbitals $\{ \Phi_i(\mathbf{r})\}$ (which we can again split in a set of spin-orbitals $\{ \phi_i(\mathbf{x})\}$, $x = \{\mathbf{r}, \sigma \}$ with $\sigma$ the spin). The requirement that the wavefunction should be of the form of a single Slater determinant is equivalent to the requirement that the electron-electron interaction is only taken into account as a mean-field interaction: in Hartree-Fock we only assumes an average repulsion between electrons. 
+
+%We first define the Fock operator, which only includes one body term. It is a simplified version of the Hamiltonian of Eq. (\ref{eq:molecularhamiltonianladder}) that turns it into a sum of one-electron operators of the form
+%\begin{equation}
+%\label{eq:fockoperator1}
+%\hat{F} =\sum_{p q} f_{p q} \hat{a}_{p}^{\dagger} \hat{a}_{q},
+%\end{equation}
+%where:
+%\begin{equation}
+%\label{eq:fockoperator2}
+%f_{p q} = h_{p q} + \sum_{k} \left( 2 h_{p q k k} - \sum_{k} h_{p k k q} \right),
+%\end{equation}
+%with the indexed $h$ defined as the one and two body integrals from Eq. (\ref{eq:HFintegral1}) and Eq. (\ref{eq:HFintegral2}) respectively. At this stage, these are unknown and can be formulated from an initial guess on the composition of the molecular orbitals. The first term ($h_{pq}$ corresponds to the kinetic energy of the electron and its Coulomb attraction to the nucleus. The second term is given by the Coloumb interaction with the other electrons and is in turn made up of two different kinds of terms: those corresponding to the classical Coulomb interaction ($h_{p q k k}$) and the purely quantum mechanical exchange potential terms ($h_{p k k q}$).
+
+%The Fock operator can be derived by imposing the variational constraint of finding the single Slater determinant corresponding to the lowest energy by optimizing the coefficients $U_{ij}$. A set of orbitals $\{ \phi_i(\mathbf{x}) \}$ whose antisymmetrised product gives this Slater determinant are the eigenfunctions of the Fock operator
+%\begin{equation}
+%\label{eq:fockoperator3}
+%\hat{F}\phi_i = \epsilon_i \phi_i
+%\end{equation}
+%This is called a pseudo-eigenvalue equation because unlike a usual eigenvalue equation, the Fock operator $\hat{F}$ is constructed from the integrals of Eq. (\ref{eq:HFintegral1}) and Eq. (\ref{eq:HFintegral2}) in terms of its own eigenfunctions. The objective of the Hartree-Fock method is to find a self-consistent solution for this equation. A tentative Fock operator $\hat{F}^{(0)}$ is initially constructed from an initial guess of the orbitals $\{ \phi^{(0)}_i(\mathbf{x}) \}$ and then updated iteratively to a new operator $\hat{F}^{(j)}$ by performing each time the integrals of Eq. (\ref{eq:HFintegral1}) and Eq. (\ref{eq:HFintegral2}), which is then diagonalized to give a new set of of orbital functions $\{ \phi^{(j)}_i(\mathbf{x}) \}$. This process is repeated until convergence is obtained, yielding the final set of orbitals $\{ \phi_i(\mathbf{x}) \}$, which are self-consistent in the sense that they satisfy Eq. (\ref{eq:fockoperator3}). 
+
+%The main advantage of the Hartree-Fock method is its relatively low computation cost. Its most basic implementation scales $\mathcal{O}(n^4)$ in the number of basis functions, although more efficient implementations can significantly reduce cost and scaling for larger system \cite{Koppl2016}. The method however fails to capture accurately energy resulting from electron-electron repulsion (the electron correlation energy), which can result in large errors for many systems. As such it is often used as a starting point for an initial estimates of the electron wavefunction and ground energy, on which more advanced can be constructed (usually named post-Hartree-Fock methods, or electron correlation methods \cite{Jensen2017}). 
+
+%\subsection{The Hubbard model} \label{sec:hubbard}
+
+%The Hubbard model is a central example of lattice model, used for example to describe itinerant ferromagnetism in transition metals like iron and nickel find in most common magnets, where interacting electrons wander through the lattice of atoms and are responsible at the same time for the conductive and magnetic properties of the material \cite{Simon2013}. To present the Hubbard model, we can first consider the simpler tight binding model, used to describe electronic band structure, where the approximate Hamiltonian is given in the second quantization formalism by
+%\begin{equation}
+%\label{eq:tightbinding}
+%\hat{H} = t \sum_{<p, q>} ( \hat{a}_{p}^{\dagger} \hat{a}_{q} + \hat{a}_{q}^{\dagger} \hat{a}_{p})
+%\end{equation}
+%where the sum is only taken for neighboring lattice sites and for spins that are aligned, and the term $t$ is called the hopping term and gives the amplitude of an electron tunneling from one lattice site to an adjacent side. The Hubbard model generalizes this approach by adding an extra term to the Hamiltonian
+%\begin{equation}
+%\label{eq:Hubbardmodel}
+%\hat{H} = t \sum_{<p, q>} ( \hat{a}_{p}^{\dagger} \hat{a}_{q} + \hat{a}_{q}^{\dagger} \hat{a}_{p}) + U \sum_{p} \hat{a}_{2p}^{\dagger} \hat{a}_{2p + 1}^{\dagger} \hat{a}_{2p} \hat{a}_{2p + 1},
+%\end{equation}
+%where we have taken even indices to correspond to electrons with spins in one direction and odd indices to correspond to electrons with spins in the opposite direction, so that the $2p$-th and the $2p + 1$-th fermionic operators create electrons of opposite spin on the same site. The first term in Eq. (\ref{eq:Hubbardmodel}) is the tight binding Hamiltonian, and the second term is the Hubbard interaction term which gives an energy penalty of $U$ whenever two electrons are found on the same lattice site. The Hubbard model Hamiltonian is a special case of the molecular Hamiltonian given by Eq. (\ref{eq:molecularhamiltonianladder}), where the only nonzero one-electron terms are the ones in between adjacent sites with the same spin and are all equal, and the only nonzero two-electron terms are the ones corresponding to the Coulomb repulsion between terms on the same lattice site and are all equal.
+
+\section{Qubit encodings and Fenwick trees} \label{sec:Fenwick_trees}
+
+The qubit encondings that have been presented in Sec. \ref{sec:gen_encoding} can be translated into the language of graph theory and be visualized in a simple way as Fenwick trees \cite{Havlek2017}.
+\begin{figure}
+\centering
+\begin{tikzpicture}
+\node[shape=circle,fill=white,thick,draw=cyan] (7) at (0,0) {7};  \node[shape=circle,draw=black,fill=gray!5] (6) at (-1.5,-1) {6};
+\node[shape=circle,draw=black,fill=white, thick] (5) at (0,-1) {5};
+\node[shape=circle,fill=white,thick,draw=red] (4) at (0,-2) {4};
+\node[shape=circle,fill=white,thick,draw=green] (3) at (1.5,-1) {3};
+\node[shape=circle,draw=black,fill=gray!5] (2) at (1,-2) {2};
+\node[shape=circle,draw=black,fill=gray!5] (1) at (2,-2) {1};
+\node[shape=circle,draw=black,fill=gray!5] (0) at (2,-3) {0};
+
+\path [-] (6) edge (7);
+\path [-] (5) edge (7);
+\path [-] (3) edge (7);
+\path [-] (4) edge (5);
+\path [-] (2) edge (3);
+\path [-] (1) edge (3);
+\path [-] (0) edge (1);
+\end{tikzpicture}
+\caption{Fenwick tree for the Bravyi-Kitaev encoding of 8 qubits showing the update set $U(5) = \{7\}$ (cyan), flip set $F(5) = \{4\}$, (red) and remainder set $R(5) = \{3\}$ (green) for qubit $5$, from which we can read off the Brayvi-Kiteav operators (See Sec. \ref{sec:bravyi-kitaev})}
+\label{fig:BK8qubit-5}
+\end{figure}
+The tree corresponding to the Bravyi-Kitaev (like the one shown in Fig. (\ref{fig:BK8qubit-5}) and in Fig (\ref{fig:BK8qubit-2})) can be built recursively according to a procedure that mirrors the construction of the change of basis matrix of Eq. (\ref{eq:bravyikitaev2}): the tree corresponding to the single-qubit encoding is the trivial graph, and the tree corresponding to the $2^x$-qubit enconding is built from two copies of the tree corresponding to the $2^{x-1}$-qubit enconding, where vertex $k$ on the first tree corresponds to vertex $k + 2^{x-1}$ on the second, and the two trees are joined together by making vertex $2^{x-1} - 1$ a child of vertex $2^x  - 1$.
+\begin{figure}
+\centering
+\begin{tikzpicture}
+\node[shape=circle,fill=white,thick,draw=cyan] (7) at (0,0) {7};  \node[shape=circle,draw=black,fill=gray!5] (6) at (-1.5,-1) {6};
+\node[shape=circle,draw=black,fill=gray!5] (5) at (0,-1) {5};
+\node[shape=circle,draw=black,fill=gray!5] (4) at (0,-2) {4};
+\node[shape=circle,fill=white,thick,draw=cyan] (3) at (1.5,-1) {3};
+\node[shape=circle,draw=black,fill=white, thick] (2) at (1,-2) {2};
+\node[shape=circle,fill=white,thick,draw=green] (1) at (2,-2) {1};
+\node[shape=circle,draw=black,fill=gray!5] (0) at (2,-3) {0};
+
+\path [-] (6) edge (7);
+\path [-] (5) edge (7);
+\path [-] (3) edge (7);
+\path [-] (4) edge (5);
+\path [-] (2) edge (3);
+\path [-] (1) edge (3);
+\path [-] (0) edge (1);
+\end{tikzpicture}
+\caption{The same Fenwick tree as in Fig. (\ref{fig:BK8qubit-5}), this time showing the update set $U(2) = \{3, 7\}$ (cyan) and remainder set $R(2) = P(2) = \{1\}$ (green) for qubit $2$ (because of how the Bravyi-Kitaev tree is constructed the leaves are the even vertices and so we see again that the flip set of an even qubit is always empty$F(2) = \emptyset$)}
+\label{fig:BK8qubit-2}
+\end{figure}
+
+The definitions of the qubit sets given when describing the Bravyi-Kitaev encoding (see Sec. \ref{sec:bravyi-kitaev}) now translate into the following simple statements about Fenwick trees \cite{Havlek2017}:
+\begin{itemize}
+\item The update set of the $j$-th qubit $U(j)$ corresponds then to the set of ancestors of vertex $j$ on the tree.
+\item The flip set $F(j)$ is the set of children of the $j$-th vertex.
+\item The remainder set $R(j)$ is the set of children of the ancestors of vertex $j$ whose values is less than $j$.
+\end{itemize}
+This construction allows us to read off qubits sets for each qubit from the tree corresponding to our encoding (as shown in Fig. (\ref{fig:BK8qubit-5}) and in Fig (\ref{fig:BK8qubit-2}) for our usual examples of qubits 2 and 5) and hence the representation of the creation and annihilation operators using Eq. (\ref{eq:BKladder4}). In the case where the number of qubits $n$ is not a power of $2$ we construct the Fenwick tree for the next power of $2$ and determine the qubit sets, and then we discard from the qubit sets all the qubits greater or equal to $n$.
+
+The parity encoding can also be represented this way, giving rise to the linear graph in Fig. \ref{fig:JW8qubit-5}. We can further generalize this to other encodings by considering disconnected Fenwick trees. We can then change our definition of $R(j)$ to include both the children of vertex $j$'s ancestors and the roots whose value is less than $j$. We then have that the Jordan-Wigner encoding corresponds to a totally disconnected graph (a graph with no edges). In the case of both encodings inspection of the corresponding Fenwick tree together with Eq. (\ref{eq:BKladder4}) recovers the same representations of $\hat{a}^\dagger_j$ and $\hat{a}_j$ operators as in Eq. (\ref{eq:parityladder2}) and Eq. (\ref{eq:JW2}). We can turn this argument upside down, and define new fermionic encodings starting from collections of Fenwick trees \cite{Havlek2017}.
+
+\begin{figure}
+\centering
+\begin{tikzpicture}
+\node[shape=circle,fill=white,thick,draw=cyan] (7) at (0,0) {7};  \node[shape=circle,fill=white,thick,draw=cyan] (6) at (0, -1) {6};
+\node[shape=circle,draw=black,fill=white,thick] (5) at (0, -2) {5};
+\node[shape=circle,draw=red,fill=white,thick] (4) at (0, -3) {4};
+\node[shape=circle,draw=black,fill=gray!5] (3) at (0, -4) {3};
+\node[shape=circle,draw=black,fill=gray!5] (2) at (0, -5) {2};
+\node[shape=circle,draw=black,fill=gray!5] (1) at (0, -6) {1};
+\node[shape=circle,draw=black,fill=gray!5] (0) at (0, -7) {0};
+\path [-] (7) edge (6);
+\path [-] (6) edge (5);
+\path [-] (5) edge (4);
+\path [-] (4) edge (3);
+\path [-] (3) edge (2);
+\path [-] (2) edge (1);
+\path [-] (1) edge (0);
+
+\node[shape=circle,draw=black,fill=gray!5] (7) at (3,0) {7};  \node[shape=circle,draw=black,fill=gray!5] (6) at (3, -1) {6};
+\node[shape=circle,draw=black,fill=white,thick] (5) at (3, -2) {5};
+\node[shape=circle,draw=green,fill=white,thick] (4) at (3, -3) {4};
+\node[shape=circle,draw=green,fill=white,thick] (3) at (3, -4) {3};
+\node[shape=circle,draw=green,fill=white,thick] (2) at (3, -5) {2};
+\node[shape=circle,draw=green,fill=white,thick] (1) at (3, -6) {1};
+\node[shape=circle,draw=green,fill=white,thick] (0) at (3, -7) {0};
+\end{tikzpicture}
+\caption{Fenwick trees for the parity (left) and Jordan-Wigner (right) encoding of 8 qubits showing update $U(5)$ (cyan), flip $F(5)$ (red) and remainder sets $R(5)$ (green) for qubit 5}
+\label{fig:JW8qubit-5}
+\end{figure}
+
+
+\section{Hadamard test}\label{sec:hadamard-test}
+
+
+Here we briefly introduce a common quantum subroutine called the Hadamard test \cite{nielsenQuantumComputationQuantum2010}. Hadamard test is frequently used to compute the amplitude $\langle \psi |U|\psi \rangle $ (both its real and imaginary part) of an initial state $|\psi \rangle $ and a unitary gate $U$. This algorithm is summarized in the circuit diagram in Fig.~\ref{fig:hadamard-test}. Here we explain the circuit in detail. To measure the real part of the amplitude, the quantum computer is initialized in a product state $|\psi \rangle \otimes |0\rangle $ with one ancilla qubit. The Hadamard gate $\Had$ converts the ancilla from $|0\rangle $ to $( |0\rangle +|1\rangle ) /\sqrt{2}$. Then the controlled-$U$ gate with control qubit on the ancilla results in the state $( U|\psi \rangle \otimes |1\rangle +|\psi \rangle \otimes |0\rangle ) /\sqrt{2}$. The second Hadamard gate gives the state $(( I+U) |\psi \rangle \otimes |0\rangle +( I-U) |\psi \rangle \otimes |1\rangle ) /2$. In the final measurement, the probability of obtaining $0$ is $( 1+\mathrm{Re} \langle \psi |U|\psi \rangle ) /2$, and the probability of obtaining $1$ is $( 1-\mathrm{Re} \langle \psi |U|\psi \rangle ) /2$. Therefore, the difference between the two probabilities is $\mathrm{Re} \langle \psi |U|\psi \rangle $. Similarly calculation shows that in the second circuit (Fig.~\ref{fig:hadamard-imag}), the probability of obtaining 0 minus the probability of obtaining 1 is $\mathrm{Im} \langle \psi |U|\psi \rangle $.
+
+\begin{figure} [ht]
+  \centering
+  \subfloat[$\mathrm{Re}\langle \psi | U | \psi \rangle$\label{fig:hadamard-real}]{
+  \Qcircuit @C=1.0em @R=0.2em @!R { 
+     \nghost{ |0\rangle  } & \lstick{ |0\rangle } & \gate{\Had} & \ctrl{1} & \gate{\Had} & \meter & \cw\\ 
+     \nghost{ |\psi\rangle } & \lstick{ |\psi\rangle } & {/} \qw & \gate{U} & \qw & \qw & \qw \\ 
+  }
+  }
+  \subfloat[$\mathrm{Im}\langle \psi |U|\psi\rangle$\label{fig:hadamard-imag}]{
+  \Qcircuit @C=1.0em @R=0.2em @!R { 
+     \nghost{ |0\rangle  } & \lstick{ |0\rangle } & \gate{\Had} & \gate{\mathrm{Rz}(-\frac{\pi}{2})} & \ctrl{1} & \gate{\Had} & \meter & \cw\\ 
+     \nghost{ |\psi\rangle } & \lstick{ |\psi\rangle } & {/} \qw & \qw & \gate{U} & \qw & \qw & \qw \\ 
+  }
+  }
+  \caption{
+  Hadamard test circuits. The probability of measuring $0$ minus the probability of measuring
+  $1$ in \protect\subref{fig:hadamard-real} and \protect\subref{fig:hadamard-imag} 
+  gives respectively the real the imaginary part of the amplitude
+  of $\langle \psi|U|\psi \rangle$.
+  }
+  \label{fig:hadamard-test}
+\end{figure}
+
+
+\input{\ProjectRoot/08_error-mit_appendix.tex}

@@ -1,0 +1,88 @@
+% --------------------------------------------------------------------
+% # README
+%
+% Here we puts the common elements that should be put into the preamble part
+% of a latex document.
+% Various latex files for compiling a single section should \input{preamble.tex}
+% in their preamble part.
+% --------------------------------------------------------------------
+% usepackage part
+% --------------------------------------------------------------------
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{fontspec}
+\usepackage[space]{xeCJK}
+\setCJKmainfont{Noto Sans KR}
+\usepackage{setspace}
+\setstretch{1.3}
+
+\usepackage{graphicx}% Include figure files
+\usepackage{dcolumn}% Align table columns on decimal point
+% NOTE: physics must be loaded before braket. Since physics redfines
+% \braket in a different manner.
+\usepackage{physics}
+\usepackage{braket}
+\usepackage{amsmath}
+% several options for the identify operator:
+% 1. \usepackage{bbm} % for the identity operator \mathbb{1}
+% 2. \usepackage{bm}% bold math
+% 3. use dsfont (the current choice)
+\usepackage{dsfont} % for \mathds{1}, i.e. \unit
+\newcommand{\unit}{\mathds{1}}  % defines \unit to be the identify operator.
+\usepackage{appendix}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{pgf}
+\usepackage{hyperref}
+\hypersetup{ % makes hyperref's links friendly to read
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=blue,      
+    urlcolor=blue,
+}
+\usepackage{blochsphere}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{qcircuit} % For drawing quantum circuits
+\usepackage{blkarray}
+\usepackage{booktabs}
+\usepackage{tabularx} % For mimicking ruledtabular in revtex
+\usepackage{multirow} % creating multi-row items inside tables.
+\usepackage{longtable} % For creating multipage tables
+\usepackage{mathtools}
+\usepackage[ruled]{algorithm2e} % For algorithm environment
+% \usepackage[intoc]{nomencl} % for list of symbols
+% \makenomenclature % for list of symbols
+\usepackage[numbers, sort&compress]{natbib} % for citation using numbered style
+% For subfigures.
+% Note that subfig requires the option caption=false for compatibility with revtex (though it's not needed now).
+\usepackage{subfig}
+% --------------------------------------------------------------------
+% Custom commands regions:
+% --------------------------------------------------------------------
+\newcommand{\lw}[1]{\textcolor{green}{#1}}
+\newcommand{\hx}[1]{\textcolor{cyan}{(\small{hx:}#1)}}
+\newcommand{\eg}[1]{\textcolor{red}{ed:#1}}
+\newcommand{\sx}[1]{\textcolor{teal}{sx:#1}}
+\newcommand{\ghb}[1]{\textcolor{red}{ghb:#1}}
+% For << and >> in Probablisitc Error Cancellation in error mitigation.
+\newcommand{\rang}{\rangle\!\rangle}
+\newcommand{\lang}{\langle\!\langle}
+% For argmax and argmin and etc.
+\DeclareMathOperator*{\argmax}{\arg\!\max}
+\DeclareMathOperator*{\argmin}{\arg\!\min}
+\DeclareMathOperator{\arctantwo}{arctan2}
+% For unknown purposes: ???
+\setlength{\skiptext}{10pt}
+\setlength{\skiprule}{5pt}
+% Defines a path pointing to project's root, which can be re-defined
+% if needed. This helps the latex code in Per Section Compilation folder.
+\newcommand*{\ProjectRoot}{.}
+% Defines citet as Ref~\cite, since we are using numbered style citation.
+\renewcommand{\citet}[1]{Ref.~\cite{#1}}
+% This increases the spacing between rows in a table by a relative factor: 
+\renewcommand{\arraystretch}{1.2}
+% a symbol for Hadamard, QFT, equivalent to \operatorname{xxx}
+\DeclareMathOperator{\Had}{Had}
+\DeclareMathOperator{\QFT}{QFT}
+% \nEES is the symbol for the order of virtual distillation in the exponential error suppression section.
+\newcommand{\nEES}{K}

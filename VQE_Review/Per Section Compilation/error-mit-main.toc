@@ -1,0 +1,32 @@
+\babel@toc {english}{}\relax 
+\contentsline {section}{\numberline {1}Optimization strategies}{1}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Background and notation}{2}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}Gradient evaluation}{3}{subsection.1.2}%
+\contentsline {subsubsection}{\numberline {1.2.1}Stochastic approximation methods }{3}{subsubsection.1.2.1}%
+\contentsline {paragraph}{Finite difference stochastic approximation (FDSA)}{3}{section*.2}%
+\contentsline {paragraph}{Simultaneous perturbation stochastic approximation (SPSA)}{3}{section*.3}%
+\contentsline {subsubsection}{\numberline {1.2.2}Analytical gradient calculation}{4}{subsubsection.1.2.2}%
+\contentsline {paragraph}{Direct analytical gradient measurement}{4}{section*.4}%
+\contentsline {paragraph}{Indirect analytical gradient measurement}{4}{section*.6}%
+\contentsline {subsection}{\numberline {1.3}Gradient-based searching strategy}{6}{subsection.1.3}%
+\contentsline {subsubsection}{\numberline {1.3.1}First order optimizers}{6}{subsubsection.1.3.1}%
+\contentsline {paragraph}{Simple gradient descent}{6}{section*.7}%
+\contentsline {paragraph}{RMSProp}{6}{section*.8}%
+\contentsline {paragraph}{Adam optimizer}{6}{section*.9}%
+\contentsline {subsubsection}{\numberline {1.3.2}Second order optimizers}{7}{subsubsection.1.3.2}%
+\contentsline {paragraph}{Broyden–Fletcher–Goldfarb–Shanno (BFGS) algorithm}{7}{section*.10}%
+\contentsline {paragraph}{Quantum natural gradient}{8}{section*.11}%
+\contentsline {subsection}{\numberline {1.4}Gradient-free searching strategy}{9}{subsection.1.4}%
+\contentsline {subsubsection}{\numberline {1.4.1}Gradient-free optimizers}{10}{subsubsection.1.4.1}%
+\contentsline {paragraph}{Nelder-Mead algorithm}{10}{section*.12}%
+\contentsline {paragraph}{Powell's conjugate direction algorithm}{10}{section*.13}%
+\contentsline {subsubsection}{\numberline {1.4.2}Analytical optimization}{11}{subsubsection.1.4.2}%
+\contentsline {paragraph}{Sequential optimization with sinusoidal fitting (Rotosolve)}{11}{section*.14}%
+\contentsline {paragraph}{Analytical Free-Axis Selection with fixed rotation angles (Fraxis)}{12}{section*.15}%
+\contentsline {paragraph}{Quantum analytical descent}{13}{section*.16}%
+\contentsline {paragraph}{Jacobi diagonalization and Anderson acceleration}{14}{section*.17}%
+\contentsline {subsection}{\numberline {1.5}Engineering cost function}{14}{subsection.1.5}%
+\contentsline {paragraph}{Collective optimization}{14}{section*.18}%
+\contentsline {paragraph}{Conditional Value-at-Risk as objective function}{15}{section*.19}%
+\contentsline {paragraph}{Symmetry preserving cost function adjustments:}{15}{section*.20}%
+\contentsline {subsection}{\numberline {1.6}Discussion}{16}{subsection.1.6}%

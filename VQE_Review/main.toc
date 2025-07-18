@@ -1,0 +1,210 @@
+\babel@toc {english}{}\relax 
+\contentsline {section}{\numberline {1}Introduction}{4}{section.1}%
+\contentsline {paragraph}{Structure of the review:}{7}{section*.2}%
+\contentsline {paragraph}{Additional resources and other reviews:}{7}{section*.3}%
+\contentsline {section}{\numberline {2}Overview of VQE}{7}{section.2}%
+\contentsline {subsection}{\numberline {2.1}A formal definition of the VQE}{7}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}The VQE pipeline}{8}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Advantage argument, assumptions, and limitations of the VQE}{11}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}VQE and conventional computational chemistry}{15}{subsection.2.4}%
+\contentsline {subsubsection}{\numberline {2.4.1}Full Configuration Interaction}{15}{subsubsection.2.4.1}%
+\contentsline {subsubsection}{\numberline {2.4.2}Efficient approximate wavefunction parameterizations for conventional computation}{17}{subsubsection.2.4.2}%
+\contentsline {subsection}{\numberline {2.5}VQE and Quantum Phase Estimation}{18}{subsection.2.5}%
+\contentsline {subsubsection}{\numberline {2.5.1}Overview of the quantum phase estimation}{19}{subsubsection.2.5.1}%
+\contentsline {subsubsection}{\numberline {2.5.2}Discussion and comparison}{21}{subsubsection.2.5.2}%
+\contentsline {subsection}{\numberline {2.6}Our suggested best practices for VQE and their scaling assessment}{22}{subsection.2.6}%
+\contentsline {subsubsection}{\numberline {2.6.1}Best practices for \textit {ab initio} electronic structure of molecular systems}{25}{subsubsection.2.6.1}%
+\contentsline {paragraph}{Hamiltonian construction:}{25}{section*.6}%
+\contentsline {paragraph}{Encoding:}{26}{section*.7}%
+\contentsline {paragraph}{Measurement strategy:}{26}{section*.8}%
+\contentsline {paragraph}{Ansatz:}{26}{section*.9}%
+\contentsline {paragraph}{Optimizer:}{27}{section*.10}%
+\contentsline {paragraph}{Scaling:}{27}{section*.11}%
+\contentsline {subsubsection}{\numberline {2.6.2}Best practices for lattice models}{28}{subsubsection.2.6.2}%
+\contentsline {paragraph}{Hamiltonian construction:}{28}{section*.12}%
+\contentsline {paragraph}{Encoding:}{28}{section*.13}%
+\contentsline {paragraph}{Grouping and measurement strategy: }{29}{section*.14}%
+\contentsline {paragraph}{Ansatz:}{29}{section*.15}%
+\contentsline {paragraph}{Optimizer: }{30}{section*.16}%
+\contentsline {paragraph}{Scaling:}{30}{section*.17}%
+\contentsline {subsection}{\numberline {2.7}Resource estimate for VQE}{30}{subsection.2.7}%
+\contentsline {subsubsection}{\numberline {2.7.1}Cost and runtime estimates for VQE}{30}{subsubsection.2.7.1}%
+\contentsline {subsubsection}{\numberline {2.7.2}Parallelization potential of the VQE}{33}{subsubsection.2.7.2}%
+\contentsline {subsubsection}{\numberline {2.7.3}Distribution of resources between quantum and conventional computation}{34}{subsubsection.2.7.3}%
+\contentsline {section}{\numberline {3}Hamiltonian Representation}{34}{section.3}%
+\contentsline {subsection}{\numberline {3.1}The electronic structure Hamiltonian}{34}{subsection.3.1}%
+\contentsline {subsubsection}{\numberline {3.1.1}The \textit {ab initio} molecular Hamiltonian}{34}{subsubsection.3.1.1}%
+\contentsline {subsubsection}{\numberline {3.1.2}Construction of the wavefunction}{35}{subsubsection.3.1.2}%
+\contentsline {subsubsection}{\numberline {3.1.3}Hamiltonian quantization}{37}{subsubsection.3.1.3}%
+\contentsline {paragraph}{First quantization: }{37}{section*.20}%
+\contentsline {paragraph}{Second quantization: }{39}{section*.21}%
+\contentsline {subsection}{\numberline {3.2}Other Hamiltonian models}{40}{subsection.3.2}%
+\contentsline {subsubsection}{\numberline {3.2.1}Lattice Hamiltonians}{40}{subsubsection.3.2.1}%
+\contentsline {subsubsection}{\numberline {3.2.2}Vibrational Hamiltonian model}{41}{subsubsection.3.2.2}%
+\contentsline {subsubsection}{\numberline {3.2.3}Periodic systems}{42}{subsubsection.3.2.3}%
+\contentsline {section}{\numberline {4}Fermionic space to spin space transformations}{43}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Generalized encodings}{44}{subsection.4.1}%
+\contentsline {subsubsection}{\numberline {4.1.1}The Jordan-Wigner encoding}{45}{subsubsection.4.1.1}%
+\contentsline {subsubsection}{\numberline {4.1.2}The parity encoding}{47}{subsubsection.4.1.2}%
+\contentsline {subsubsection}{\numberline {4.1.3}The Bravyi-Kitaev encoding}{48}{subsubsection.4.1.3}%
+\contentsline {paragraph}{Operators for occupancy qubits:}{49}{section*.23}%
+\contentsline {paragraph}{Operators for parity qubits:}{50}{section*.24}%
+\contentsline {subsubsection}{\numberline {4.1.4}Optimal general encoding based on ternary trees}{51}{subsubsection.4.1.4}%
+\contentsline {subsubsection}{\numberline {4.1.5}Discussion on generalized encondings}{51}{subsubsection.4.1.5}%
+\contentsline {subsection}{\numberline {4.2}Lattice model tailored encoding}{53}{subsection.4.2}%
+\contentsline {subsubsection}{\numberline {4.2.1}Auxiliary fermion schemes}{53}{subsubsection.4.2.1}%
+\contentsline {subsubsection}{\numberline {4.2.2}Superfast Encoding / Loop Stabilizer Encodings}{56}{subsubsection.4.2.2}%
+\contentsline {paragraph}{Background and definition of SFBK:}{56}{section*.28}%
+\contentsline {paragraph}{Generalized Superfast Encoding:}{59}{section*.31}%
+\contentsline {paragraph}{Compact mappings:}{59}{section*.32}%
+\contentsline {subsubsection}{\numberline {4.2.3}Discussion on lattice tailored encodings}{61}{subsubsection.4.2.3}%
+\contentsline {subsection}{\numberline {4.3}Reducing qubit requirements}{61}{subsection.4.3}%
+\contentsline {section}{\numberline {5}Efficient grouping and measuring strategies}{63}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Scaling of shot numbers in VQE}{63}{subsection.5.1}%
+\contentsline {subsubsection}{\numberline {5.1.1}Overall scaling of measurements:}{63}{subsubsection.5.1.1}%
+\contentsline {subsubsection}{\numberline {5.1.2}Measurement weighting}{64}{subsubsection.5.1.2}%
+\contentsline {paragraph}{Uniform distribution of measurements:}{64}{section*.34}%
+\contentsline {paragraph}{Weighted distribution of measurements:}{65}{section*.35}%
+\contentsline {paragraph}{Term truncation:}{65}{section*.36}%
+\contentsline {subsection}{\numberline {5.2}Pauli string groupings, and other joint measurement strategies}{66}{subsection.5.2}%
+\contentsline {subsubsection}{\numberline {5.2.1}Inference methods}{66}{subsubsection.5.2.1}%
+\contentsline {paragraph}{Methods for low Pauli weight Hamiltonians:}{66}{section*.37}%
+\contentsline {paragraph}{Shadow tomography, classical shadow, and locally-biased classical shadow:}{67}{section*.38}%
+\contentsline {paragraph}{Neural Network tomography:}{69}{section*.39}%
+\contentsline {subsubsection}{\numberline {5.2.2}Hamiltonian partitioning based on commutativity}{70}{subsubsection.5.2.2}%
+\contentsline {paragraph}{Qubit-wise commutativity (QWC) or Tensor Product Basis (TPB) groups:}{70}{section*.40}%
+\contentsline {paragraph}{General Commutativity (GC), or entangled measurements:}{71}{section*.41}%
+\contentsline {paragraph}{Simple example:}{72}{section*.42}%
+\contentsline {subsubsection}{\numberline {5.2.3}Unitary partitioning of the Hamiltonian:}{73}{subsubsection.5.2.3}%
+\contentsline {subsubsection}{\numberline {5.2.4}Decomposed interactions for efficient joint measurements:}{75}{subsubsection.5.2.4}%
+\contentsline {paragraph}{Basis Rotation Grouping:}{75}{section*.47}%
+\contentsline {paragraph}{Full rank optimization (FRO):}{76}{section*.48}%
+\contentsline {subsubsection}{\numberline {5.2.5}Grouping heuristics}{77}{subsubsection.5.2.5}%
+\contentsline {paragraph}{Conventional grouping heuristics used in VQE context:}{77}{section*.49}%
+\contentsline {paragraph}{Sorted Insertion, heuristic dedicated to Pauli strings and VQE applications:}{78}{section*.50}%
+\contentsline {subsection}{\numberline {5.3}Discussion on measurement strategies and grouping methods}{79}{subsection.5.3}%
+\contentsline {section}{\numberline {6}Ansatz selection and construction}{80}{section.6}%
+\contentsline {paragraph}{Expressibility:}{80}{section*.51}%
+\contentsline {paragraph}{Trainability:}{81}{section*.52}%
+\contentsline {subsection}{\numberline {6.1}The barren plateau problem}{81}{subsection.6.1}%
+\contentsline {subsubsection}{\numberline {6.1.1}Drivers of the barren plateau problem}{82}{subsubsection.6.1.1}%
+\contentsline {paragraph}{System size and random initialization \cite {McClean2018}:}{82}{section*.53}%
+\contentsline {paragraph}{Expressibility \cite {Holmes2021}:}{83}{section*.54}%
+\contentsline {paragraph}{Cost function non-locality: \cite {Cerezo2021_BP, Uvarov2020, Sharma2020}:}{84}{section*.55}%
+\contentsline {paragraph}{Noise induced barren plateau (NIBP):}{84}{section*.56}%
+\contentsline {paragraph}{Large degrees of entanglement \cite {OrtizMarrero2020, Patti2021}:}{85}{section*.57}%
+\contentsline {subsubsection}{\numberline {6.1.2}Methods to address barren plateau problem}{85}{subsubsection.6.1.2}%
+\contentsline {subsubsection}{\numberline {6.1.3}Comments on barren plateau in the context of the VQE}{86}{subsubsection.6.1.3}%
+\contentsline {subsection}{\numberline {6.2}Fixed structure ans{\"{a}}tze}{87}{subsection.6.2}%
+\contentsline {subsubsection}{\numberline {6.2.1}Hardware-efficient ansatz (HEA)}{87}{subsubsection.6.2.1}%
+\contentsline {subsubsection}{\numberline {6.2.2}The Unitary Coupled Cluster (UCC) Ansatz and extensions}{89}{subsubsection.6.2.2}%
+\contentsline {paragraph}{Generalized UCC:}{92}{section*.60}%
+\contentsline {paragraph}{Paired UCC (k-UpCCGSD):}{92}{section*.61}%
+\contentsline {paragraph}{Pair-natural orbital-UCC (PNO-UpCCGSD):}{93}{section*.62}%
+\contentsline {paragraph}{OO-UCC:}{93}{section*.63}%
+\contentsline {paragraph}{Downfolded Hamiltonian and Double Unitary Coupled Cluster (DUCC):}{94}{section*.64}%
+\contentsline {paragraph}{Other UCC-based methods:}{95}{section*.65}%
+\contentsline {paragraph}{Unitary Selective Coupled-Cluster Method:}{95}{section*.66}%
+\contentsline {subsubsection}{\numberline {6.2.3}Symmetry-preserving methods}{97}{subsubsection.6.2.3}%
+\contentsline {subsubsection}{\numberline {6.2.4}The Hamiltonian Variational Ansatz and extensions}{100}{subsubsection.6.2.4}%
+\contentsline {paragraph}{The Hamiltonian Variational Ansatz (HVA):}{100}{section*.71}%
+\contentsline {paragraph}{Fourier-transform HVA \cite {Babbush2018}:}{101}{section*.72}%
+\contentsline {paragraph}{Symmetry breaking HVA \cite {Vogt2020, Choquette2021}:}{101}{section*.73}%
+\contentsline {subsection}{\numberline {6.3}Adaptative structure ans{\"{a}}tze}{102}{subsection.6.3}%
+\contentsline {subsubsection}{\numberline {6.3.1}Iterative ansatz growth methods (ADAPT-VQE and extentions)}{102}{subsubsection.6.3.1}%
+\contentsline {paragraph}{Fermionic-ADAPT-VQE:}{102}{section*.74}%
+\contentsline {paragraph}{ADAPT-VQE for nuclear structure problems:}{104}{section*.75}%
+\contentsline {paragraph}{qubit-ADAPT-VQE:}{105}{section*.76}%
+\contentsline {paragraph}{QEB-ADAPT-VQE:}{105}{section*.77}%
+\contentsline {paragraph}{Entangler pool compression:}{106}{section*.78}%
+\contentsline {subsubsection}{\numberline {6.3.2}Iterative Hamiltonian dressing (iterative Qubit Coupled Cluster (iQCC) and extensions)}{107}{subsubsection.6.3.2}%
+\contentsline {paragraph}{The Qubit Coupled Cluster ansatz:}{107}{section*.79}%
+\contentsline {paragraph}{iQCC:}{108}{section*.80}%
+\contentsline {paragraph}{ClusterVQE:}{110}{section*.81}%
+\contentsline {subsubsection}{\numberline {6.3.3}Ansatz structure optimization}{111}{subsubsection.6.3.3}%
+\contentsline {paragraph}{RotoSelect \cite {ostaszewskiStructureOptimizationParameterized2021}:}{111}{section*.82}%
+\contentsline {paragraph}{Variable Ansatz (VAns) \cite {Bilkis2021}:}{111}{section*.83}%
+\contentsline {paragraph}{Machine learning of ansatz structure and Quantum Architecture Search (QAS):}{111}{section*.84}%
+\contentsline {subsection}{\numberline {6.4}Discussion on ans\"atz used in the VQE context}{112}{subsection.6.4}%
+\contentsline {section}{\numberline {7}Optimization strategies}{113}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Background and notation}{114}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}Gradient evaluation}{115}{subsection.7.2}%
+\contentsline {subsubsection}{\numberline {7.2.1}Stochastic approximation methods }{115}{subsubsection.7.2.1}%
+\contentsline {paragraph}{Finite difference stochastic approximation (FDSA)}{116}{section*.85}%
+\contentsline {paragraph}{Simultaneous perturbation stochastic approximation (SPSA)}{116}{section*.86}%
+\contentsline {subsubsection}{\numberline {7.2.2}Analytical gradient calculation}{117}{subsubsection.7.2.2}%
+\contentsline {paragraph}{Direct analytical gradient measurement}{117}{section*.87}%
+\contentsline {paragraph}{Indirect analytical gradient measurement}{117}{section*.89}%
+\contentsline {subsection}{\numberline {7.3}Gradient-based searching strategy}{119}{subsection.7.3}%
+\contentsline {subsubsection}{\numberline {7.3.1}First order optimizers}{119}{subsubsection.7.3.1}%
+\contentsline {paragraph}{Simple gradient descent}{119}{section*.90}%
+\contentsline {paragraph}{RMSProp}{120}{section*.91}%
+\contentsline {paragraph}{Adam optimizer}{120}{section*.92}%
+\contentsline {subsubsection}{\numberline {7.3.2}Second order optimizers}{120}{subsubsection.7.3.2}%
+\contentsline {paragraph}{Broyden–Fletcher–Goldfarb–Shanno (BFGS) algorithm}{121}{section*.93}%
+\contentsline {paragraph}{Quantum natural gradient}{121}{section*.94}%
+\contentsline {subsection}{\numberline {7.4}Gradient-free searching strategy}{124}{subsection.7.4}%
+\contentsline {subsubsection}{\numberline {7.4.1}Gradient-free optimizers}{124}{subsubsection.7.4.1}%
+\contentsline {paragraph}{Nelder-Mead algorithm}{124}{section*.95}%
+\contentsline {paragraph}{Powell's conjugate direction algorithm}{125}{section*.96}%
+\contentsline {subsubsection}{\numberline {7.4.2}Analytical optimization}{126}{subsubsection.7.4.2}%
+\contentsline {paragraph}{Sequential optimization with sinusoidal fitting (Rotosolve)}{126}{section*.97}%
+\contentsline {paragraph}{Analytical Free-Axis Selection with fixed rotation angles (Fraxis)}{127}{section*.98}%
+\contentsline {paragraph}{Quantum analytical descent}{129}{section*.99}%
+\contentsline {paragraph}{Jacobi diagonalization and Anderson acceleration}{130}{section*.100}%
+\contentsline {subsection}{\numberline {7.5}Engineering cost function}{131}{subsection.7.5}%
+\contentsline {paragraph}{Collective optimization}{131}{section*.101}%
+\contentsline {paragraph}{Conditional Value-at-Risk as objective function}{131}{section*.102}%
+\contentsline {paragraph}{Symmetry preserving cost function adjustments:}{132}{section*.103}%
+\contentsline {subsection}{\numberline {7.6}Discussion}{132}{subsection.7.6}%
+\contentsline {section}{\numberline {8}Error mitigation for VQE}{134}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Symmetry verification}{134}{subsection.8.1}%
+\contentsline {paragraph}{Final symmetry verification:}{135}{section*.105}%
+\contentsline {paragraph}{Bulk symmetry verification:}{135}{section*.107}%
+\contentsline {paragraph}{Symmetry verification by post-processing:}{136}{section*.109}%
+\contentsline {subsection}{\numberline {8.2}Extrapolation based methods}{136}{subsection.8.2}%
+\contentsline {subsubsection}{\numberline {8.2.1}Method to systematically increase the noise}{137}{subsubsection.8.2.1}%
+\contentsline {paragraph}{Re-scaling method}{137}{section*.110}%
+\contentsline {paragraph}{Pauli Twirling}{137}{section*.111}%
+\contentsline {paragraph}{Inserting CNOT gates}{137}{section*.112}%
+\contentsline {paragraph}{Unitary folding:}{138}{section*.113}%
+\contentsline {paragraph}{Multi-parameter noise model:}{139}{section*.114}%
+\contentsline {subsubsection}{\numberline {8.2.2}Modeling the noise and extrapolating from measured data}{139}{subsubsection.8.2.2}%
+\contentsline {paragraph}{Linear/Polynomial model:}{139}{section*.115}%
+\contentsline {paragraph}{Exponential model:}{141}{section*.116}%
+\contentsline {subsection}{\numberline {8.3}Probabilistic error cancellation}{142}{subsection.8.3}%
+\contentsline {paragraph}{Tomography based method \cite {endoPracticalQuantumError2018}:}{143}{section*.117}%
+\contentsline {paragraph}{Learning based method:}{144}{section*.118}%
+\contentsline {subsection}{\numberline {8.4}Exponential error suppression}{145}{subsection.8.4}%
+\contentsline {subsection}{\numberline {8.5}Measurement readout error mitigation}{146}{subsection.8.5}%
+\contentsline {subsubsection}{\numberline {8.5.1}Measurement calibration matrix}{147}{subsubsection.8.5.1}%
+\contentsline {subsubsection}{\numberline {8.5.2}Correcting measurement outcomes}{147}{subsubsection.8.5.2}%
+\contentsline {subsubsection}{\numberline {8.5.3}Exploiting state-dependent noise}{148}{subsubsection.8.5.3}%
+\contentsline {subsection}{\numberline {8.6}Other error mitigation methods}{148}{subsection.8.6}%
+\contentsline {subsection}{\numberline {8.7}Impact of error mitigation on the scaling of VQE}{150}{subsection.8.7}%
+\contentsline {subsection}{\numberline {8.8}Noise robustness of VQE algorithms}{151}{subsection.8.8}%
+\contentsline {section}{\numberline {9}Beyond the ground state of isolated molecules: Extensions of VQE}{152}{section.9}%
+\contentsline {subsection}{\numberline {9.1}Excited states VQE}{152}{subsection.9.1}%
+\contentsline {paragraph}{Quantum Subspace Expansion:}{153}{section*.122}%
+\contentsline {paragraph}{Variational approaches:}{153}{section*.123}%
+\contentsline {paragraph}{Dynamical correlation functions}{155}{section*.124}%
+\contentsline {subsection}{\numberline {9.2}VQE as a solver of correlated subspaces in multiscale methods}{155}{subsection.9.2}%
+\contentsline {paragraph}{Complete active space approaches:}{156}{section*.125}%
+\contentsline {paragraph}{Density matrix embedding theory (DMET):}{157}{section*.126}%
+\contentsline {paragraph}{Dynamical Mean-Field Theory (DMFT):}{157}{section*.127}%
+\contentsline {section}{\numberline {10}Conclusion and outlook}{158}{section.10}%
+\contentsline {section}{\numberline {A}Qubit encodings and Fenwick trees}{160}{appendix.A}%
+\contentsline {section}{\numberline {B}Hadamard test}{161}{appendix.B}%
+\contentsline {section}{\numberline {C}Error mitigation appendix}{161}{appendix.C}%
+\contentsline {subsection}{\numberline {C.1}Common noise models}{161}{subsection.C.1}%
+\contentsline {subsubsection}{\numberline {C.1.1}Relaxation rates}{161}{subsubsection.C.1.1}%
+\contentsline {subsubsection}{\numberline {C.1.2}Over-rotation}{162}{subsubsection.C.1.2}%
+\contentsline {subsubsection}{\numberline {C.1.3}Depolarizing noise model}{162}{subsubsection.C.1.3}%
+\contentsline {subsubsection}{\numberline {C.1.4}Dephasing noise model}{162}{subsubsection.C.1.4}%
+\contentsline {subsubsection}{\numberline {C.1.5}Damping error}{163}{subsubsection.C.1.5}%
+\contentsline {subsection}{\numberline {C.2}Example for probabilistic error cancellation}{163}{subsection.C.2}%
+\contentsline {subsection}{\numberline {C.3}Implementation of exponential error suppression}{164}{subsection.C.3}%
+\contentsline {subsubsection}{\numberline {C.3.1}Ancilla assisted method}{164}{subsubsection.C.3.1}%
+\contentsline {subsubsection}{\numberline {C.3.2}Diagonalization method}{165}{subsubsection.C.3.2}%
+\contentsline {subsubsection}{\numberline {C.3.3}Dual state purification method}{167}{subsubsection.C.3.3}%
+\contentsline {subsubsection}{\numberline {C.3.4}Shadow tomography based method}{168}{subsubsection.C.3.4}%

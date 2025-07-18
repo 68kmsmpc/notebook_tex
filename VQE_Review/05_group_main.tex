@@ -1,0 +1,392 @@
+\section{Efficient grouping and measuring strategies} \label{sec:Grouping}
+
+One of the key challenges possibly holding back the VQE is the very large amount of samples that are required to accurately compute the relevant values of the algorithm. There are two main aspects to manage for efficiently sampling these expectation values: the number of terms in the Hamiltonian cost functions (computed using the mappings presented in Sec. \ref{sec:Encoding}), and the number of shots required to sample an expectation value at a certain level of accuracy. It is worth noting that the level of accuracy required changes throughout the optimization process. This could be because of the accuracy needed for computation of the final output of the VQE, but also most importantly because optimizer gradients (or optimizer steps in gradient-free methods) must be estimated precisely enough to be distinguished from one another when the optimization landscape flattens. An extreme case of the latter is the barren plateau problem (\cite{McClean2018}, see Sec. \ref{sec:barren_plateau}). We first discuss strategies for optimal sampling error reduction (Sec. \ref{sec:measurements_strategies}), and then we discuss methods used to reduce the number of Pauli strings that are necessary to separately measure (Sec. \ref{sec:pauli_grouping}).
+
+\subsection{Scaling of shot numbers in VQE}  \label{sec:measurements_strategies}
+
+In this section, we discuss methods that have been proposed to reduce the impact of the denominator in Eq.~(\ref{eq:measurement_scaling}) on the total number of measurements required for each energy evaluation in the VQE, and in particular for each estimation within a gradient estimation. Namely how to minimize the number of measurements required to achieve a given level of precision, established by a target standard error on the measurement: $\epsilon$. 
+
+\subsubsection{Overall scaling of measurements:}
+
+To get an idea of the scaling in sampling requirements, let us first consider the scaling of the output from the mapping methods presented in the previous section (Sec. \ref{sec:Encoding}). As seen previously, generalized mappings for molecular Hamiltonians result in $\mathcal{P} \sim \mathcal{O}(n^4)$ distinct Pauli strings to estimate. For mappings tailored to lattice models, this scales with the number of edges in the lattice (as an illustration, for a regular square lattice Hubbard model of dimension $D$, the number of edges scales $\mathcal{O}(nD)$).  
+
+With this in mind, let us consider the number of shots required to achieve a given precision. In any sampling experiment, the standard error is equal to $\epsilon = \sigma/\sqrt{S}$, where $\sigma$ is the population standard deviation, and $S$ is the experimental sample size, in our case, the number of shots also noted $S$ (for a general introduction to statistical theory, we recommend \cite{Dekking2005}). This means that the number of times an experiment needs to be repeated to achieve a given expected error $\epsilon$ goes as $O(1/\epsilon^2)$. 
+More specifically, when measurements are distributed optimally among the different Pauli strings, such that the variance is minimized with respect to a given precision $\epsilon$, the number of measurements required is upper-bounded by
+\begin{equation} \label{eq:measurement_upper_bound}
+    S \leqslant \left( \frac{\sum_a^{\mathcal{P}} w_a}{\epsilon} \right)^2,
+\end{equation}
+where $w_a$ are the weights of the Pauli strings in the Hamiltonian \cite{Wecker2015, Rubin2018}. 
+
+As a result, for a given level of accuracy for each Pauli string measured independently, the overall scaling of the number of shots required for an energy estimation is:
+\begin{equation} \label{eq:measurement_scaling}
+    \mathcal{O}\left(\frac{N^4}{\epsilon^2}\right).
+\end{equation}
+
+In the context of quantum chemistry, successful computing methods are expected to produce results within a precision of $\epsilon = 1.6$ mE$_{\rm H}$ \cite{Peterson2012} to the target. When results obtained numerically are within this level of precision to experimental results, the simulations is deemed to reach chemical accuracy. This metric can be used as a bound for target precision in the VQE context (for an excellent discussion of precision vs. accuracy in this context, we direct readers to Eflving {\it et al.}~\cite{Elfving2020}). One should be cautious however not to assume too much of a relationship between this number and the number of shots required to perform VQE. That is because the key bottleneck of VQE optimization is not the estimation of the wavefunction itself but the estimation of gradients and in particular the difference between these gradients (which allow for the optimization step to be performed reliably). This difference may be orders of magnitude smaller than the chemical precision threshold in a barren plateau, requiring that many more measurements (\cite{McClean2018}, see Sec. \ref{sec:barren_plateau}). 
+While polynomial in scaling, it has been pointed out on several occasions that the number of shots required to accurately compute a VQE optimization process rapidly becomes unmanageable \cite{Elfving2020, Wecker2015, Gonthier2020}, suggesting the method might be unable to compete with its conventional computing counterparts \cite{Elfving2020}. Ref. \cite{Wecker2015} estimates (though conservatively) that simulating the energy of $\mathrm{Fe_2S_2}$ ferredoxin (in STO-3G basis with $N=112$ spin-orbitals) using a VQE would require a total of $\mathrm{O}(10^{19})$ shots based on the upper bound defined in Eq.~(\ref{eq:measurement_upper_bound}). As such, a significant amount of effort has been devoted to finding solutions that reduce the pre-factor for the number of shots required. 
+
+\subsubsection{Measurement weighting}
+
+\paragraph{Uniform distribution of measurements:} The variance of  Pauli strings can be computed easily as they are self-inverse. In particular: 
+\begin{align}
+    \operatorname{Var}[\hat{P}_a] &= \bra{\psi}\hat{P}_a^2\ket{\psi} - \bra{\psi}\hat{P}_a\ket{\psi}^2 \nonumber \\
+    &= 1 - \bra{\psi}\hat{P}_a\ket{\psi}^2 \leqslant 1.  
+\end{align}
+Measurements of different Pauli operators (when not grouped) are independent and therefore uncorrelated, resulting in mean squared error for the energy estimate given a total of $\mathcal{P}$ Pauli strings of \cite{Rubin2018}:
+\begin{align} \label{eq:standard_error}
+    \epsilon  &= \sqrt{\sum_a^{\mathcal{P}} \frac{w_a^2 \operatorname{Var}[\hat{P}_a]}{S_a}} \nonumber \\
+    &= \sqrt{\sum_a^{\mathcal{P}} w_a^2 \left(\frac{1 -  \bra{\psi}\hat{P}_a\ket{\psi}^2}{S_a}\right)},
+\end{align}
+where $S_a$ is the number of shots used to measure the expectation value of each Pauli string $\hat{P}_a$, which has weight $w_a$, and such that $S = \sum_a S_a$. Assuming uniformly distributed shots across all Pauli strings, we can rearrange this result to showcase the number of measurements required to achieve a target standard error \cite{Arrasmith2020}: 
+
+\begin{align} \label{eq:num_measurements_for_precision}
+    S  = \mathcal{P}\sum_a^{\mathcal{P}} \frac{w_a^2 \operatorname{Var}[\hat{P}_a]}{\epsilon^2}.
+\end{align}
+This particular distribution of shots could be considered optimal in the special case where $\sqrt{\operatorname{Var}[\hat{P}_a]} \propto  1/|w_a|$ \cite{Rubin2018, Arrasmith2020}. This is in general not the case and therefore further methods have been developed to distribute measurements to optimally reduce estimation variance \cite{Arrasmith2020}. The methods outlined below aim to reduce $S$, the total number of shots, while maintaining a given precision $\epsilon$.
+
+\paragraph{Weighted distribution of measurements:} An alternative to uniform distribution of shots is to focus on measuring more precisely the operators which contribute most to the total variance of the expectation value estimated. With a given shot budget, one can improve the overall precision of measurement by distributing these shots towards specific operators. 
+
+A straightforward manner to distribute these shots is to simply weight them with respect to the Pauli strings weights ($|w_a|$) in the Hamiltonian \cite{Wecker2015}. When looking at Eq.~(\ref{eq:num_measurements_for_precision}), we can easily see that reducing the number of shots on strings contributing less to the total energy estimate (with lower $|w_a|$ value) and adding these to strings that contribute the most reduces total variance, as long as $\operatorname{Var}[P_a]$ are similar for all $a$ \cite{Rubin2018}. Rubin \textit{et al.} \cite{Rubin2018} indeed show that $S_a \propto |w_a|\sqrt{\operatorname{Var}[\hat{P}_a]}$, is optimal (although $\operatorname{Var}[\hat{P}_a]$ might not be easily accessible), while Arrasmith {\it et al.}  \cite{Arrasmith2020} show numerically that when considering random states, variations in $|w_a|$ tend to be higher than variation in $\operatorname{Var}[\hat{P}_a]$, resulting in the weight pro-rata distribution (where $S_a \propto |w_a|$) of measurements outperforming the uniform distribution in most cases. 
+To address cases in which the number of shots is limited (i.e. there are so few shots, that each one could create a bias in the energy estimate), it is proposed in Ref. \cite{Arrasmith2020} to perform measurements on Pauli strings randomly, with probabilities proportional to $|w_a|\sqrt{\operatorname{Var}[\hat{P}_a]}$, thereby allowing unbiased estimates even with a low total shot number. 
+
+Rubin {\it et al.}~\cite{Rubin2018} further use fermionic marginals, and $N$-representability constraints to determine optimized measurements distributions for Hamiltonian estimates. The idea of optimizing shots distributions was also merged to optimization strategy by designing specific optimizers aiming to balance their optimization-per-shot cost~\cite{Arrasmith2020,Kubler2020adaptiveoptimizer}. 
+
+\paragraph{Term truncation:} Another approach to consider is to remove from measurement scope terms that have contributions significantly below the error tolerance threshold $\epsilon$ \cite{mccleanTheoryVariationalHybrid2015}. This method has been shown to significantly reduce the cost of quantum chemistry calculations with negligible impact on accuracy \cite{McClean2014}.
+
+To implement this, one must observe that the contribution of any Pauli observable to the final energy estimate is bounded by the absolute value of its associated weight: $|\bra{\psi}w_a \hat{P}_a \ket{\psi}| \leqslant |w_a|$.  By ordering these contributions in ascending order, one can construct a partial sum of the $k \leq \mathcal{P}$ smallest contributor: 
+\begin{equation}
+    e_k = \sum_a^k |w_a|.
+\end{equation}
+From there, one can choose a constant $C \in [0, 1 [$, and include in the partial sum the terms up to an index $k$ that verify: $e_k < C \epsilon$. This method  \cite{mccleanTheoryVariationalHybrid2015} introduces a bias in total energy estimation, and as such the key to implement successfully is to pick a constant $C$ such that the truncation bias is lower than the mean square error reduction from measurements added to the remaining terms. McClean {\it et al.} \cite{mccleanTheoryVariationalHybrid2015} present an adjusted estimate for the number of shots required to achieve $\epsilon$, to be contrasted with Eq.~(\ref{eq:num_measurements_for_precision}):
+\begin{align} \label{eq:num_measurements_for_precision_2}
+    S  = (\mathcal{P} - k)\sum_{a=k+1}^{\mathcal{P}} \frac{w_a^2 \operatorname{Var}[\hat{P}_a]}{(1 - C^2)\epsilon^2}.
+\end{align}
+If the expected number of shots is lower than without term truncation (Eq. \ref{eq:num_measurements_for_precision}), then the method provides an improvement regarding the precision to measurement cost ratio.
+
+\subsection{Pauli string groupings, and other joint measurement strategies} \label{sec:pauli_grouping}
+
+The methods described below works with the idea that measuring a given Pauli string $a$: 
+\begin{align}
+    &\hat{P}_a = \sigma_{p^{(a)}_1} \otimes \sigma_{p^{(a)}_{2}} \otimes ... \otimes \sigma_{p^{(a)}_{N-1}} \otimes \sigma_{p^{(a)}_N} \\
+    &p^{(k)}_i \in \{I, X, Y, Z\}, \nonumber
+\end{align}
+provides information about other Pauli strings which have overlapping Pauli elements (i.e. $p^{(a)}_j = p^{(b)}_j$) (for instance \cite{mccleanTheoryVariationalHybrid2015}). In essence, all of these methods target the same information gathering optimization. As such, there are a number of incompatibilities between them. In particular, General Commutativity \cite{Yen2020, Hamamura2020, Gokhale2019_short}, Unitary \cite{Izmaylov2020a, Zhang2020} and decomposed interactions \cite{Huggins2021} based grouping are aimed at diagonalizing a set of Pauli strings (i.e. rotate them so that $\forall i$, $p^{(a)}_j \in \{I, Z \}$), they exhaust all of the information that can be gained from inference methods (e.g. \cite{Huang2020, Torlai2020}. It is not the case however for Qubit-Wise Commutation based grouping \cite{mccleanTheoryVariationalHybrid2015, Kandala2017, Hempel2018, Rubin2018, Kokail2019, Izmaylov2019, Nam2020, Verteletskyi2020, Hamamura2020, Gokhale2019_long} which can also be used with inference methods.
+
+\subsubsection{Inference methods}
+\label{sec:pauli_grouping-inference-methods}
+
+Inference methods all seek to recover the expectation values of an observable from a restricted set of operators, rather than the complete basis in which it can be measured. They are extensions built upon the theory of Quantum State Tomography (for some literature on the topic, we recommend: \cite{MauroDAriano2003, Cramer2010, Christandl2012, Bisio2009, ODonnell2016, ODonnell2017, Haah2017}) aiming at achieving a target precision $\epsilon$ with a minimum number of shots $S$ using the structure of the Lie algebra in which Pauli strings are defined \cite{Hall2015}. 
+
+\paragraph{Methods for low Pauli weight Hamiltonians:} Restricting the problem of tomography to the estimation of a Hamiltonian can however significantly reduce the cost of measurements. For instance, taking into account the Pauli weight of the Hamiltonian can help reduce the sampling requirements. It is worth noting that both methods described in this paragraph are initially designed for Hamiltonian characterization rather than ground state estimation, and as such may not be directly optimized for use within the context of the VQE. 
+
+One such method is Quantum Overlapping Tomography (QOT) \cite{Cotler2020} which aims at efficiently estimating all $\mathrm{k}$-body operators for a given quantum state (a $\mathrm{k}$-body qubit operator is computed in a manner that is similar to the one- and two-body RDM presented in Sec. \ref{sec:second_quantization}, but replacing the fermionic operators with computational basis elements), which in turn allows computing the expectation of an observable having up to $\mathrm{k}$ Pauli weight. They observe that complete tomography on a $\mathrm{k}$-qubit state grows exponentially in $\mathrm{k}$ \cite{ODonnell2016, Haah2017} (namely $3^{\mathrm{k}}$), and that there are $\binom{N}{\mathrm{k}}$  $\mathrm{k}$-body reduced density operators to measure for an $N$ qubit state, bringing the cost of a naive measurement of all $\mathrm{w}$-body operators to $\sim e^{\mathcal{O}(\mathrm{w})}\binom{N}{\mathrm{w}}$. However, one can also use the fact that many of these operators can be overlapped and measured in parallel on the same qubit register. Cotler et al. \cite{Cotler2020} show that this can result in a significant reduction of the number of shots required to estimate all $\mathrm{k}$-qubit reduced density matrices within a precision of $\epsilon$, to:
+\begin{equation}
+    S \sim \mathrm{k}e^{\mathcal{O}(\mathrm{k})} \left( \frac{\log(N)}{\epsilon} \right)^2,
+\end{equation}
+with the detail process on how to optimally allocate this measurements being described in Ref.~\cite{Cotler2020}. An interesting research question would be to study whether this method lends itself well to \textit{ab initio} molecular systems, and lattice models with high connectivity - this is because QOT does not necessarily take into account pre-existing structures of the Hamiltonian, for which in principle $\mathcal{O}(n^4)$ and $\mathcal{O}(nD)$  operators are normally needed to be estimated respectively, instead of the $3^{\mathrm{k}}$ for each $\mathrm{k}$-body reduced density matrix.
+
+Another such method that is worth mentioning briefly is Bayesian Hamiltonian Learning \cite{Evans2019} which can infer the value of $\mathcal{P}$ Pauli strings with high success probability using $\mathcal{O}(3^{\mathrm{k}} \log(\mathcal{P}) / \epsilon^2) $ parallel shots. 
+\paragraph{Shadow tomography, classical shadow, and locally-biased classical shadow:} The concept of shadow tomography was initially presented in \cite{Aaronson2019, Aaronson2019_prooceed}. It describes the task of predicting certain properties of a quantum state without conducting full tomography on the state. In particular, it was shown that an exponential number of target functions (for instance, computing the expectation value of an operator) can be predicted from a polynomial number of shots. It was highlighted however in Ref.~\cite{Huang2020} that this method requires exponential depth in the quantum circuit and access to quantum memory, thereby rendering it on balance too costly for NISQ algorithms such as VQE. 
+
+The concept of classical shadow \cite{Huang2020} is an attempt to extend the idea of shadow tomography and address some of these caveats. It aims at efficiently learning a classical sketch $\tilde{\rho}$ of an unknown quantum state $\rho$, that is then used to predict arbitrary linear functions of that state (for instance, the expectation value of an operator: $\langle \hat{O} \rangle = \mathrm{Tr}[\hat{O} \rho]$) using a median-of-means protocol \cite{Jerrum1986, Nemirovsky1983}. The classical shadow is beneficial if it can be constructed with a tractable number of measurements and such that $\mathbb{E}[f(\tilde{\rho})] = f(\rho)$, with $f$ any of the aforementioned functions. Applied to the case of the expectation value of an observable, measurement of the classical shadow produces a random variable whose expectation value must match the expectation value of the observable with respect to the quantum state:
+\begin{equation}
+    \mathbb{E}[\langle \tilde{O} \rangle] = \mathbb{E}[\mathrm{Tr}(O \tilde{\rho})] = \operatorname{Tr}[O\rho].
+\end{equation}
+
+To construct a classical shadow, one must first produce an instance of the state $\rho$ and apply a random unitary $U$ taken from an ensemble $\mathcal{U}$ (defined by its elements and a probability rule for picking each element) to rotate it before performing a measurement. The measurement returns a N-bit measurement vector $\ket{\tilde{b}} \in \{0, 1 \}^N $. The conjugate of the unitary can then be applied back to measurement vector, producing $U^{\dagger}\ket{\tilde{b}}\bra{\tilde{b}}U$. 
+
+From this point, we can define the linear map $\mathcal{M}$ (or measurement channel), which transforms $\rho$ to the expectation value of $U^{\dagger}\ket{\tilde{b}}\bra{\tilde{b}}U$ over both any unitary in $\mathcal{U}$ and all measurement outcome possible $\ket{\tilde{b}}$. We have: 
+\begin{align}
+    \mathcal{M}(\rho) &= \mathbb{E}_{U\in\mathcal{U}} \sum_{b \in \{0, 1 \}^N} \bra{b}U\rho U^{\dagger}\ket{b} U^{\dagger}\ket{b}\bra{b} U \nonumber \\
+    & = \mathbb{E}\left[U^{\dagger}\ket{\tilde{b}}\bra{\tilde{b}}U  \right],
+\end{align}
+where Born's rule was used: $\mathrm{Pr}[\tilde{b} = b] = \bra{b} U \rho U^{\dagger} \ket{b}$. The linear map admits a unique inverse (this requires Tomogaphic completeness, please refer to the Supplementary materials of \cite{Huang2020} for details) which can be applied through conventional post-processing, producing a classical shadow, such that:
+\begin{equation}
+    \tilde{\rho}_i = \mathcal{M}^{-1} \left( U_i^{\dagger}\ket{\tilde{b}_i}\bra{\tilde{b}_i}U_i \right).
+\end{equation}
+This procedure is repeated $T$ times, to produce an $T$-sized classical shadow array: $S(\rho, T) = \{ \tilde{\rho_1}, ..., \tilde{\rho_T} \}$. Huang \textit{et al.} \cite{Huang2020} report that the use of classical shadow allows scaling measurements required for the desired precision logarithmically in the number of operators to measure. This can be combined with measurements weighting methods \cite{Hadfield2020} to avoid exponential scaling of required classical shadow in case of non-local observables. Low weight derandomization strategy, presented in Ref.~\cite{Huang2021} (and independently Ref.~ \cite{acharya2021informationally}) expand on the ideas of shadow tomography and classical shadows. It removes the need to draw unitaries (rotating the measurement basis) randomly from a pool, and the need for median-of-means predictions, by progressively and deterministically selecting Pauli strings that have the highest impact on narrowing a given confidence bound. An adaptive process to reduce computational cost of the low-weight derandomization strategy was also proposed by Hadflied \cite{Hadfield2021}.
+
+Two questions central to implementing classical shadows are the choice of the unitary ensemble $\mathcal{U}$ to draw from, and the construction of the inverse linear map $\mathcal{M}^{-1}$. Clifford ensembles were initially proposed \cite{Huang2020}, but alternative ensembles have also been discussed, such as unitaries corresponding to time evolution of a random Hamiltonian \cite{Hu2022}, unitary ensembles defined through locally scrambled quantum dynamics \cite{Hu2021} achieving a lower tomography complexity compared to Clifford based methods, and in the case of fermionic states, a discrete group of fermionic Gaussian unitaries \cite{Zhao2021, OBrien2021}. Bu \textit{et al.} \cite{Bu2022} propose to use Pauli-invariant unitary ensembles (unitary ensembles that are invariant under multiplication by a Pauli operator), a class which includes both Clifford ensembles and locally scrambled unitary ensembles. They also provide an explicit formula for the inverse linear map corresponding to these ensembles.
+
+Classical shadows can be applied to study several aspects of quantum states, in particular for energy estimation as part of a VQE \cite{Hadfield2020, Hadfield2021, OBrien2021, Lukens2021}, and though it remains unclear how it can perform over other efficient measurement schemes numerical studies have already suggested superior empirical scaling over methods such as Basis Rotation Grouping \cite{Huggins2021} (described below).
+These methods have also been studied in the presence of noise and modifications to the scheme have been shown to render the method resilient to quantum noises \cite{Chen2021_shadow, Koh2020}. Finally, classical shadows have been shown to be useful as a mean to mitigate barren plateaus \cite{Sack2022}. 
+
+\paragraph{Neural Network tomography:} Another type of method proposed to reduce the number of shots required to achieve a given precision level on the measurement of a Hamiltonian is to use Machine Learning on a series of shot outputs to decrease the variance of the expectation value.     
+A first example is presented in Ref. \cite{Torlai2020}, where Torlai et al. present a method to learn a mock of the state produced by an ansatz using an unsupervised restricted Boltzmann machine (RBM) \cite{Ackley1985} then used to compute expectation values of quantum observables. RBMs have been shown as successful models to represent quantum states in the field of condensed matter physics \cite{Melko2019, Torlai2020_MLQS}. 
+
+RBMs are in general composed of two layers of binary-valued neurons, a visible layer composed of $i$ units equal to the input size, noted $\boldsymbol{v}$ (in this case, it would be $N$) and a hidden layer composed of $j$ units, noted $\boldsymbol{h}$. The two layers are connected by a set of weights (a matrix noted $\boldsymbol{W}$, where entry $W_{ij}$ connects unit $v_i$ to unit $h_j$), and units within each layer are not connected (unlike in general Boltzmann machines). Each unit also has a bias weight $b_i^{(v)}$ and $b_j^{(h)}$ ($\boldsymbol{b}^{(v)}$ and $\boldsymbol{b}^{(h)}$ in vector notation), such that the energy of the RBM can be expressed as: 
+
+\begin{align} \label{eq:RBM_energy}
+    E(\boldsymbol{v}, \boldsymbol{h}) = - \boldsymbol{b}^{(v)T}\boldsymbol{v} - \boldsymbol{b}^{(h)T}\boldsymbol{h} - \boldsymbol{v}^{T}\boldsymbol{W}\boldsymbol{h}.
+\end{align}
+
+In the case of representing a many-body wavefunction, the network parameters $\boldsymbol{\lambda} = \{\boldsymbol{b}^{(v)}, \boldsymbol{b}^{(h)}, \boldsymbol{W}\}$ are complex valued \cite{Carleo2017}. In addition, following \cite{Torlai2020}, the energy of the RBM in Eq.~(\ref{eq:RBM_energy}) is modified to represent a wavefunction dependent on the network parameters and a binary vector $\boldsymbol{v}$ of size $N$:
+
+\begin{align} \label{eq:RBM_qmb_energy}
+    \psi_{\boldsymbol{\lambda}}(\boldsymbol{v}) = e^{\boldsymbol{b}^{(v)T}\boldsymbol{v}}e^{\sum_j \log \cosh{\sum_i W_{ij} v_i + b^{(h)}_j} }
+\end{align}
+
+The aim of the RBM is to train $\boldsymbol{\lambda}$ such that given an element of the computational basis $\ket{\boldsymbol{v}}$:
+
+\begin{align}
+    \psi_{\boldsymbol{\lambda}}(\boldsymbol{v}) = \langle \boldsymbol{v} | \psi(\boldsymbol{\theta}) \rangle, 
+\end{align}
+
+where $\ket{\psi(\boldsymbol{\theta})}$ is the output state of the ansatz so that RBM approximates the probability distribution of measuring the output state. Otherwise said, the RBM is trained so that the output of the RBM energy function (Eq. \ref{eq:RBM_qmb_energy}) is equal to the amplitude of the quantum circuit output state with respect to the basis element $\ket{\boldsymbol{v}}$.
+
+To train this RBM, suppose you have a pool of single-qubit measurement basis operators $\boldsymbol{p} = \bigotimes_i^N  p_i$, with $p_i = \{ X, Y, Z \}$. For each $\boldsymbol{p}$, there exist a set of binary vectors $\{ \boldsymbol{v}^{\boldsymbol{p}} \}$ corresponding to the possible measurement outcomes of $\boldsymbol{p}$ by state $\ket{\psi(\boldsymbol{\theta})}$. As such, following Born's rule we can define the probability of measuring each of $\boldsymbol{v}^{\boldsymbol{p}}$ as $P(\boldsymbol{v}^{\boldsymbol{p}}) = | \langle \boldsymbol{v}^{\boldsymbol{p}} | \psi(\boldsymbol{\theta}) \rangle |^2 $. We note $P_{\boldsymbol{\lambda}}(\boldsymbol{v}^{\boldsymbol{p}}) = |\psi_{\boldsymbol{\lambda}}(\boldsymbol{v}^{\boldsymbol{p}})|^2$, the amplitude square of the output of the RBM given $\boldsymbol{v}^{\boldsymbol{p}}$ as input and $\boldsymbol{\lambda}$ as parameters. Torlai et al. \cite{Torlai2020} suggest to use the extended Kullback-Leibler (KL) divergence as cost function for the RBM: 
+\begin{align}
+    \mathcal{C}_{\boldsymbol{\lambda}} &= \sum_{\boldsymbol{p}} \sum_{\boldsymbol{v}^{\boldsymbol{p}}} P(\boldsymbol{v}^{\boldsymbol{p}}) \log \frac{P(\boldsymbol{v}^{\boldsymbol{p}})}{P_{\boldsymbol{\lambda}}(\boldsymbol{v}^{\boldsymbol{p}})}  \nonumber \\
+    & \approx - \sum_{\boldsymbol{p}} \sum_{\boldsymbol{v}^{\boldsymbol{p}}} P(\boldsymbol{v}^{\boldsymbol{p}}) \log P_{\boldsymbol{\lambda}}(\boldsymbol{v}^{\boldsymbol{p}}),
+\end{align}
+where the numerator of the log has been discarded in the second equality as it does not depend on $\boldsymbol{\lambda}$ and therefore does not impact the optimization process. This formulation is of course intractable as the set $\{ \boldsymbol{p} \}$ scales $3^N$ and each set $\{ \boldsymbol{v}^{\boldsymbol{p}} \}$ scales $2^N$. Ref. \cite{Torlai2020} bypass these exponential sums by restricting  $\{ \boldsymbol{p} \}$  to the set of Pauli strings already included in the Hamiltonian decomposition, and restricting the measurement outputs $\{ \boldsymbol{v}^{\boldsymbol{p}} \}$  to a set of finite size measurements $\mathcal{D}$ such that: 
+
+\begin{equation}
+    \mathcal{C}_{\boldsymbol{\lambda}} = -  \sum_{\boldsymbol{v}^{\boldsymbol{p}} \in \mathcal{D}} P(\boldsymbol{v}^{\boldsymbol{p}}) \log P_{\boldsymbol{\lambda}}(\boldsymbol{v}^{\boldsymbol{p}})
+\end{equation}
+
+\subsubsection{Hamiltonian partitioning based on commutativity}
+
+The premise of this section, and the methods that follow, is that an Abelian group of Pauli strings can be simultaneously diagonalized through a unitary rotation of the measurement basis \cite{griffiths2005introduction}, thereby reducing the number of terms that need to be measured to accurately compute the expectation value of a Hamiltonian. This implies that single measurement values for all the terms in a given Abelian group can be inferred from a single \textit{joint measurement} (a measurement that simultaneously assesses multiple Pauli operators) of the complete qubit register. This principle derives from the stabilizer theory (for a review of stabilizer theory, we recommend: Refs. \cite{Gottesman1997, nielsenQuantumComputationQuantum2010}). First, we need to identify a set of generators of the Abelian group, $\{ \tau_i\}$. From there, we know that there exist a unitary $U$, such that we can write: 
+
+\begin{equation}
+    U \tau_i U^{\dagger} = \sigma_Z^{q(i)},
+\end{equation}
+
+where $q(i)$ maps generator index $i$ to a unique address in the qubit register. This means that after applying $U$ to a given quantum circuit, obtaining the expectation value of generator $\tau_i$ can be done by measuring the expectation value of $ \sigma_Z^{q(i)}$. Finding the unitary $U$ for an Abelian group therefore allows to measure all of its generators by simply measuring $\sigma_Z$ on all qubits (the expectation values of all the Pauli terms within the group, which are not generators, can be also be recovered, from the data gathered from the generators measurements). \\
+
+\paragraph{Qubit-wise commutativity (QWC) or Tensor Product Basis (TPB) groups:} Two of Pauli strings are said to be QWC if each Pauli operator in the first commute with the Pauli operator of the second one that has the same index. Generally speaking, that would be any group where, any given Pauli operator in any Pauli string has an index such that, all the operators of the same index across all the other Pauli strings in the group are either the same Pauli operator, or the identity (for example, $XI$, $IZ$, and $XZ$ are altogether QWC). The term TPB refers to the same idea, all the Pauli strings in the group can be diagonalized simultaneously in a joint tensor product basis with no entanglement. 
+
+This basis for grouping terms has been widely used and studied \cite{mccleanTheoryVariationalHybrid2015, Kandala2017, Hempel2018, Rubin2018, Kokail2019, Izmaylov2019, Nam2020, Verteletskyi2020, Hamamura2020, Gokhale2019_long}. It allows performing joint measurements more efficiently. In particular, Gokhale et al. \cite{Gokhale2019_long} found that this method reduces the pre-factor for the number of Pauli terms to be measured by about three, without however changing its asymptotic scaling (see also Ref. \cite{Yen2020}). It is worth noting that the process for partitioning for QWC is significantly cheaper computationally \cite{Gokhale2019_long} than for the General Communitativity (GC) rule which we present later on.
+
+Another key advantage is that the basis rotation used to conduct the joint measurements only requires a circuit of depth 1. To achieve this, we need to find the unitary $U_{QWC}$ which rotates all the Pauli strings in a given QWC group into a basis in which they are all diagonalized. This is a straightforward process as any individual Pauli operator can be rotated in the $Z$ basis with one single-qubit operation as follows: 
+
+\begin{align}
+    &Z = \mathrm{Ry}\left(-\frac{\pi}{2}\right) X \mathrm{Ry}\left(-\frac{\pi}{2}\right)^{\dagger} \nonumber \\
+    &Z = \mathrm{Rx}\left(\frac{\pi}{2}\right) Y \mathrm{Rx}\left(\frac{\pi}{2}\right)^{\dagger}
+\end{align}
+This method of grouping and joint measurement is therefore relatively cheap to implement and allows for significant savings in the number of shots required to complete a VQE, although without changing the overall scaling. 
+
+\paragraph{General Commutativity (GC), or entangled measurements:} This method uses the same logic as the QWC groupings, however rather than allowing for qubit-wise commutation groupings, it allows for grouping of any Pauli strings that generally commute. There has been a number of independent research producing similar results \cite{Yen2020, Hamamura2020, Gokhale2019_short}. From here it is obvious that the set of QWC relationships is included in the set of GC relationships (if two Pauli strings Qubit-Wise commute, they necessarily generally commute, the reverse is not true). 
+
+Consider two Pauli strings $\boldsymbol{\nu}$ and $\boldsymbol{\eta}$, each composed of $N$ Pauli / identity tensored operators (noted $\nu_i$ and $\eta_i$ for $i \in [1, N]$. If two Pauli operators do not commute we have: $\nu_i\eta_i = - \eta_i\nu_i$, and  $\nu_i\eta_i = \eta_i\nu_i$ if they commute. This implies that:
+\begin{equation}
+    \boldsymbol{\nu}\boldsymbol{\eta} = (-1)^k \boldsymbol{\eta}\boldsymbol{\nu},
+\end{equation}
+where k is the number of index-wise Pauli operators that do not commute. As such, two Pauli strings generally commute if they comprise an even number $k$ of index-wise operators that do not commute (for example, $XYZ$, $XZY$, and $ZIX$ altogether are GC). The interesting aspect of this approach is that it reduces the scaling of the number of separate terms to be measured from $\mathrm{O}(N^4)$ to $\mathrm{O}(N^3)$ \cite{Gokhale2019_short, Yen2020, Jena2019} in the case of \textit{ab initio} molecular Hamiltonian, providing a significant advantage to VQE optimization. \\
+
+The problem of building appropriate unitaries for joint measurements of the groups identified is more complicated than in the QWC case. The objective is the same: finding a unitary rotation that simultaneously diagonalizes all the elements of a given group. The measurement basis however is more complex than a TPB, and requires entangled measurements \cite{Hamamura2020}. As for QWC, the qubit register is entirely measured in the $Z$ basis and therefore the unitary performing the basis rotation itself must include non-local, entangling operations. This requires careful circuit design, which has been thoroughly explained in Ref.~\cite{Gokhale2019_long}, and we strongly recommend readers that are interested in building their implementation to refer back to this article, or to the "CZ" construction (based on Ref.~\cite{VandenNest2004}) and "CNOT" construction (based on Ref.~\cite{Aaronson2004, Patel2008}) proposed in Ref.~\cite{Crawford2021}. These two latter methods have the advantage of explicitly treating the case where the number of independent operators in a group, $k$, is strictly less than $N$ (as we have in all cases  $k \leqslant N$). It is worth noting that while not explicitly covered in Ref.~\cite{Gokhale2019_long}, this case can also be addressed using the former method.
+
+Gokhale et al. \cite{Gokhale2019_long} also point out that the number of gates in the circuits scales $\mathcal{O}(N^2)$ (with some gate parallelization possible, making this a worst-case for depth), while Ref. \cite{Yen2020} shows a gate scaling of $\mathcal{O}(N^2/\log (N))$. The methods presented in \cite{Crawford2021} have a number of two-qubit gates that in the worst-case scale:
+ \begin{align}
+     &u_{\mathrm{CZ}}(k, N) = kN - k(k+1)/2 \nonumber \\
+     &u_{\mathrm{CNOT}}(k, N) = \mathcal{O}(kN/\log(k)).
+ \end{align}
+In all cases, it can be considered negligible compared to the scaling of most ans{\"{a}}tze, but not all, as linearly scaling ans\"tze such as UpCCGSD \cite{Lee2019} could see their cost become negligible compared to the required basis rotation (see Sec. \ref{sec:Ansatz}). As such, the decision on whether this method should be used depends on the type of ansatz used and the quantum cost (circuit depth) one is willing to reduce the computing time (number of repeated measurements). 
+
+\paragraph{Simple example:} As an example, consider the arbitrary set of Pauli strings covering 4 qubits presented in Table  \ref{tab:eg_pauli_set}
+
+\begin{table} [ht]
+\caption{Example set of Pauli strings}\label{tab:eg_pauli_set}
+\begin{tabularx}{\textwidth}{p{\linewidth}}
+\toprule
+$IIXX, YXII, XYII, YXYY, YXXX, XYYY, XYXX, IIYY, XXYX, IIYX, YYYX, IIXY, XXII, YYII,$ \\ 
+$XXXY, YYXY$\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+From this set, one can apply one of the heuristics presented in Sec. \ref{sec:grouping_heuristics} to decompose the set into commutative groups. As an example, one can identify the commutative group presented in Table  \ref{tab:eg_commutative_group}.
+
+\begin{table} [ht]
+\caption{Example set of a commutative group extracted from Table \ref{tab:eg_pauli_set}}
+\begin{tabularx}{\textwidth}{p{\linewidth}}
+\toprule
+$XXYX, IIYX, YYYX, IIXY, XXII, YYII, XXXY, YYXY$
+\\
+\bottomrule
+\end{tabularx}
+ \label{tab:eg_commutative_group}
+\end{table}
+
+The next step is to identify a minimum set of generators of the multiplicative group defined - for instance, we can observe that $(XXYX) \times (IIYX) = XXII$. Ref. \cite{Gokhale2019_long} suggests using Gaussian elimination to achieve this. There are of course more than one possibility. The set presented in Table  \ref{tab:eg_commutative_generators} is an example of generators identified.
+
+\begin{table} [ht]
+\caption{Example set of generators for the commutative from Table  \ref{tab:eg_commutative_group}}
+\begin{tabularx}{\textwidth}{c}
+\toprule
+$XXYX, IIYX, YYYX, IIXY$
+\\
+\bottomrule
+\end{tabularx}
+\label{tab:eg_commutative_generators}
+\end{table}
+
+The final step is to construct the unitary $U$ that maps each of the Pauli strings above to single-qubit measurements, such that:
+
+\begin{align} \label{eq:grouping_GC_example}
+    U^{\dagger} \left( XXYX \right) U  = ZIII \nonumber \\
+    U^{\dagger} \left( IIYX \right) U = IZII \nonumber \\
+    U^{\dagger}\left( YYYX \right) U = IIZI \nonumber \\
+    U^{\dagger}\left( IIXY \right) U = IIIZ
+\end{align}
+
+The quantum circuit realizing this unitary can be produced for example following the method presented in Ref. \cite{Gokhale2019_long}. For the example above, an example of realization for this unitary is given in Fig. \ref{fig:grouping_GC_circuit}.
+
+\begin{figure}[ht]
+\centerline{
+\Qcircuit @C=1em @!R {
+   \lstick{\ket{q_0}}   &   \qw   &   \gate{H}   &    \qswap    &  \gate{S} & \control \qw  & \qw    & \qw & \qw  &   \gate{H}   & \meter          \\
+   \lstick{\ket{q_1}}   &   \qw   &   \qw   &    \qswap \qwx    &  \qswap & \ctrl{-1} & \gate{S} & \control \qw & \qw  &  \gate{H}    & \meter            \\
+   \lstick{\ket{q_2}}   &   \qw   &   \gate{H}   &    \qw    &  \qswap \qwx & \qw & \qw & \ctrl{-1} & \gate{S} &    \gate{H}    & \meter                \\
+   \lstick{\ket{q_3}}   &   \qw   &   \qw   &    \qw   &  \qw &  \gate{S} & \qw  & \qw  &  \qw &  \gate{H}  & \meter                 \\
+} 
+}\caption{Example quantum circuit for the realization of the relationships defined in Eq.~(\ref{eq:grouping_GC_example}), following the method presented in \cite{Gokhale2019_long}} \label{fig:grouping_GC_circuit}
+\end{figure}
+
+From this, we can see that half of the Pauli strings set presented in Table  \ref{tab:eg_pauli_set} can be jointly measured through the operator $ZZZZ$.
+
+\subsubsection{Unitary partitioning of the Hamiltonian:} 
+
+An alternative to the GC rule as a connection system for grouping Hamiltonian terms is to connect anti-commuting terms. In essence, this is the complement to the GC connections (if the GC relationships for Hamiltonian terms are defined in terms of a graph, the anti-commuting relationships are the complementary graph). It offers however a convenient property: it allows partitioning the Hamiltonian as a weighted sum of a minimum (or close to minimum) number of unitary operators \cite{Izmaylov2020a}.
+
+To see this, consider that while Pauli strings are hermitian unitary, a weighted sum of Pauli strings generally is not. The conditions for a weighted sum to be unitary however can be recovered through anti-commuting grouping. In particular, for any operator expressed as a Pauli sum:
+\begin{equation} \label{eq:weighted_sum_operator}
+    \hat{O} = \sum_{a}^{\mathcal{P}} w_{a} \hat{P_{a}},
+\end{equation}
+to be unitary, we must have: 
+\begin{align}
+    \mathrm{Im}(w_{a}^{\dagger}w_{b}) = 0, \label{eq:real_condition}\\
+    \sum_a |w_{a}|^2 = 1,\label{eq:normalized_condition}
+\end{align}
+and: 
+\begin{equation}
+    \{\hat{P_{a}}, \hat{P_{b}} \} = 2 \delta_{ab}. \label{eq:anticommute_condition}
+\end{equation}
+
+The first two conditions are easily met. Given $w_a$ weights are always real, Eq.~(\ref{eq:real_condition}) is always verified in the VQE context. The normalization condition in Eq.~(\ref{eq:normalized_condition}) can easily be engineered by extracting a normalization factor $\boldsymbol{w}$ such that 
+\begin{equation}
+    \mathrm{w} = \left( \sum_a |w_a|^2 \right)^{\frac{1}{2}}, 
+\end{equation}
+and
+\begin{equation}
+    \hat{O} = \mathrm{w} \sum_{a} \frac{w_{a}}{\mathrm{w}} \hat{P_{a}}.
+\end{equation}
+By selecting the Pauli strings in $\hat{O}$ such that they anti-commute, we can re-write the above equation as 
+\begin{equation}
+    \hat{O} = \mathrm{w} \hat{U},
+\end{equation}
+with $\hat{U}$ a unitary operator. Therefore, by partitioning the Hamiltonian following anti-commuting operator it can be re-written as a weighted sum of $\mathcal{U}$ unitary operators as 
+\begin{equation} \label{eq:unitary_hamiltonian}
+    \hat{H} = \sum_a^{\mathcal{U}} \mathrm{w}_a \hat{U}_a.
+\end{equation}
+This grouping premise has been shown to allow a linear reduction in the number of terms in the Hamiltonian, similar to what can be achieved with GC grouping \cite{Izmaylov2020a, Zhao2020, Ralli2021}.
+
+The next step is to implement the joint measurement of all the elements of each unitary group identified. Unlike the groupings based on QWC and GC, the groups produced based on unitary partitioning can be directly implemented as quantum circuits. To see how this is done, one can follow the method in Ref. \cite{Izmaylov2020a} starting by incorporating the partitioned Hamiltonian from Eq.~(\ref{eq:unitary_hamiltonian}) into the VQE optimization problem (Eq. \ref{eq:vqe_hybrid_function}):
+\begin{equation} \label{eq:vqe_pb_unitary}
+    E_{\mathrm{VQE}} = \min_{\boldsymbol{\theta}} \sum_a^{\mathcal{U}} \mathrm{w}_a \bra{\psi(\boldsymbol{\theta})} \hat{U}_{a} \ket{\psi(\boldsymbol{\theta})}.
+\end{equation}
+The unitary group cannot be directly measured jointly. However, as the observable is a unitary, one can transform Eq.~(\ref{eq:vqe_pb_unitary}) into an overlap measurement problem (rather than an observable measurement problem). Using the fact that a unitary observable has the same expectation value as its complex conjugate, we have
+\begin{align} \label{eq:unitary_and_conj}
+    E_{\mathrm{VQE}} &= \frac{1}{2} \sum_a^{\mathcal{U}} \mathrm{w}_a \bra{\psi(\boldsymbol{\theta})} \hat{U}_{a} \ket{\psi(\boldsymbol{\theta})} + \bra{\psi(\boldsymbol{\theta})} \hat{U}_{a}^{\dagger} \ket{\psi(\boldsymbol{\theta})} \nonumber \\
+    & = \frac{1}{2} \sum_a^{\mathcal{U}} \mathrm{w}_a \left( \langle \boldsymbol{0} | \Psi_a \rangle + \langle \Psi_a | \boldsymbol{0} \rangle \right) \nonumber \\
+    & = \sum_a^{\mathcal{U}} \mathrm{w}_a Re\left( \langle \boldsymbol{0} | \Psi_a \rangle \right), 
+\end{align}
+where $\ket{\boldsymbol{0}}$ is the initial qubit register (which can be replaced with the Hartree-Fock wavefunction) and we have set $\ket{\Psi_a} = U_{\boldsymbol{\theta}}^{\dagger} U_a   U_{\boldsymbol{\theta}} \ket{\boldsymbol{0}}$ (and of course $\ket{\psi(\boldsymbol{\theta})} = U_{\boldsymbol{\theta}} \ket{\boldsymbol{0}}$). The real part of the overlap in Eq.~(\ref{eq:unitary_and_conj}) can be computed using a Hadamard test (as presented in Appendix [\ref{sec:hadamard-test}]). 
+
+In terms of the cost of the circuit add-on, one should first note that the ansatz used to prepare the trial state is used twice therefore at least doubling circuit depth. In addition, one must take into account the depth required to implement $U_a$. As a sum of Pauli operators, it can be implemented using $2(\tilde{q} - 1)$ CNOT gates per operator, where $q$ is the Pauli weight of the operator. Hence, $U_a$ takes a total of $2L(\tilde{q} - 1)$, where L is the number of term is $U_a$ (and as such, on average $L \approx N$ given there are $\mathcal{O}(N^3)$ groups). This gives a total CNOT scaling of $\mathcal{O}(\tilde{q}N^2)$ \cite{Izmaylov2020a}. 
+ 
+Ref. \cite{Zhao2020} show that unitary groups can also be jointly measured in a manner similar to commutative groups by appending the unitary at the end of the ansatz which rotates the unitary group into a diagonal basis. Their method requires entangling gate scaling of $\mathcal{O}(qL)$, with $q$ the maximum Pauli weight in the Hamiltonian, and $L$ the number of terms in each unitary group. As discussed before, this implies a scaling of $\mathcal{O}(N^2)$ using Jordan-Wigner, and $\mathcal{O}(N \log(N))$ using Bravyi-Kitaev. Zhang \textit{et al.} \cite{Zhao2020} also show that the circuit depth can be reduced further using ancilla qubits. These methods of partitioning the Hamiltonian into unitary groups have been tested in an implementation on a quantum computer by Ralli \textit{et al.} \cite{Ralli2021}.
+
+\subsubsection{Decomposed interactions for efficient joint measurements:} \label{sec:DecomposedInteractions}
+
+
+\paragraph{Basis Rotation Grouping:}
+The method proposed in Ref.~\cite{Huggins2021}, referred to as "Basis Rotation Grouping" is based on a tensor decomposition of the two-body operator. It details how to significantly reduce the overall number of (joint) terms to measure in the Hamiltonian, down to a linear number with system size. This same decomposition has also been used to reduce the total gate depth of the full UCCSD Ansatz as well as Trotter steps in Ref.~\cite{Motta2021} and is based on a two-stage decomposition of the interaction tensor originally proposed in Ref.~\cite{Peng2017}. It also provides a large improvement in the noise resilience of mappings with high Pauli weight such as Jordan-Wigner (See Sec.~\ref{sec:Encoding}). The price to pay for this is that the measurement has to take place in a different basis for each term, necessitating an additional $\mathcal{O}(N)$ gate depth before measurement to implement this orbital rotation for each grouped term of this decomposed Hamiltonian (which remains much less than $\mathcal{O}(N^2)$ required for general commutative grouping).
+
+The first step in this method is to re-write the second-quantized Hamiltonian into a factorized form through decomposition of the two-electron integral tensor \cite{Berry2019, Motta2021, Huggins2021}. Starting from Eq.~(\ref{eq:molecularhamiltonianladder}) in the basis of spin-orbitals, we can rewrite the two-electron part as
+\begin{align} \label{eq:two_body_decomp}
+    V &= \frac{1}{2} \sum_{pqrs=1}^{n} h_{pqrs} \hat{a}_{p}^{\dagger} \hat{a}_{q}^{\dagger} \hat{a}_{r} \hat{a}_{s} \\
+    &= \frac{1}{2} \sum_{pqrs=1}^{n} h_{ps,qr} (\hat{a}_{p}^{\dagger} \hat{a}_s \hat{a}_{q}^{\dagger} \hat{a}_r - \hat{a}_p^{\dagger} \hat{a}_r \delta_{qs}) = V' + S ,
+\end{align}
+where $S$ is an additional one-body operator, and $h_{ps,qr}=(ps|qr)$ is a representation of the two-body integrals in the conventional `chemists' notation. The positive-definite super-operator $h_{ps,qr}$ can be decomposed in a low-rank spectral decomposition:
+
+\begin{align} \label{eq:spectral_decomposition_two_RDM}
+    V' = \sum_{pqrs} \sum_{l=1}^L v_{ps}^{(l)} v_{qr}^{(l)} \hat{a}_p^{\dagger} \hat{a}_s \hat{a}_q^{\dagger} \hat{a}_r.
+\end{align}
+This decomposition has a long history in quantum chemistry, and this low-rank factorized form can be directly constructed, avoiding an explicit diagonalization (which would scale as $\mathcal{O}(N^6)$), through techniques such as density fitting or Cholesky decomposition \cite{Pedersen2009, Beebe1977, Koch2003, Purwanto2011, Mardirossian2018, Peng2017} (which is generally accepted to scale $\mathcal{O}(N^3)$). It has long been known that the decomposed form is not of full rank, with a number of terms $L = \mathcal{O}(N)$, which is a sufficient description of the system in the case of arbitrary basis quantum chemistry \cite{Pedersen2009}. It is worth noting that in special representations where the Coulomb operator is diagonal, as demonstrated for the plane wave basis and dual basis in Ref.~\cite{Babbush2018}, this can be rigorously $L=1$.
+
+Further eigendecomposition of the resulting matrix for each value of $l$ is possible, with
+\begin{equation}
+    v_{ps}^{(l)} a_p^{\dagger} a_s = \sum_{i=1}^{\rho_l} U_{pi}^{(l)} \lambda_i^{(l)} U_{si}^{(l)} \hat{a}_p^{\dagger} \hat{a}_s ,
+\end{equation}
+where $U$ denote single-particle unitary operators.
+These can be combined with a decomposition of the one-body part into a final doubly factorized Hamiltonian form of
+%The two-body component of the Hamiltonian (second term in Eq. \ref{eq:hamiltonian_chemist} can be rewritten following \cite{Huggins2021}:
+%\begin{align}
+%    \frac{1}{2} \sum_l^L w_l \left(
+%    \sum_{\sigma \in \{ \uparrow, \downarrow\}} \sum_{p, q = 1}^{n/2} v_{pq}^{(l)} a_{p, \sigma}^{\dagger} a_{q, \alpha} \right)^2.
+%\end{align}
+%The Hamiltonian is now expressed as a sum of one-body operators (the one-body component) and a sum of product of one-body operators (the two-body component). These can all be diagonalized in a rotated single-particle basis. This results in the following Hamiltonian (where the spin indices have been dropped for simplicity): 
+\begin{equation}
+    \hat{H} = U^{(0)} \left( \sum_i g_i \hat{n}_i \right) (U^{(0)})^{\dagger} + \sum_{l=1}^L U^{(l)} \left( \sum_{ij}^{\rho_l} g_{ij}^{(l)}\hat{n}_i \hat{n}_j\right)(U^{(l)})^{\dagger},
+\end{equation}
+where $\hat{n}_i = \hat{a}_i^{\dagger} \hat{a}_i$ and $g_{ij}^{(l)}=\frac{\lambda_i^{(l)} \lambda_j^{(l)}}{2}$ are scalars constructed from absorbing all relevant weights. The single-particle unitaries $U^{(0)}$ and  $U^{(l)}$ implement the orbital basis change and can be applied to the prepared state before measurement. 
+The key is that all $\hat{n}_i$ and $\hat{n}_i \hat{n}_j$ for a given $l$ commute, and thus can be measured simultaneously, resulting in $L \sim \mathcal{O}(N)$ separate terms to estimate, but additionally requiring the change in measurement basis for each term increasing the gate depth by $\mathcal{O}(N)$. This method was tested in Ref.~\cite{Gonthier2020} and showed clear superiority of basis rotation method compared to QWC, achieving a significant scaling reduction in the number of measurements required. 
+
+
+\paragraph{Full rank optimization (FRO):}
+Yen and Izmaylov \cite{Yen2021_Cartan} propose an a more general method for decomposition of the two body operator. Starting from $V$, as defined in Eq. (\ref{eq:two_body_decomp}), one can write
+\begin{align} \label{eq:full_rank_opt}
+    V &= \frac{1}{2}\sum_{\alpha = 1}^L U_{\alpha}^{\dagger} \left[ \sum_{ij}^n \lambda_{ij}^{(2, \alpha)} \hat{a}^{\dagger}_i\hat{a}_i \hat{a}^{\dagger}_j\hat{a}_j  \right]  U_{\alpha} \nonumber \\
+    &= \frac{1}{2}\sum_{\alpha = 1}^L \sum_{ij}^n \lambda_{ij}^{(2, \alpha)} [ U_{\alpha}^{\dagger}\hat{a}^{\dagger}_i\hat{a}_i U_{\alpha}][U_{\alpha}^{\dagger}\hat{a}^{\dagger}_j\hat{a}_j U_{\alpha}],
+\end{align}
+with $\boldsymbol{\lambda}$ a tensor which must be discovered. The transformation unitary can be written as: 
+\begin{align}
+    U_{\alpha} &= \exp\left[ \sum_{i>j}^n -i \zeta_{ij}^{(\alpha)} ( \hat{a}_i^{\dagger}\hat{a}_j + \hat{a}_j^{\dagger}\hat{a}_i) +  \eta_{ij}^{(\alpha)} ( \hat{a}_i^{\dagger}\hat{a}_j - \hat{a}_j^{\dagger}\hat{a}_i) \right],
+\end{align}
+where $\boldsymbol{\zeta}$ and $\boldsymbol{\eta}$ are tensors which must be discovered. The process for estimating tensors  $\boldsymbol{\lambda}$,  $\boldsymbol{\zeta}$, and  $\boldsymbol{\eta}$ involves re-writing Eq.(\ref{eq:full_rank_opt}) to express the two-body coefficients $h_{pqrs}$ as function of these tensors. The system of equation can then be resolved using a difference minimization (for which the Broyden-Fletcher-Goldfarb-Shanno, BFGS, optimizer is suggested \cite{broyden_convergence_1970,fletcher_new_1970,goldfarb_family_1970,shanno_conditioning_1970}), and is described in further details in Ref.~\cite{Yen2021_Cartan}. 
+
+Two variants of this method are also proposed in Ref.~\cite{Yen2021_Cartan}. The Greedy FRO (GFRO) discovers the tensors mentioned above iteratively by starting from $\alpha=1$. The variance-estimate GFRO (VGFRO) also takes into account the variance of the operators for the discovery of the tensors. Overall, Yen and Izmaylov find that FRO achieves a much lower number of partitions than the Basis rotation group method \cite{Huggins2021} (less than half, on six different systems ranging from $4$ to $20$ qubits), though FRO and VGFRO result in significantly more partitions (between $5$ and $7$ times more). The comparative analysis is however pushed further to take into account the risk for co-variances resulting from joint measurement of operators \cite{mccleanTheoryVariationalHybrid2015} (more details below), and it is found \cite{Yen2021_Cartan} that General Commutativity (GC) with Sorted Insertion \cite{Crawford2021} (presented below) performs the best in most systems. VGFRO, GFRO, and the basis rotation methods perform similarly, and far better than FRO. Yen and Izmaylov \cite{Yen2021_Cartan} conjecture that the relative performance of VGFRO, GFRO and basis rotation methods will improve compared to GC with Sorted Insertion as the size of the system studied increases. 
+
+\subsubsection{Grouping heuristics} \label{sec:grouping_heuristics}
+
+We have seen that defining whether two Pauli strings are QWC, GC, or anti-commuting is straightforward. However, given neither QWC, GC or anti-commutation properties are transitive (if two Pauli strings, $A$ and $B$ commute, and $A$ commutes with a third one, $C$, $B$ does not necessarily commute $C$), finding optimal groups of Pauli strings that together all meet one of these criteria out of the $\mathrm{O}(N^4)$ terms in the Hamiltonian can be a challenging process. 
+
+Before detailing grouping methods directly dedicated to Pauli strings, we briefly outline conventional heuristics that have been used in the context of grouping Pauli strings and the studies that have been conducted to compare these. 
+
+\paragraph{Conventional grouping heuristics used in VQE context:}
+
+The problem of grouping Pauli terms that have been connected following a specific rule (QWC, GC, or AC), can be straightforwardly mapped to a graph problem. Namely, it can be mapped to the Minimum Clique Cover (MCC) problem \cite{Hamamura2020, Jena2019, Crawford2021, Verteletskyi2020, Izmaylov2020a, Zhao2020, Yen2020} (or equivalently the graph coloring problem \cite{Garey1979}), which aims at finding the minimum number of fully connected subgraphs in an initial input graph. In this case, we can define a graph $G( V, E)$, where $V$, the vertices are representing the Pauli strings, and $E$, the edges, are representing the connections established using one of the rules defined above. It is in general NP-hard \cite{Karp1972} and therefore should be solved using heuristics. The problem of grouping Pauli strings can therefore be addressed using the same heuristics as for MCC like problems: 
+
+\begin{itemize}
+    \item Largest Degree First Colouring (LDFC) Algorithm: In this algorithm, edges represent anti-commuting relationships. It works by first assigning a color to the vertex $V$ with the highest degree (colors are represented by integers, starting with $1$). Following this step, the vertex among those remaining with the highest degree is assigned the lowest color that is not already attributed to one of its neighbors. The process is repeated iteratively until all colors have been assigned \cite{Welsh1967} (Used for Pauli grouping in \cite{Hamamura2020}).
+    \item Smallest first: Identical to the LDFC except for the ordering of colors allocation, which starts from the vertex with the smallest degree.  \cite{Matula1972}
+    \item DSatur: The degree of saturation of a vertex is defined as the number of different colors it is adjacent to. With that in mind, the DSatur algorithm functions broadly like the LDFC algorithm, albeit by attributing colors along an ordering of the degree of saturation of the remaining uncolored vertices. The first color is attributed based on the largest degree. \cite{Brelaz1979}
+    \item Independent-operator sorting algorithm: Vallury et al. \cite{Vallury2020} propose to group Pauli strings, using a QWC relationship, by ranking them according to the number of identity operators in each string. The method starts with the Pauli string having the lowest number of identity operators. Following strings are iteratively sorted: if a string QWC with all elements of an existing TBP group, it is added to this group, otherwise a new group is created. 
+    \item Others of note include: Dutton and Brigham, \cite{Dutton1981}, COSINE \cite{Hertz1990}, Ramsey \cite{Boppana1992}, \cite{Tomita2006}, and Connected Sequential d.f.s \cite{Kubale2004}, Recursive largest first \cite{Leighton1979}.
+\end{itemize}
+
+For a thorough review of graph coloring methods, we recommend \cite{Kubale2004}.
+
+All the heuristics mentioned above, except the BKT algorithm, are polynomial in scaling with respect to the number of graph vertices \cite{Izmaylov2020a}. The number of vertices being equal to the number of Pauli strings in the Hamiltonian these heuristics, in general, scale $\mathcal{O}(N^{k4})$, with $k \geqslant 2$ an integer corresponding to the respective scaling of each method. For instance, LDFC scales quadratically in the number of vertices in the graph \cite{Kubale2004}, therefore the method's time complexity is $\mathcal{O}(N^8)$ for a graph built from the second quantized Hamiltonian.
+
+An alternative has been proposed in \cite{Gokhale2019_short}, where the problem is treated as finding a Maximal Flow in a Network Flow Graph. Gokhale et al. propose to identify the commuting relationships at the fermionic operator level, basing themselves on spin orbital indices of the fermionic terms. This is only treated under the Jordan-Wigner mapping They show that they can create partitions of size $N$, thereby reducing the total number of terms to measure to $N^3$, using the Baranyai construction approach which has a computational cost of $\mathcal{O}(N^5\log N) \leqslant \mathcal{O}(N^{k4})$. They also note that the groupings can be re-used across multiple Hamiltonian of the same sizes, which does not necessarily occur when grouping at the spin-operator level.
+
+Several papers have drawn comparisons in the ability of these different heuristics to approach the MCC in the context of Pauli strings grouping. In particular, \cite{Izmaylov2020a} shows that RLF and DB tend to result in the lowest number of cliques for Unitary based grouping, on systems up to 14 qubits. \cite{Verteletskyi2020} show similar results for GC based grouping, with Largest First and SL also performing equivalently (on systems up to 14 qubits for all methods, and up to 36 for Largest first). \cite{Crawford2021} compares a lower number of methods (and also performs analysis on the co-variance implications, which is discussed in the next paragraph) and also finds that LDFC finds a lower number of cliques against Connected d.f.s, DSATUR, and Sorted insertion. 
+
+\paragraph{Sorted Insertion, heuristic dedicated to Pauli strings and VQE applications:} 
+
+The method presented in Ref.~\cite{Crawford2021} stems from the observation that grouping Pauli strings can result in measurement co-variances, thereby increasing the number of measurements required to achieve the desired precision \cite{mccleanTheoryVariationalHybrid2015}. It targets grouping based on optimization of the number of measurements required rather than on the number of terms to measure. Sorted Insertion works by allocating Pauli strings to commuting groups in descending order of their absolute weights in the Hamiltonian. The complexity of implementing this grouping heuristic is capped to $\mathcal{O}(N\mathcal{P}^2)$, with $\mathcal{P}$ the number of terms in the Hamiltonian \cite{Crawford2021} - hence in the general second quantized Hamiltonian case  $\mathcal{O}(N^9)$.
+
+In addition, Crawford et al. \cite{Crawford2021} show that breaking commuting groups into smaller groups cannot reduce the variance under an optimal measurement strategy. They also define a useful figure of merit for a grouping strategy: the ratio of the minimum number of measurements required to achieve a desired precision (see Eq. \ref{eq:num_measurements_for_precision}) in the cases where Hamiltonian terms are not grouped, over the cases in which they are. They propose an approximate version of this metric which can be computed analytically from the Hamiltonian and the grouping. Given a Hamiltonian $\hat{H}$, which can be decomposed into $k$ operators $\hat{h}_i = \sum_j w_{ij}P_{ij}$ where all $P_{ij}$ for a given $i$ commute, the figure of merit is given by
+\begin{equation}
+    \tilde{R}:= \left(\frac{\sum_i^k \sum_j |w_{ij}|}{\sum_i^k \sqrt{\sum_j |w_{ij}|^2}}\right)^2.
+\end{equation}
+It is shown that Sorted Insertion achieves a significantly higher $\tilde{R}$ score than LDFC, DSatur, Connected Sequential d.f.s. and Independent Set on a number of molecular systems. Yen and Izmaylov \cite{Yen2021_Cartan} also showed that GC grouping using Sorted Insertion achieves the highest reduction in the number of shots required for a given precision for several systems up to $16$ qubits (one system of $20$ qubits is tested in Ref. \cite{Yen2021_Cartan}, and for which decomposed interactions methods \cite{Huggins2021, Yen2021_Cartan} perform better, see \ref{sec:DecomposedInteractions}).
+
+\subsection{Discussion on measurement strategies and grouping methods} \label{sec:discussion_grouping}
+
+The definition of the 'best possible grouping method' is not straightforward. While it is clear that aiming for the lowest number of groups possible is advantageous, it is not the only metric to take into consideration. In particular, it was shown in \cite{mccleanTheoryVariationalHybrid2015} that grouping terms, both under GC and QWC based grouping, suffers from co-variances arising from the joint measurement (thereby changing the formula presented in Eq. \ref{eq:standard_error}). This covariance effects increase the sampling noise and as such the total number of measurements required at a given level of precision. ~Joint measurements under the Unitary grouping or the decomposed interaction methods suffer from the same issue \cite{Yen2021_Cartan}. Therefore, the total number of measurements required to achieve a given precision should be taken into consideration as figure of merit for a grouping strategy \cite{Crawford2021}. Another cost to consider is the additional quantum noise resulting from the circuit used to rotate the measurement basis which could be significant in both the case of Unitary grouping and GC grouping. Further resources may be required to mitigate these additional errors (Sec. \ref{sec:error-mit}). Finally, an important point to note is that the scaling of most grouping heuristics could end up being somewhat prohibitive (for instance, we recall that LDFC scales $\mathcal{O}(N^8)$) for large systems. A possible way to dampen this issue is to use grouping methods which can be re-used across different Hamiltonians of the same active space sizes, by applying heuristics at the fermionic operator level \cite{Gokhale2019_long}, or by relying on two-body reduced density matrices \cite{Tilly2021}. 
+
+Inference methods could perform better for each of the costs listed above but could also face their own pitfalls, in particular when an additional machine learning model requires training. A thorough numerical analysis of the multiple methods that have been proposed would be an interesting avenue for future research. In the meantime, we consider that the decomposed interactions \cite{Huggins2021, Yen2021_Cartan} methods have the most supporting arguments for the treatment of molecular Hamiltonians. While it is shown numerically in Ref.~\cite{Yen2021_Cartan} that GC with Sorted Insertion \cite{Crawford2021} tends to be most efficient with respect to the number of measurements required to achieve a given level of precision, decomposed interactions methods perform almost at the same level (and it appears that the gap in performance narrows as the system increases in size \cite{Yen2021_Cartan}), and requires significantly less depth to perform the required unitary transformations ($\mathcal{O}(N)$ against $\mathcal{O}(N^2)$ for GC). It is worth noting that the basis rotation group method \cite{Huggins2021} currently has a much more predictable implementation cost than FRO and its extensions. The latter requires solving a minimization problem to perform the decomposition, which could come at a significant computational cost or loss in accuracy, though further research will be required to investigate this point. 

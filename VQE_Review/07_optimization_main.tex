@@ -1,0 +1,770 @@
+\section{Optimization strategies} \label{sec:Optimization}
+
+The VQE is in essence an optimization problem, it aims at heuristically constructing an approximation of an electronic wavefunction through iterative learning of ansatz parameters. For the algorithm to be viable, it must be that it can learn a good enough approximation of the solution within a tractable number of learning steps. It was already demonstrated that optimization of the variational quantum ans{\"{a}}tze is NP-hard~\cite{Bittel2021}, meaning that there exist at least some problems in which finding an exact solution for the VQE problem is intractable. As such, efficient optimization strategies that provide a well-approximated solution within an acceptable number of iterations are essential for any variational algorithms to be put into practice. Compared to the conventional numerical optimization problem, however, optimizing the expectation value of a variational quantum ansatz faces additional challenges: 
+\begin{itemize}
+    \item Sampling noise and gate noise on NISQ devices disturb the landscape of the objective function. Such noise can be detrimental to the convergence of optimization~\cite{gentini_noise-resilient_2020, Wang2020}, and could limit the scope for quantum advantage~\cite{Franca2021}. 
+    \item While the precision of conventional numerical optimization is generally not considered a problem, the precision of the measured expectation value is limited by the sample shot number. The cost of optimization is heavily dependent on the precision required for optimization. 
+    \item Related to the point above, the landscape of the expectation value of variational ansatz may cause the vanishing of gradient very easily as a result of the barren plateau problem~\cite{McClean2018} (See Sec. \ref{sec:barren_plateau} for further details).
+\end{itemize}
+
+On the flip side, studies from recent years show the landscape of expectation value has some analytical properties that are useful to extract information, such as evaluating gradients directly on quantum devices~\cite{nakanishi_sequential_2020,ostaszewskiStructureOptimizationParameterized2021, Romero2019,schuld_evaluating_2019}. In addition, the ansatz' landscape can be efficiently approximated to accelerate the convergence~\cite{koczor_quantum_2020,parrish_jacobi_2019}. Utilizing such prior knowledge helps to develop efficient optimization strategies for variational quantum algorithms.   
+This section presents the most relevant optimizers used in the context of the VQE and recent studies of optimization strategies, focusing on the strategies that target fast convergence rates. Some optimizers are developed to reduce the shot numbers \cite{Arrasmith2020,Kubler2020adaptiveoptimizer}, for which specific applications are discussed in  section \ref{sec:measurements_strategies}. We also compare these proposed algorithms and discuss the current challenge facing the optimization of variational quantum algorithms.  
+
+\subsection{Background and notation}  
+
+The objective function of a variational algorithm is constructed conventionally based on the measurement outcome. Denote $\mathbf{O}(\boldsymbol{\theta}) = (\hat{O}_1(\boldsymbol{\theta}^{(1)}),\hat{O}_2^{(2)}(\boldsymbol{\theta}^{(2)}),\dots,\hat{O}_a(\boldsymbol{\theta}^{(a)}))$ are the observables used to compose the objective function and $a$ is the number of observables. The objective function is given by 
+\begin{equation}
+    \mathcal{L}(\boldsymbol{\theta}) = C(\mathbf{O}(\boldsymbol{\theta}))
+\end{equation}
+where $C$ is a function that maps the observed expectation value to the objective function, and usually have the simple linear form 
+\begin{equation}
+    C(\mathbf{X}) = \sum_i c_i X_i
+\end{equation}
+where $c_i$ is a constant defined by the problem as the coefficient of each measurement expectation value, $X_i$ is the $i$-th component of $\mathbf{X}$. Note that such linear form preserves the analytical properties and it is essential for using the analytical methods to directly calculate the gradient or implement analytical gradient free optimization strategy~\cite{CostFunction2020Cao,nakanishi_sequential_2020,ostaszewskiStructureOptimizationParameterized2021,koczor_quantum_2020,schuld_evaluating_2019,Romero2019}.  
+
+A measurement expectation value is given by
+\begin{equation}
+    \braket{\hat{O}_k(\boldsymbol{\theta}^{(k)})} = \bra{\psi_0}U^{(k)\dagger}(\boldsymbol{\theta}^{(k)}) \hat{M}_{k} U^{(k)}(\boldsymbol{\theta}^{(k)})\ket{\psi_0},
+\end{equation}
+where $\ket{\psi_0}$ is the initial state on the quantum computer. 
+$\hat{M}^{(k)}$ is a Hermitian measurement operator, usually chosen to be the tensor product of Pauli operators to match the physical measurement implementation on quantum hardware.  $U_k(\boldsymbol{\theta}^{(k)})$ is the variational ansatz defined as
+\begin{equation}
+    U^{(k)}(\boldsymbol{\theta}^{(k)}) = \prod_j U^{(k)}_j(\theta^{(k)}_j)
+\end{equation}
+and each $U_j$ is a quantum gate, which is generalized as
+\begin{align}
+U^{(k)}_{j}(\boldsymbol{\theta}^{(k)}_j) = \exp(i \theta^{(k)}_{j} P^{(k)}_j)
+\end{align}
+where $P_j^{(k)}$ is a Hermitian matrix, usually is a tensor product of Pauli operators. 
+
+It is sometimes convenient to utilize the superoperator formalism and consider the noise into the optimization process, the expectation value can be written as
+\begin{equation}
+    \braket{\hat{O}_k(\boldsymbol{\theta}^{(k)})} = \operatorname{Tr}[\hat{M}_k\Phi^{(k)}(\boldsymbol{\theta}^{(k)})\rho_0],
+\end{equation}
+where $\rho_0$ is the initial state density operator and $\Phi^{(k)}(\boldsymbol{\theta}^{(k)})$ denote the transformation matrix, which is given by 
+\begin{equation}
+    \Phi^{(k)}(\boldsymbol{\theta}^{(k)}) = \prod_j \Phi^{(k)}_j(\theta^{(k)}_j).
+\end{equation}
+
+For devices that support single shot readout, each sample the quantum device would yield a bit string $\mathbf{s}$. For each string $\mathbf{s}$ a measurement value could be calculated with $M_i(\mathbf{s})$, and the expectation value is the average of each $M_k(\mathbf{s})$.
+\begin{equation}
+    \braket{\hat{O}_k(\boldsymbol{\theta}^{(k)})} = \sum_j \mathrm{Prob(\mathbf{s}}(\boldsymbol{\theta}^{(k)}))=b_jM_k(b_j)
+\end{equation}
+where $b_j \in B$, $B$ covers all possible single shot bit string (all binary numbers from $0$ to $2^{n-1}$) of the measurement outcome.
+
+Due to the physical implementation from the quantum hardware, not all quantum computing systems support single-shot readout. Some systems can only yield expectation value by averaging the signal from the readout. For example, some NMR systems use an ensemble of molecules to implement quantum computing and cannot read the state of each single molecule~ \cite{ebel_dispersive_2021,lu_nmr_2015}. In practice, the quantum hardware system may directly yield an expectation value, and the measurement approaches vary from different physical systems.  
+
+In the following discussion, the upper label "$(k)$" is simplified when there is no ambiguity.
+
+\subsection{Gradient evaluation}
+
+A significant amount of numerical optimization methods requires the knowledge of the gradient of the objective function at a given parameter value. Therefore the evaluation of gradient is rather important and we would cover this topic in a separate subsection. %The gradient can be either approximated by finite difference methods or can be directly measured by exploiting the analytical property of the ansatz.
+
+\subsubsection{Stochastic approximation methods }\label{sec:stochastic_approximation}
+
+Stochastic approximation (SA) is a family of methods used to reconstruct the properties of the expectation value of a function that depends on some random variables. Instead of measuring the expectation values directly, SA recovers the properties of the expectation value with random sampling. SA has been widely used for big data and machine learning applications when the objective function is too costly to evaluate directly. In the context of variational quantum algorithms, the objective function is some function of the expectation value of the quantum state; evaluating the expectation value of a variational ansatz is expensive. Therefore SA naturally fits into the context of variational quantum algorithms and has been used to approximate the gradient of the expectation values.      
+
+\paragraph{Finite difference stochastic approximation (FDSA)}
+
+One of the simplest methods to approximate the gradient is evaluating two function points and using its difference as the approximated gradient. Finite difference stochastic approximation (FDSA)~\cite{kiefer_stochastic_1952} is given by
+\begin{equation}
+    ({g}(\boldsymbol{\theta}_{t}))_{j}
+        =
+        {\frac {    \mathcal{L}(\boldsymbol{\theta}+c_{t}\mathbf{e}_{j})    -    \mathcal{L}(\boldsymbol{\theta}-c_{t}\mathbf{e}_{j})    }
+        {2c_{t}}},
+\end{equation}
+where $({g}(\boldsymbol{\theta}_{t}))_{j}$ is $j$-th component of the gradient at point $\boldsymbol{\theta}_t$. $\mathbf{e}_j$ is the unit vector of the $j$-th dimension, $c_t$ is the displacement value that generally decrease with iteration step number $t$ \cite{kiefer_stochastic_1952}.% The FDSA method requires evaluating all components of the gradient; each component requires two measurements. However, for the approximation of the practice, this is not always necessary. 
+
+\paragraph{Simultaneous perturbation stochastic approximation (SPSA)}
+
+SPSA algorithm approximates the gradient with only two measurements of the objective function. Instead of choosing the measurement points symmetrically, SPSA uses a small random vector to perturb the objective function. While FDSA calculates the gradient at one direction of the variable, SPSA calculates a direction composed of multiple variables.
+\begin{equation}
+    ({g}(\boldsymbol{\theta}_{t}))_{j}
+        =
+        {\frac {    \mathcal{L}(\boldsymbol{\theta}+c_{t}\mathbf{\Delta}_{j})    -    \mathcal{L}(\boldsymbol{\theta}-c_{t}\mathbf{\Delta}_{j})    }
+        {2c_{t}(\Delta_t)_j}},
+\end{equation}
+where $\Delta_t$ is a random perturbation vector. The SPSA algorithm needs to measure two points per iteration, which is friendly to variational quantum algorithms. Also it can be applied to noisy optimization~\cite{s_performance_2012,morison_spsa_2003,wang_mixed_2018}. 
+
+The SPSA methods can approximate the preconditioned gradient for second order optimization methods~\cite{Spall1997AcceleratedMeasurements}. Explanation of second order optimization methods are covered in Sec. \ref{sec:second_order_optimizers}. Consider the preconditioned gradient $g^\prime(\boldsymbol{\theta}) = F^{-1} g(\boldsymbol{\theta})$ where $F$ is some metric with information from second order derivatives of function $f(\boldsymbol{\theta})$. Denote $\Tilde{F}$ as the approximated value for $F$, we have
+
+\begin{equation}
+    \Tilde{F}^{(k)} = \frac{\delta f}{2\epsilon^2}\frac{\Delta^{(k)}_1\Delta^{(k)T}_2+\Delta^{(k)}_2\Delta^{(k)T}_1}{2}
+\end{equation}
+
+where 
+\begin{align}
+    \delta f^{(k)} &= f(\boldsymbol{\theta}^{(k)}+\epsilon\Delta_1^{(k)} +\epsilon\Delta_2^{(k)}) \\ 
+    &- f(\boldsymbol{\theta}^{(k)}+\epsilon\Delta_1^{(k)}) \\
+    &- f(\boldsymbol{\theta}^{(k)}-\epsilon \Delta_1^{(k)} + \epsilon \Delta_2^{(k)}) \\ 
+    &+ f(\boldsymbol{\theta}^{(k)}-\epsilon \Delta_1^{(k)}) \\ 
+\end{align}
+
+The approximated value is estimated from all previously evaluated values with an exponentially smooth estimator 
+ 
+ \begin{equation}
+ \bar{F}^{(k)} = \frac{k}{k+1} \bar{F}^{(k-1)} + \frac{1}{k+1} \Tilde{F}^{(k)}
+ \end{equation}
+
+%TODO: discuss the overall cost of gradient computation.
+
+\subsubsection{Analytical gradient calculation}
+
+%For quantum-classical hybrid algorithms the full gradient can be evaluated by applying the chain rule to the later classical functions after measuring the quantum circuit. 
+The gradient of measurement observables can be evaluated on quantum computers directly by utilizing the analytical property of the ansatz. For ans{\"{a}}tze made from a sequence of parametrized quantum gates, the partial derivative is
+\begin{align}\label{eq:exactDerivative}
+\frac{\partial \braket{\hat{O}_k(\boldsymbol{\theta})}}{\partial \theta_j} &= 
+%\langle \phi_0|U^{\dagger}(\boldsymbol{\theta}) M_k \frac{\partial U(\boldsymbol{\theta})}{\partial\theta_j} |\phi_0\rangle + \langle \phi_0| \frac{\partial U(\boldsymbol{\theta})^{\dagger}}{\partial\theta_j} M_k  U(\boldsymbol{\theta})|\phi_0\rangle \\
+%& = i(\langle \phi_0|U^{\dagger}(\boldsymbol{\theta}) M_k  V^{j}_{k}(\boldsymbol{\theta}) |\phi_0\rangle - \langle \phi_0| V^{j\dagger}_{k}(\boldsymbol{\theta}) M_k U(\boldsymbol{\theta})|\phi_0\rangle) \\
+2 \operatorname{Im} (\langle \phi_0| V^{j\dagger}_{k}(\boldsymbol{\theta}) \hat{M}_k U(\boldsymbol{\theta})|\phi_0\rangle),
+\end{align}
+where the operator $V^{j}_{k}(\mathbf{t})$ is defined as inserting $P^j_k$ between the $(j-1)$-th term and $j$-th term, which comes from the derivative of the $j$-th term:
+\begin{align}
+V^{j}_{k}(\boldsymbol{\theta}) = & e^{i \theta_{N_k} P^{N_k}_k} \cdots e^{i \theta_{j} P^{j}_{k}} P^j_{k} e^{i \theta_{j-1} P^{j-1}_{k}} \cdots  e^{i \theta^{1} P^{1}_{k}}.
+\end{align}
+
+The difficulty of evaluating the gradient directly is that $V^{j\dagger}_{k}(\boldsymbol{\theta}) \hat{M}_k U(\boldsymbol{\theta})$ is usually not Hermitian, therefore there is no known method that can directly convert it to a quantum circuit. Two methods to analytically measure the gradient have been developed, and it is worth noticing that these two methods are measuring the gradient with the exact same mechanism, but with direct and indirect measurements~\cite{mitarai_methodology_2019}. Here, direct measurement means the observed quantity is encoded into a single quantum observable, while indirect measurement calculates the quantity with multiple quantum observables. 
+
+%And now for the expression for the whole derivative in total would be:
+
+%\begin{align}
+%\frac{\partial \mathcal{L}(\boldsymbol{\theta})}{\partial \theta_j} & = 2 \sum^{M}_{i} h_i \left( \sum^{N^{j}_S}_{k} c^j_k \operatorname{Im} (\langle \Phi_0| V^{j\dagger}_{k}(\mathbf{t}) O_i  U(\mathbf{t})|\Phi_0\rangle) \right)
+%\end{align}
+\paragraph{Direct analytical gradient measurement} 
+
+The imaginary part of $\langle \phi_0| V^{j\dagger}_{k}(\boldsymbol{\theta}) \hat{M}_k U(\boldsymbol{\theta}) |\phi_0\rangle$ can be directly evaluate by introducing an ancillary qubit~\cite{Romero2019}. This is done by first prepare the ancillary qubit into the $1/(\sqrt{2})(\ket{0}+\ket{1})$ state, and prepare the rest of quantum register into $\ket{\phi(\boldsymbol{\theta})}$ state. Now the system has the state
+\begin{align}
+    \ket{\psi} = \frac{\sqrt{2}}{2} (\ket{0}+\ket{1})\otimes \ket{\psi(\boldsymbol{\theta})}.
+\end{align}
+We can then apply the $P_{j}$ gate controlled by the ancillary qubit and apply the remaining unitary. Finally we apply the measurement observable controlled by the ancillary qubit. This gives the new state
+\begin{align}
+    \ket{\psi} =\frac{(\ket{0}\otimes U(\boldsymbol{\theta})\ket{\psi_0}+\ket{1}\otimes \hat{M}_k V_k^j(\boldsymbol{\theta})\ket{\phi_0})}{\sqrt{2}}.
+\end{align}
+Now we apply the Hadamard gate to the ancillary qubit, which gives
+\begin{align}
+\ket{\psi} = \frac{\ket{0}\otimes(U\ket{\phi_0}+ \hat{M}_k V^j_k(\boldsymbol{\theta})\ket{\phi_0}) + \ket{1}\otimes(U\ket{\phi_0} - \hat{M}_k V^j_k(\boldsymbol{\theta})\ket{\phi_0})}{2}.
+\end{align}
+The imaginary part of $\langle \phi_0| V^{j\dagger}_{k}(\boldsymbol{\theta}) \hat{O}_i  U(\boldsymbol{\theta})|\phi_0\rangle$ is now encoded in the ancillary qubit in the $Y$-basis.
+\begin{center}
+\begin{figure}[hbt]
+%\begin{align*}
+\[\Qcircuit @C=0.5em @R=.7em {
+\lstick{\ket{0}}&\gate{H}&\qw&\qw&\ctrl{2}&\qw&\qw&\qw&\ctrl{2}&\gate{H}& \gate{\frac{1}{2}X} &\meter\\
+&&...&&&&...&\\
+\lstick{\ket{\bar{0}}}&\gate{U_1}&\qw&\gate{U_{j-1}}&\gate{P_{j}}&\gate{U_{j}}&\qw&\gate{U_{n}}&\gate{M_{k}}&\qw&\qw&\qw\\
+}\]
+%\end{align*}
+\label{fig:gradient_measurement}
+\caption{Quantum circuit that evaluates $\operatorname{Im} (\langle \phi_0| V^{j\dagger}_{k}(\boldsymbol{\theta}) \hat{M}_k U(\boldsymbol{\theta})|\phi_0\rangle)$.}
+\end{figure}
+\end{center}
+
+\paragraph{Indirect analytical gradient measurement} 
+
+To illustrate this method first we make some modifications to our notations. We now absorb the common term of $U$ and $V$ into the state and measurement operator, and define
+\begin{equation}
+\begin{split}
+    W_{k,1}(\boldsymbol{\theta}) &= \exp(i \theta_{j-1} P^{j-1}_{k}) \cdots  \exp(i \theta^{1} P^{1}_{k}) \\
+    W_{k,2}(\boldsymbol{\theta}) &= \exp(i \theta_{n} P^{n}_k) \cdots \exp(i \theta_{j} P^{j}_{k}) \\
+    \ket{\phi(\boldsymbol{\theta})} &= W_{k,1}(\boldsymbol{\theta})\ket{\phi_0} \\
+    Q_k(\boldsymbol{\theta}) &=  W_{k,2}^\dag \hat{M}_i  W_{k,2}.
+\end{split}
+\end{equation}
+Then we have 
+\begin{equation}
+    \frac{\partial \braket{\hat{O}_k(\boldsymbol{\theta})}}{\partial \theta_j} = 2 \operatorname{Im} (\langle \phi(\boldsymbol{\theta})| Q_k(\boldsymbol{\theta}) P_{k} |\phi(\boldsymbol{\theta})\rangle).
+\end{equation}
+We use following construct which is related to $\bra{\phi(\boldsymbol{\theta})}P_kQ_k(\boldsymbol{\theta})\ket{\phi(\boldsymbol{\theta})}$:
+
+\begin{equation}
+    \langle \phi(\boldsymbol{\theta})| (\unit \mp i P_{k})Q_k(\boldsymbol{\theta})(\unit \pm i P_{k} |\phi(\boldsymbol{\theta})\rangle  = \mp  \operatorname{Im} (\langle \phi(\boldsymbol{\theta})| P_{k}Q_k(\boldsymbol{\theta}) |\phi(\boldsymbol{\theta})\rangle) + C,
+\end{equation}
+%    = & \bra{\psi(\boldsymbol{\theta})}    Q_k(\boldsymbol{\theta})  \ket{\psi(\boldsymbol{\theta})} +  \bra{\psi(\boldsymbol{\theta})} P_k Q_k(\boldsymbol{\theta})P_k   \ket{\psi(\boldsymbol{\theta})})\\
+%    & \pm i (\bra{\psi(\boldsymbol{\theta})}  Q_k(\boldsymbol{\theta}) P_k \ket{\psi(\boldsymbol{\theta}) -\bra{\psi(\boldsymbol{\theta})} P_k^\dagger Q_k(\boldsymbol{\theta})  \ket{\psi(\boldsymbol{\theta})}}\\
+where $C = \bra{\phi(\boldsymbol{\theta})}    Q_k(\boldsymbol{\theta})  \ket{\phi(\boldsymbol{\theta})} +  \bra{\phi(\boldsymbol{\theta})} P_k Q_k(\boldsymbol{\theta})P_k   \ket{\phi(\boldsymbol{\theta})})$ is a constant value.
+
+For single qubit gate given by $U_j(\theta_j) = \operatorname{exp}(i\theta_jP_k), P_k \in {X,Y,Z}$ where ${X,Y,Z}$ are Pauli matrices and with exactly two eigenvalues, we have~\cite{schuld_evaluating_2019}
+\begin{align}\label{eq:optimization:shift_rule_principal}
+    \unit \pm i P_{k} = \operatorname{exp}(\mp\frac{\pi}{4} i P_k),
+\end{align}
+therefore
+\begin{align}
+    &\langle \phi(\boldsymbol{\theta})| (\unit \mp i P_{k})Q_k(\boldsymbol{\theta})(\unit \pm i P_{k} |\phi(\boldsymbol{\theta})\rangle \\=& \bra{\phi(\boldsymbol{\theta} \pm \frac{\pi}{2}\mathbf{e}_j)}    Q_k(\boldsymbol{\theta} \pm \frac{\pi}{2}\mathbf{e}_j)  \ket{\phi(\boldsymbol{\theta} \pm \frac{\pi}{2}\mathbf{e}_j)},
+\end{align}
+and 
+\begin{align}
+    \frac{\partial \braket{\hat{O}_k(\boldsymbol{\theta})}}{\partial \theta_j} = \braket{\hat{O}_k(\boldsymbol{\theta}+\frac{\pi}{2}\mathbf{e}_j)} - \braket{\hat{O}_k(\boldsymbol{\theta}-\frac{\pi}{2}\mathbf{e}_j)}.
+\end{align}
+The parameter shift rule can be generalized to a general parameter shift rule and give gradient $g_{gPSR}$ to obtain higher-order derivatives~\cite{schuld_evaluating_2019,Hubregtsen2022}.
+\begin{equation}
+    g_{gPSR}(\theta,\gamma_1,\gamma_2) := r[L(\theta + \gamma_1) + L(\theta + \gamma_2)]
+\end{equation}
+
+where $2r$ is the difference of the eigenvalue of the gate generator $G$. For single-qubit gates with Pauli operators as the generator, $r=1$. 
+
+\begin{equation}
+    g_{gPSR}(\theta,\gamma_1,\gamma_2) = \frac{sin(2r\gamma_1)+sin(2r\gamma_2)}{2}g^{(1)}(\theta) - \frac{cos(2r\gamma_1)-cos(2r\gamma_2)}{4r}g^{(2)}(\theta),
+\end{equation}
+and because of the sinusoidal property of the expectation value, the $k$-th order derivative has a constant multiplier different to the $k-2$-th order derivative.
+\begin{equation}
+ g^{(k+2)} = -\frac{1}{4r} g^{(k)}.
+\end{equation}
+
+So far the analytical gradient methods only apply to parametrized single-qubit gates. The relation presented in Eq. \ref{eq:optimization:shift_rule_principal} holds only when $P_k$ has exactly two different eigenvalues. To use the parameter shift rule for arbitrary two-qubit gates, one can decompose the multi-qubit gate into a sequence of single-qubit gate and product of the same Pauli matrices, which always has two different eigenvalues~\cite{crooks_gradients_2019}. When the operators has 3 different eigenvalues, the gradient can be evaluated with a modified 4-value shift rule~\cite{izmaylov_analytic_2021}. For other operators, the value $P$ can be polynomially expanded into a linear combination of low-rank (2 or 3 eigenvalues) operators~\cite{izmaylov_analytic_2021}. Alternatively, the objective function can be decomposed into trigonometric polynomials, and the gradient can be evaluated with trigonometric interpolation methods~\cite{GeneralGradientsWierichs2022,OptimalityCircuits2021Theis}.
+
+It is worth mentioning that for VQE, the parameter shift rule can be implemented before encoding the fermionic excitation to the qubits, which reduces the required measurement amount~\cite{Kottmann2021_3}.
+
+\subsection{Gradient-based searching strategy}
+
+Gradient-based optimization strategies utilize information from cost function derivatives. First-order optimizers utilize only the first-order derivatives of the cost function, and second-order optimizers utilize both first-order and second-order derivatives, at the cost of computing the second-order derivatives. In this section, we discuss some of the popular gradient-based optimizers.
+
+\subsubsection{First order optimizers}
+
+First-order optimizers for variational ansatz are mostly borrowed from the deep learning communities. These methods have been widely used for the early studies of variational quantum algorithms.
+
+
+\paragraph{Simple gradient descent}
+
+Simple gradient descent is the simplest first-order method searching for local minimum with gradient~\cite{Lemarechal12cauchyand,Courant1943Variational}. The algorithm takes a step towards the opposite direction of the gradient, and the step size is calculated based on the absolute value of the gradient and a meta-parameter $\eta$ usually referred to as the learning rate. Almost all the gradient-based methods are developed based on the idea of simple gradient descent. 
+
+\vspace{0.5cm}
+
+\begin{algorithm}[H]
+\SetAlgoNoLine%
+\SetKw{KwVariable}{~} % @SX: I add this for you, is it right?
+\KwVariable{$\eta$: Learning rate.}\\
+ \While{Not converged}{
+  Calculate gradient $g_t = g(\theta_t)$\;
+  $\theta_{t+1} = \theta_{t} - \eta g_{t}$
+ }
+\caption{Simple gradient descent}
+\end{algorithm}
+
+
+Adaptive optimizers well developed from the deep learning community are adapted to the ansatz parameter optimization. %As widely used in machine learning, they are trailed at the early stage of variational quantum circuits.
+%\textcolor{red}{References for quantum}
+
+\paragraph{RMSProp}
+RMSProp is an adaptive learning rate optimization method. The RMSProp divides the gradient by the weighted moving average of the root mean square of gradient value, which enhances the direction of the gradient and reduces the significance of the gradient magnitude.  
+
+
+\vspace{0.5cm}
+
+\begin{algorithm}[H]
+\SetAlgoNoLine%
+\SetKw{KwVariable}{~} % @SX: I add this for you, is it right?
+\KwVariable{$\gamma$: Moving average parameter.}\\
+\KwVariable{$\eta$: Learning rate.}\\
+ \While{Not converged}{
+  Calculate gradient $g_t = g(\theta_t)$\;
+  
+  $E[g^2]_t = \gamma E[g^2]_{t-1} + (1 - \gamma) g^2_t$\;
+  
+  $\theta_{t+1} = \theta_{t} - \dfrac{\eta}{\sqrt{E[g^2]_t + \epsilon}} g_{t}$
+ }
+\caption{RMSProp optimizer}
+\end{algorithm}
+
+
+\vspace{0.5cm}
+
+%\textcolor{red}{References for quantum}
+
+
+\paragraph{Adam optimizer}
+
+Adaptive moment (Adam) optimizer \cite{kingma_adam_2017} is a widely used optimizer developed from the deep learning community to solve the stochastic gradient-based optimization problem. The Adam optimizer performs efficient stochastic optimization with only first-order gradient. Adam optimizers utilize adaptive moment estimation as an extra on RMSProp. Instead of descent to the gradient direction, it jumps towards the momentum direction, the weighted moving average of the gradient.
+
+\vspace{0.5cm}
+
+
+\begin{algorithm}[H]
+\SetAlgoNoLine%
+\SetKw{KwVariable}{~} % @SX: I add this for you, is it right?
+\KwVariable{$\beta_{1}$: Moving average parameter for past gradients.}\\
+\KwVariable{$\beta_{2}$: Moving average parameter for past squared gradients.}\\
+ \While{Not converged}{  
+  Calculate gradient $g_t = g(\theta_t)$
+  
+  $m_t = \beta_1 m_{t-1} + (1 - \beta_1) g_t$ \; 
+  $v_t = \beta_2 v_{t-1} + (1 - \beta_2) g_t^2$ \;
+  
+  
+$m^\prime_t = \dfrac{m_t}{1 - \beta^t_1}$ \; 
+$v^\prime_t = \dfrac{v_t}{1 - \beta^t_2}$ \;
+$\theta_{t+1} = \theta_{t} - \dfrac{\eta}{\sqrt{v^\prime_t} + \epsilon} m^\prime_t$ \;
+ }
+ \caption{Adam optimizer}
+\end{algorithm}
+
+
+\vspace{0.5cm}
+
+%\textcolor{red}{References for quantum}
+
+Since the Adam optimizer utilizes moving average for both momentum and magnitude estimations, it can be applied to scenarios with noisy gradients.
+
+\subsubsection{Second order optimizers} \label{sec:second_order_optimizers}
+
+Second-order optimization techniques make use of the second-order derivative of the objective function to determine the descent direction. 
+
+\paragraph{Broyden–Fletcher–Goldfarb–Shanno (BFGS) algorithm} %\cite{Hawking1971}
+
+The BFGS algorithm~\cite{broyden_convergence_1970,fletcher_new_1970,goldfarb_family_1970,shanno_conditioning_1970} is a gradient-based iterative approach to solve standard nonlinear optimization problems. The direction of each step is obtained by preconditioning the gradient with curvature information. Preconditioning the gradient in the context of optimization means it modifies the gradient before taking the descending step. The BFGS algorithm modifies the gradient based on the curvature information obtained by the Hessian. In practice, the Hessian is difficult to calculate precisely, even for conventional problems with large parameter space. A different variant of the BFGS method has been developed to approximate the Hessian, such as Limited-memory BFGS (L-BFGS) \cite{byrdt_limited_nodate}. 
+
+\vspace{0.5cm}
+
+
+\begin{algorithm}[H]
+\SetKw{KwVariable}{~}
+\KwVariable{$B_{k}$: Approximated Hessian at step $k$.} \\
+\KwVariable{$\mathcal{L}(\theta)$: Objective function}\\
+\KwVariable{$\alpha_k$: stepsize at step $k$ }\\
+\KwVariable{$\mathbf{p}_k$: Descent direction}\\
+
+\SetAlgoNoLine%
+
+Calculate $B_0$ from initial guess $x_0$\;
+
+ \While{Not converge}{
+ Obtain $\mathbf{p}_{k}$ by solving $B_{k}\mathbf {p} _{k}=-\nabla \mathcal{L}(\mathbf {\theta} _{k})$\;
+ Perform line search for $\alpha _{k}=\argmin \mathcal{L}(\mathbf {\theta} _{k}+\alpha \mathbf {p} _{k})$ \;
+ Set $ \mathbf {s} _{k}=\alpha _{k}\mathbf {p} _{k}$ and update $ \mathbf {\theta} _{k+1}=\mathbf {\theta} _{k}+\mathbf {s} _{k}$\;
+Set $\mathbf {y} _{k}={\nabla \mathcal{L}(\mathbf {\theta} _{k+1})-\nabla \mathcal{L}(\mathbf {\theta} _{k})}$\;
+Set $ B_{k+1}=B_{k}+{\frac {\mathbf {y} _{k}\mathbf {y} _{k}^{\mathrm {T} }}{\mathbf {y} _{k}^{\mathrm {T} }\mathbf {s} _{k}}}-{\frac {B_{k}\mathbf {s} _{k}\mathbf {s} _{k}^{\mathrm {T} }B_{k}^{\mathrm {T} }}{\mathbf {s} _{k}^{\mathrm {T} }B_{k}\mathbf {s} _{k}}}$\;
+ }
+ \caption{BFGS algorithm}
+\end{algorithm}
+
+%\textcolor{red}{References for quantum}
+\vspace{0.5cm}
+
+Although the Hessian of a variational ansatz landscape can be calculated with analytical method \cite{huembeli_characterizing_2021}, it is still difficult to calculate the full Hessian. Therefore this method is only used in the very early age of simulating conventional algorithms or as a baseline of comparison for lately developed optimizers. The SPSA algorithm from section \ref{sec:stochastic_approximation} can be used to approximate a Hessian.
+
+\paragraph{Quantum natural gradient}
+
+Natural gradient descent is a well-studied second-order optimization technique for numerical optimization. Natural gradient descent uses the steepest descent direction for the information geometry instead of taking each step with the gradient from parameter space~\cite{amari_natural_1998,martens_new_2020,wierichs_avoiding_2020}. A similar principle can be applied to optimizing the parameter of quantum variational ansatz, which is then referred to as quantum natural gradient descent. The idea of taking steps in another manifold can also be extended beyond information geometry~\cite{Wiersema2022OptimizingGradientFlow}.
+
+Before diving into the details of quantum natural gradients, it is worth noting that the pure state quantum natural gradient descent is, in fact, equivalent to imaginary time evolution~\cite{stokes_quantum_2020}.
+The imaginary time evolution is defined by
+\begin{equation}
+    \ket{\psi(\tau)} = A(\tau)e^{-H\tau}\ket{\psi(0)}.
+\end{equation}
+The state at $\tau \rightarrow \infty$ is the ground state of $H$. Instead of evolving the state directly, variational imaginary time evolution calculates the evolution direction with McLachlan's variational principle and simulates the evolution by variating the ansatz parameters~\cite{McArdle2019}.
+
+The idea of natural gradient descent can be explained as follows. Consider the objective function $\mathcal{L}(\theta)$ is a likelihood function $\mathcal{L}(\theta|x)$ where $x$ denote the measurement outcome of the distribution. For a general optimization, the likelihood function is given by the definition of the problem. While the traditional gradient descent algorithm takes one step towards the gradient direction in the parameter space, such direction may not necessarily be the direction that most significantly changes the difference of the distribution of $\mathcal{L}(\theta|x)$. From the statistical point of view, we would like each step to be taken in the direction that maximizes the distribution difference of the cost function. The natural gradient is then invented to present the gradient of the difference of the distribution function, and the corresponding geometry space is called information geometry.
+
+The likelihood function's distribution difference from different $\theta$ can be characterized by the Kullback–Leibler (KL) divergence \cite{Kullback1951}. The KL divergence defines a distance measure between $\mathcal{L}(\theta|x)$, and when parameter $\theta$ is mapped to the likelihood function, it creates a Riemannian manifold with a metric $F$, where for small vector $d\theta$ in the parameter space, the distance $ds$ on the manifold is 
+\begin{equation}
+    ds^2 = d\theta^T F d\theta.
+\end{equation}
+Here $F$ is the Fisher information metric, which is the Hessian of the KL divergence. The Riemannian manifold describes the information geometry of the problem. The natural gradient descent instead takes the gradient from the information geometry and maximizes the KL divergence for each step. The natural gradient is defined as 
+\begin{equation}
+    \Tilde{g} = F^{-1}g  =F^{-1} \grad \mathcal{L}(\theta).
+\end{equation}
+
+So far our discussion about natural gradient descent are with real space. To implement natural gradient descent for variational quantum algorithms, we can use the Fubini-Study metric as the Fisher Information metric in Hilbert space~\cite{safranek_simple_2018,liu_quantum_2020}, which is given by \cite{wierichs_avoiding_2020,yamamoto_natural_2019,stokes_quantum_2020,Straaten2020}
+\begin{equation}
+  \begin{split}
+    \left(F\right)_{ij} &\coloneqq \operatorname{Re}({\braket{\partial_{i}\psi|\partial_{j}\psi})-\braket{\partial_{i}\psi|\psi}}\braket{\psi|\partial_{j}\psi},
+  \end{split}
+\end{equation}
+where $\ket{\partial_i \psi}\coloneqq \frac{\partial U(\boldsymbol{\theta})}{\partial \theta_i}\ket{\psi_0}$. These quantities can be evaluated with similar techniques as the Hadamard test. More details of Hadamard test has been included in appendix \ref{sec:hadamard-test}.
+
+There are a few challenges for the quantum natural gradient. The first is the quantum natural gradient is defined on pure states, while in practice we need to consider the noise and non-unitary evolution. To solve this problem, the Fubini-Study metric can be generalized to a non-unitary circuit \cite{koczor_quantum_2020}.
+\begin{equation} 
+	(F)_{ij} = \frac{1}{2} \Tr[\rho(\boldsymbol{\theta})   (L_i L_j + L_j L_i) ],
+\end{equation}
+where $L$ is the symmetric difference defined as 
+\begin{equation} 
+	\partial_k \rho(\boldsymbol{\theta})  =: \frac{\partial \rho(\boldsymbol{\theta})}{\partial \theta_k} =  \frac{1}{2}(L_k \rho(\boldsymbol{\theta}) +\rho(\boldsymbol{\theta}) L_k).
+\end{equation}
+Suppose the density matrix of mixed state has fidelity $f_{id} = 1-\epsilon$, which means the eigenvalue $\lambda_1 = f_{id}$. Such density matrix is given by
+\begin{equation}
+    \rho_\epsilon = (1-\epsilon)\ket{\psi_1}{\bra{\psi_1}} + \epsilon \sum_{k=2}^d \lambda_k \ket{\psi_k}\bra{\psi_k}.
+\end{equation}
+The Fisher information matrix on NISQ device can be approximated efficiently as
+\begin{equation}
+    (F)_{ij} = 2\operatorname{Tr}[\frac{(\partial_i\rho_\epsilon)(\partial_j\rho_\epsilon)}{f_{id}}] + \mathcal{O}(\frac{1-f_{id}}{d}).
+\end{equation}
+Term $\frac{1}{f_{id}}$ is ignored since it is only a scale factor. $\operatorname{Tr}[(\partial_i\rho_\epsilon)(\partial_j\rho_\epsilon)]$ is a Riemannian metric tensor and can be evaluated with SWAP tests.
+
+Secondly, the quantum natural gradient can be ill-conditioned and might lead to unreasonably large updates due to very small eigenvalues of $F$. In practice, the learning rate for the initial steps needs to be chosen very small or one needs to use \textit{Tikhonov} regularization to add a small constant to the diagonal of $F$ before the inversion. Another method to get a stable gradient is by doing a “half-inversion”, given by \cite{haug_optimal_2021}
+\begin{equation}
+    \Tilde{g} =F^{-\alpha} \grad \mathcal{L}(\theta)
+\end{equation}
+
+where $\alpha$ is considered a regularization parameter. When $\alpha=0$, no precondition is applied to the original gradient, and when $\alpha=1$ the formula gets back to the original natural gradient. In practice, $\alpha$ is often chosen to be $0.5$. 
+
+The third challenge comes from the cost of constructing the Fisher information metric. To fully construct the Fisher information metric with $p$ parameters, $p^2$ different expectation values needs to be estimated from the quantum computer. For a large $p$ the cost of construct the Fisher information metric can be significant. Gacon \textit{et al.} \cite{Gacon2021simultaneous} proposed that quantum natural gradient can also be approximated with the SPSA methods previously discussed in Sec. \ref{sec:stochastic_approximation}. Given the Fisher information metric $F(\boldsymbol{\theta}_1,\boldsymbol{\theta}_2) = |\braket{\psi_0|U^T(\boldsymbol{\theta_1})U(\boldsymbol{\theta_2})|\psi_0}|$, the estimated gradient $\Tilde{g}$ is given by
+
+\begin{equation}
+    \Tilde{g}^{(k)} = \frac{\delta F}{2\epsilon^2}\frac{\Delta^{(k)}_1\Delta^{(k)T}_2+\Delta^{(k)}_2\Delta^{(k)T}_1}{2}
+\end{equation}
+
+where 
+\begin{align}
+    \delta F^{(k)} &= F(\boldsymbol{\theta}^{(k)},\boldsymbol{\theta}^{(k)}+\epsilon\Delta_1^{(k)} +\epsilon\Delta_2^{(k)}) \\ 
+    &- F(\boldsymbol{\theta}^{(k)},\boldsymbol{\theta}^{(k)}+\epsilon\Delta_1^{(k)}) \\
+    &- F(\boldsymbol{\theta}^{(k)},\boldsymbol{\theta}^{(k)}-\epsilon \Delta_1^{(k)} + \epsilon \Delta_2^{(k)}) \\ 
+    &+ F(\boldsymbol{\theta}^{(k)},\boldsymbol{\theta}^{(k)}-\epsilon \Delta_1^{(k)}), \\ 
+\end{align}
+
+and the exponentially smooth estimator 
+ 
+ \begin{equation}
+ \bar{F}^{(k)} = \frac{k}{k+1} \bar{F}^{(k-1)} + \frac{1}{k+1} \Tilde{F}^{(k)}.
+ \end{equation}
+
+The simulation results from ~\cite{Gacon2021simultaneous} show that the stochastic approximated natural gradient does not perform as well as the original natural gradient, however, it still improves the convergence speed compared to the standard gradient descent.   
+
+\subsection{Gradient-free searching strategy}
+
+The gradient-free search strategy is the other large category of optimization strategy. Because of the analytical property of the quantum ansatz, a few gradient-free searching strategies are developed for optimizing the variational ansatz. 
+
+\subsubsection{Gradient-free optimizers}
+
+\paragraph{Nelder-Mead algorithm}
+
+The Nelder-Mead algorithm~\cite{nelder_simplex_1965} is a gradient-free heuristic search method based on a simplex. A simplex $\mathcal{S}$ in $\mathbb{R}^k$ is defined as the convex hull of $k+1$ vertices in $\mathbb{R}^k$ . It can be considered a multidimensional version of triangles. For example, in $\mathbb{R}^2$ a simplex is a triangle, and in $\mathbb{R}^3$ a simplex is a tetrahedron. 
+
+The algorithm first generates a random simplex and then transforms the simplex $\mathcal{S}$ and decreases the function values at each vertex iteratively. In each iteration, the objective function value at one or more test points is measured. Then a new simplex is updated by replacing the vertices with one of the test points.
+
+\vspace{0.5cm}
+
+
+\begin{algorithm}[H]
+\SetAlgoNoLine%
+\SetKw{KwVariable}{~} % @SX: I add this for you, is it right?
+\KwVariable{$\alpha_r$: Reflection coefficient.}\\
+\KwVariable{$\alpha_e$: Expansion coefficient.}\\
+\KwVariable{$\alpha_c$: Contraction coefficient.}\\
+\KwVariable{$\alpha_s$: Shrink coefficient.}\\
+ \While{Not converge}{
+ 
+  Ordering the existing test points, so that $\mathcal{L}(\boldsymbol{\theta}_{0}) \leq \mathcal{L}(\boldsymbol{\theta}_{1}) ... \leq \mathcal{L}(\boldsymbol{\theta}_{n+1})$
+ 
+  Calculate $\mathbf {\theta} _{o}$, the centroid of all points except $\mathbf {\theta} _{n+1}$ \;
+
+  Calculate reflection point $\boldsymbol{\theta}_{r}=\boldsymbol{\theta}_{o}+\alpha_r (\boldsymbol{\theta}_{o}-\boldsymbol{\theta}_{n+1})$ with $\alpha_r >0$.
+  
+  \If{The reflection point the not the best estimation, but better than the second worst point $\theta_n$}{
+   replace the worst point $ \mathbf {\theta} _{n+1}$ with the reflected point $\mathbf {\theta} _{r}$\;
+   continue\;
+   }
+   
+  \If{Reflected point $\boldsymbol{\theta}_{r}$ is the best point}{
+    Calculate expansion point $\boldsymbol{\theta}_{e}=\boldsymbol{\theta}_{o}+\alpha_e (\mathbf {\theta} _{r}-\mathbf {\theta} _{o})$ with $\alpha_e >1$
+    
+   replace the worst point $ \mathbf {\theta} _{n+1}$ with the best point from expansion point $\boldsymbol{\theta}_{e}$ or reflected point $\mathbf {\theta} _{r}$\;
+  }
+  
+  Calculate contraction point $ \mathbf {\theta} _{c}=\mathbf {\theta} _{o}+\alpha_c (\mathbf {\theta} _{n+1}-\mathbf {\theta} _{o})$ with $ 0<\alpha_c \leq 0.5$.
+
+  \If{Contraction point  $ \mathbf {\theta} _{c}$ is better than the worst point $ \mathbf {\theta} _{n+1}$}{
+    Replacing the worst point $ \mathbf {\theta} _{n+1}$ with the contracted point $ \mathbf {\theta} _{c}$ \;
+    Continue \;
+  }
+ 
+  \tcp{Shrink}
+  Replace all points except the best point $ \mathbf {\theta} _{1}$ with
+    $ \mathbf {\theta} _{i}=\mathbf {\theta} _{1}+\alpha_s (\mathbf {\theta} _{i}-\mathbf {\theta} _{1})$
+ }
+\caption{Nelder-Mead algorithm}
+\end{algorithm}
+
+
+\vspace{0.5cm}
+
+
+The Nelder-Mead algorithm is gradient-free, and for each iteration, only very limited points need to be measured. Therefore it is very friendly to variational quantum algorithms.  A result from \cite{Lavrijsen2020ClassicalDevices,Pellow-Jarman2021} shows the Nelder-Mead algorithm performs well in a low-noise environment, but not as well when a noise model is included.  
+
+\paragraph{Powell's conjugate direction algorithm}
+
+Powell's conjugate direction algorithm is a gradient-free optimization method. Powell's algorithm takes a starting point and two non-parallel vectors as inputs. The algorithm first search bidirectionally through the direction parallel to the first vector, and uses the minimal point as the direction, and search through the next direction parallel to the second vector. A conjugate direction can be defined as the displacement between the initial starting point and the optimal point of the second iteration. The algorithm repeats this process until it converges. The linear directional search can be implemented with Golden-section search or Brent's method~\cite{Powell1964}. 
+
+\begin{algorithm}[H]
+\SetAlgoNoLine%
+ 
+
+\SetKw{KwVariable}{~}
+\KwVariable{$x_k$: Searched minimal point. $x_0$ is the starting point.} \\
+\KwVariable{$\mathcal{L}(\theta)$: Objective function}\\
+\KwVariable{$\alpha_k$: Searching displacement }\\
+\KwVariable{$\mathbf{d}_k$: Searching direction. $\mathbf{d}_1$ and $\mathbf{d}_2$} are the starting direction.\\
+ \While{Not converged}{  
+  Search for $\alpha_k$ that minimize $\mathcal{L}(\mathbf{x}_{k-1}+\alpha_k \mathbf{d}_k)$ \\
+  Set $x_k = x_{k-1} + \alpha_k d_k$.\\
+  Remove the initial vectors by assigning $\mathbf{d}_j = \mathbf{d}_{j+1}$
+  Set $\mathbf{d}_N = \mathbf{x}_N - \mathbf{x}_0 $ 
+  Search for $\alpha_N$ that minimize $\mathcal{L}(\mathbf{x}_{N}+\alpha_N \mathbf{d}_N)$ \\
+  Set $\mathbf{x}_0 = \mathbf{x}_0 + \alpha_N \mathbf{d}_N$
+
+ }
+ \caption{Powell's algorithm}
+\end{algorithm}
+
+\subsubsection{Analytical optimization} \label{sec:analytical_opt}
+
+In this section, we review optimization methods that take advantage of the analytical property of the objective function landscape. Consider the ansatz circuit as a CPTP mapping as a product of individual quantum super-operators
+\begin{equation}\label{fullansatz}
+\Phi(\boldsymbol{\theta}) = \Phi_k(\theta_k) \dots \Phi_2(\theta_2) \Phi_1(\theta_1).
+\end{equation}	
+Here $\Phi_k(\theta_k)$ are $k$-th parameterised quantum gates where $\Phi_k(\theta_k) \rho := U_k \rho U_{k}^{\dagger} $
+and $U_k=\exp(- i \frac{\theta_k}{2} P_k)$. Here $P_k$ are tensor products of single-qubit
+Pauli operators as $P_k \in \{I, X, Y ,Z\}^{\otimes N}$. Each superoperator can be expanded around $\boldsymbol{\theta}_0$ as
+\begin{equation}
+\Phi_k(\theta_0 + \theta) = 
+a(\theta) \Phi_{ak}
++ b(\theta) \Phi_{bk}
++ c(\theta) \Phi_{ck},
+\end{equation}
+where $a(\theta), b(\theta) = 1\pm\cos(\theta)$ and $c(\theta) = \frac{1}{2}\sin(\theta)$.
+
+Now we only allow $n$ parameters to be variables and fix all the others, the whole ansatz can be expanded into 
+\begin{equation}\label{eq:optimization:ansatz_expansion}
+\Phi(\boldsymbol{\theta}_0 {+} \boldsymbol{\theta})
+= 
+\prod_{k=1}^\nu
+[a(\theta_k) \Phi_{ak}
++ b(\theta_k) \Phi_{bk}
++ c(\theta_k) \Phi_{ck}],
+\end{equation}	
+where $\boldsymbol{\theta}$ is the displacement around the reference point $\mathbf{\theta_0}$.
+
+\paragraph{Sequential optimization with sinusoidal fitting (Rotosolve)}
+
+A variety of quantum variational algorithms are dealing with linear objective functions. For example, the energy value for VQE is a linear objective function. For these problems, the objective function landscape of every single variable is a sinusoidal function. The full information of such function can be obtained by simply measuring three different points of the objective function. The sequential optimization method \cite{Vidal2018, nakanishi_sequential_2020,ostaszewskiStructureOptimizationParameterized2021} utilizes this feature and calculates the minima of the sinusoidal function directly. By iteratively finding the minima of every single parameter while fixing the other parameters, a greedy method can be derived to efficiently optimize the parameters of the ansatz.
+
+From Eq.~(\ref{eq:optimization:ansatz_expansion}) we can simplify $a(\theta), b(\theta)$ and $b(\theta)$ into a simpler form if we only allow one single parameter to change. When all the parameters are independent, the objective function can be transformed as 
+\begin{align}
+\mathcal{L}(\boldsymbol{\theta}_0 {+} \theta \cdot e_i) = \mathcal{L}_i(\theta)_{\boldsymbol{\theta}_0} = & \operatorname{Tr}[M \Phi_i(\boldsymbol{\theta}_0 {+} \theta \cdot e_i)]\\
+= & \operatorname{Tr}[M(a(\theta) \Phi_{a}
++ b(\theta) \Phi_{b}
++ c(\theta) \Phi_{c})]\\
+= & A \sin(\theta + \phi) + C.
+\end{align}
+The parameter can be evaluated analytically with following equation when the hermitian generator has exactly two eigenvalues.
+\begin{equation}
+\begin{split}
+    \theta^* = \phi - \tfrac{\pi}{2} - \arctantwo \big( \phi_1 , ~ \phi_2\big) + 2\pi k,
+\end{split}
+\end{equation}
+where 
+\begin{equation}
+    \phi_1 = 2\mathcal{L}_i(\theta)_{\boldsymbol{\theta}_0} - \mathcal{L}_i(\theta+\frac{\pi}{2})_{\boldsymbol{\theta}_0} - \mathcal{L}_i(\theta-\frac{\pi}{2})_{\boldsymbol{\theta}_0} 
+\end{equation}
+\begin{equation}
+    \phi_2 =\mathcal{L}_i(\theta+\frac{\pi}{2})_{\boldsymbol{\theta}_0} - \mathcal{L}_i(\theta-\frac{\pi}{2})_{\boldsymbol{\theta}_0}.
+\end{equation}
+
+All the single qubit gates have Pauli operators as their generators, which satisfy the above equations. The cost function can also sum sinusoidal functions with different period~\cite{GeneralGradientsWierichs2022,Vidal2018CalculusQuantumCircuit} when the generator has more than two distinct eigenvalues.
+
+When several gates share the same parameter, the objective function can be transformed into similar form but with different oscillation period:
+\begin{align}
+\mathcal{L}(\boldsymbol{\theta}_0 {+} \theta \cdot e_i)
+= & A \sin( k \theta + \phi) + C,
+\end{align}
+where $k$ is the number of appearances of $\theta_i$ in the ansatz. The same approach can be applied to find the analytical solution.
+
+It is important to note that the conditions for validity of this optimization method implies that it cannot be applied to some ans{\"{a}}tze (for instance in the case where a parameterized controlled unitary is used) In general terms, Rotosolve and its subsequent extension require that all parametrized gate subject to optimization have  $2\pi$-periodicity and full-rank for the Hermitian matrix generating the rotation. The work presented by Wierisch \textit{et al.} \cite{Wierichs2022}, relying on alternative general parameter-shift rules, demonstrates a generalization of Rotosolve which allows for it to be used on all quantum gates with arbitrary frequencies.
+
+\paragraph{Analytical Free-Axis Selection with fixed rotation angles (Fraxis)}
+
+The analytical method we mentioned so far has fixed rotation axis in the ansatz, but with a flexible rotation angle. The Analytical Free-Axis Selection (Fraxis) method implemented an alternative version where angles are fixed but the axis can be flexible \cite{Watanabe2021WatanabeOptimizingSelection}. The method is shown to provide faster optimization than Rotosolve in some numerical tests. Wada \textit{et al. } \cite{Wada2021SimulatingCircuits} further improved on this idea by optimizing the angle and the axis at the same time for time evolution simulations. 
+
+The Fraxis method considers each single qubit gate in the ansatz as 
+\begin{equation}
+    U_k(\theta_k) = e^{-i\frac{\theta_k}{2}\hat{n}_k\cdot \Vec{P}}
+\end{equation}
+
+where $U_k(\theta_k)$ is the $k$-th single qubit rotation, $\theta_k$ is the rotation angle, and is the $\hat{n}_k$ is the direction vector characterize the rotation direction of the hermitian generator, given by  
+
+\begin{equation}
+    \hat{n}_k\cdot\Vec{P} =  n_{k,x}X + n_{k,y}Y + n_{k,z}Z \mathrm{~for~} \hat{n}_k \in \mathcal{R}^3, |\hat{n}_k| = 1.   
+\end{equation}
+
+Here $X$,$Y$,$Z$ are Pauli matrices.
+
+With Lagrange multiplier method, the optimal $\hat{n}_k$ is found to satisfy following linear equations: 
+
+\begin{equation}
+    \sin^2(\frac{\theta_k}{2}\mathbf{R} - 2\lambda^*\hat{n}_{k^*}) = -\alpha_{\theta_k}\mathbf{b}
+\end{equation}
+
+where 
+
+\begin{equation}
+    \mathbf{b} = (tr(M[\rho,X]),tr(M[\rho,Y]),tr(M[\rho,Z]))^T \label{eq:fraxis}
+\end{equation}
+
+and 
+
+
+\begin{eqnarray}
+    r_x &\equiv& \mbox{tr}\left(MX\rho X\right),\\
+    r_y &\equiv& \mbox{tr}\left(MY\rho Y\right),\\
+    r_z &\equiv& \mbox{tr}\left(MZ\rho Z\right),\\
+    r_{(x+y)} &\equiv& \mbox{tr}\left(M \left(\frac{X+Y}{\sqrt{2}}\right) \rho  \left(\frac{X+Y}{\sqrt{2}}\right)\right),\\
+    r_{(x+z)} &\equiv& \mbox{tr}\left(M \left(\frac{X+Z}{\sqrt{2}}\right) \rho  \left(\frac{X+Z}{\sqrt{2}}\right)\right),\\
+    r_{(y+z)} &\equiv& \mbox{tr}\left(M \left(\frac{Y+Z}{\sqrt{2}}\right) \rho  \left(\frac{Y+Z}{\sqrt{2}}\right)\right).
+\end{eqnarray}
+
+\begin{equation}\label{eq:R-def}
+    \mathbf{R} \equiv 
+    \begin{pmatrix}
+    2r_x  & 2r_{(x+y)} - r_x - r_y & 2r_{(x+z)} - r_x - r_z\\
+    2r_{(x+y)} - r_x - r_y & 2r_y & 2r_{(y+z)} - r_y - r_z \\
+    2r_{(x+z)} - r_x - r_z & 2r_{(y+z)} - r_y - r_z & 2r_z
+    \end{pmatrix}.
+\end{equation}
+
+The optimum value $\hat{n}_k^*$ can be solved by measuring all elements in $\mathbf{R}$ and solving the linear equation \ref{eq:fraxis}.   When $\theta_k = \pi$, the method can be further simplified and $\hat{n}_k^*$ becomes the eigenvector of $\mathbf{R}$.  
+
+\paragraph{Quantum analytical descent}
+
+The full landscape of the expectation value could be too expensive to construct. However, it can be approximated. Previous works from Sung et.al \cite{sung_using_2020} approximate the local region with a predefined model, such as a quadratic polynomial.  The quantum analytical descent \cite{koczor_quantum_2020} approximates the landscape properly and utilizes a similar idea of sequential optimization with sinusoidal fitting.  Instead of fitting the sinusoidal function for each parameter iteratively, the entire landscape of the linear objective function can be approximated efficiently with a quadratic number of parameters and quadratic number of measurements. 
+
+The expansion of the entire ansatz has $3^p$ terms, which cannot be efficiently evaluated. The full expansion of the ansatz can be approximated into 
+\begin{align} \label{full-circuit}
+\Phi(\boldsymbol{\theta}) = A(\boldsymbol{\theta}) \Phi^{(A)} &+ \sum_{k=1}^p
+[B_k(\boldsymbol{\theta}) \Phi^{(B)}_k + C_k(\boldsymbol{\theta}) \Phi^{(C)}_k] \\
+&+\sum_{l>k}^p [ D_{kl}(\boldsymbol{\theta}) \Phi^{(D)}_{kl}] + O(\sin^3 \epsilon). \nonumber
+\end{align}
+Here $A, B_k, C_k, D_{kl} : \mathbb{R}^p \mapsto \mathbb{R}$ are products of simple univariate trigonometric functions. And the loss function can be constructed as
+\begin{align} \label{full-energy}
+\mathcal{L}(\boldsymbol{\theta}) = A(\boldsymbol{\theta}) \mathcal{L}^{(A)} &+ \sum_{k=1}^p
+[B_k(\boldsymbol{\theta}) \mathcal{L}^{(B)}_k + C_k(\boldsymbol{\theta}) \mathcal{L}^{(C)}_k] \\
+&+\sum_{l>k}^p [ D_{kl}(\boldsymbol{\theta}) \mathcal{L}^{(D)}_{kl}] + O(\sin^3 \epsilon). \nonumber
+\end{align}
+
+Here $\mathcal{L}^{(A)},\mathcal{L}^{(B)}_k,\mathcal{L}^{(C)}_k, \mathcal{L}^{(D)}_{kl} \in \mathbb{R}$ can be calculated from the hardware by measuring expectation value at $1 + 2p^2 -2 p$ different points where $p$ is the number of parameters. 
+
+After the objective function landscape has been approximated, the author uses natural gradient descent to find the minimum conventionally. The natural gradient descent requires the Fubini-Study metric tensor to find the natural gradient, which can be approximated as 
+
+\begin{equation}
+[F_Q]_{pq} =
+F_{BB} F_{BB}(\boldsymbol{\theta})
++ F_{AB} F_{AB}(\boldsymbol{\theta}) + \dots  O(\sin^2\epsilon),
+\end{equation}
+where
+\begin{align}
+	F_{BB}(\boldsymbol{\theta}) :=& 2\frac{\partial  B_p(\boldsymbol{\theta})}{\partial \theta_p}  \frac{\partial  B_q(\boldsymbol{\theta})}{\partial \theta_q}\\
+	F_{AB}(\boldsymbol{\theta}) :=&  2\frac{\partial B_p(\boldsymbol{\theta}) }{\partial \theta_p}  \frac{\partial A(\boldsymbol{\theta}) }{\partial \theta_q} 
+	+ 2 \frac{\partial A(\boldsymbol{\theta}) }{\partial \theta_p}  \frac{\partial B_n(\boldsymbol{\theta}) }{\partial \theta_q}.
+\end{align}
+%\textcolor{red}{some extra word and double check equations above}
+
+Once the local minima of the approximated landscape have been found, the algorithm updates the best-guessed parameters in this iteration to be the local minima. Then repeat the approximation and conventional optimization steps until the algorithm converges.
+
+%\textcolor{red}{Pro and Con}
+
+
+\paragraph{Jacobi diagonalization and Anderson acceleration}
+
+An analytical method inspired by Jacobi diagonalization and Anderson acceleration has been introduced in Ref. \cite{parrish_jacobi_2019}. This method is an improved version of the sequential sinusoidal fitting. Instead of fitting the landscape one dimension at a time, the landscape can be accurately reconstructed by only allowing a small subset of parameters to vary. This technique is similar to the Jacobi diagonalization algorithm for large matrices by iteratively optimizing a random subset of parameters~\cite{golub_eigenvalue_2000}. The Anderson/Pulay DIIS sequence acceleration is then introduced to produce a better estimation for each iteration. %The author shows that this combined approach is often faster than L-BFGS and Powell's method.
+
+This algorithm first constructs the analytical landscape with a few parameters and then iteratively chooses a random subset of parameters to fit the analytical landscape for the optimal value. This iteration approach is similar to the Jacobian diagonalization method. 
+
+Parrish \textit{et al.} \cite{parrish_jacobi_2019} then introduce the DIIS (Direct inversion of the iterative subspace) method to better estimate and improve the convergence speed. Suppose the optimized parameter after $i$-th iteration is $\theta^i$, the error of the optimized parameter is $\epsilon^i$, which is the difference between the optimal value and the optimized parameter $\theta^i$. The DIIS algorithm gives a better estimation:
+\begin{equation}
+    \theta^{i\prime} = \sum_i c_i\theta^i,
+\end{equation}
+where $c_i$ is a real coefficient that minimizes the square of the 2-norm of $\epsilon$,
+\begin{equation}
+    O(c_i) = \sum_{ij}c_ic_j\epsilon^i \cdot \epsilon^j,
+\end{equation}
+and subject to the normalization condition 
+\begin{equation}
+   \sum_i c_i = 1.
+\end{equation}
+The DIIS algorithm utilizes the previous steps' historical value and extrapolates a better estimation for the next steps. Since the error $\epsilon^i$ is not accessible for each step, it can be approximated by 
+\begin{equation}
+    \epsilon^i \approx \delta \theta^i = \theta^i - \theta^{i-1} ~~\mathrm{(Anderson~style)},
+\end{equation}
+or 
+\begin{equation}
+    \epsilon^i \approx g(\theta^i) ~~\mathrm{(Pulay~style)},
+\end{equation}
+where $g(\theta^i)$ is the gradient of the cost function at $\theta^i$. Here the Anderson style and Pulay style are different approaches to approximate the error value.
+
+\subsection{Engineering cost function} \label{sec:cost_function}
+
+\paragraph{Collective optimization}\cite{zhang_collective_2020}
+In practice, when using VQE to solve eigenenergies of molecules, there are different Hamiltonians with varied bond lengths that can be studied. Since the two different solutions should be close when the Hamiltonian is only different in a small amount, all of the optimal solutions of the series of Hamiltonian should also be chained together in the parameter space, forming a snake-like shape. The entire optimization process can be considered optimizing the arrangement of the whole snake instead of optimizing points separately. 
+
+The collective optimization algorithm redefines the cost function into 
+\begin{equation}
+\mathcal{L(\boldsymbol{\theta}(\lambda))} = \int_{\lambda_0}^{\lambda_1} [L(\boldsymbol{\theta}(\lambda))+E(\boldsymbol{\theta}(\lambda))], 
+\end{equation}
+where $\boldsymbol{\theta}(\lambda)$ is the optimized ansatz parameter for Hamiltonian of bond distance $\lambda$, the $E$ term is the energy of the molecules, while the $L$ term defines the internal energy of the snake.
+\begin{equation}
+    L(\boldsymbol{\theta}(\lambda)) = \alpha \lvert\frac{\partial\boldsymbol{\theta}(\lambda)}{\partial\lambda}\rvert^2 + \beta \lvert\frac{\partial^2\boldsymbol{\theta}(\lambda)}{\partial^2\lambda}\rvert^2.
+\end{equation}
+The first term refers to the energy that depends on the snake's length, and the second term refers to the curvature of the snake. $\alpha$ and $\beta$ are meta parameters. 
+
+In practice the snake is discretized into a sequence of parameters at different bond distance $r_i = (\theta_i(\lambda_1),\theta_i(\lambda_2),\dots,\theta_i(\lambda_K))$ where $i$ is the $i$-th component for each $\theta_i(\lambda_k)$. Then the $r_i$ can be solved iteratively by
+\begin{equation}
+    r_i^t=(\eta\mathbf{A}+\unit)^{-1}(r_i^{t-1}-\eta\frac{dE(r^{t-1})}{dr_i}),
+\end{equation}
+where $\eta$ is the learning rate, $E(r)=\sum_{k=1}^K E(\theta(\lambda_j))$ and $A$ is a pentadiagonal banded matrix with $A_{i-2,i}=A_{i,i-2}=\beta$, $A_{i-1,i}=A_{i,i-1}=-\alpha-4\beta$, $A_{i,i}=2\alpha+6\beta$.
+
+The simulation result shows the collective optimization methods help to pull the parameters from local minimums.
+
+\paragraph{Conditional Value-at-Risk as objective function}
+
+Conditional Value-at-Risk (CVaR) is a measure that takes into account only the tail of the probability distribution. The CVaR of a random variable $X$ for a confidence level $\alpha \in (0, 1]$ is defined as
+\begin{equation}
+    \mathrm{CVaR}_\alpha(X) = E[X|X \leq F^{-1}_X(\alpha)],
+\end{equation}
+where $F_X$ is the cumulative density function of X. To illustrate the idea, consider the random variable $X$ has been sampled $N$ times. The CVaR with confidence $\alpha$ can be calculated by selecting $\alpha N$ samples with the lowest value and evaluating the average. When $\alpha=1$, CVaR equals the expectation value. For variational quantum algorithms, consider the result of each sampling to be a random variable. Then the CVaR can be used as an objective function and replace the expectation value~\cite{barkoutsos_improving_2020}. 
+\begin{equation}
+    \mathcal{L}(\theta) = \mathrm{CVaR}_\alpha(X(\theta)),
+\end{equation}
+where $X$ is the random variable for each sample result.
+
+The CVaR could give a reasonable benefit. Suppose $\ket{\psi_0}$ is the ground state, and $\ket{\psi_1}$,$\ket{\psi_2}$,$\ket{\psi_3}$ are first, second and third excited state. Define $\ket{\psi_A} = (\ket{\psi_0} + \ket{\psi_3})\sqrt{2}$ and $\ket{\psi_B} = (\ket{\psi_1} + \ket{\psi_2})\sqrt{2}$. Suppose the energy level are equally separated, then $\bra{\psi_A}H\ket{\psi_A} = \bra{\psi_B}H\ket{\psi_B}$, therefore the optimizer will encounter a gradient plateau. However for our purpose, we would like to obtain the ground state, therefore $\ket{A}$ is better than $\ket{B}$ in practice. The CVaR could help with this problem by emphasizing the distribution $\ket{A}$. The CVaR emphasizes the best-observed samples and leads to a smooth objective function without introducing local minimum~\cite{barkoutsos_improving_2020}. Also, the implementation of CVaR is relatively straightforward. Since CVaR throws away some of the samples, the accuracy of the estimation decreases. In order to get the same accuracy, the sampling number needs to be increased. The same amount of samples should be involved in the calculation. 
+
+\paragraph{Symmetry preserving cost function adjustments:} One means to maintain electron number conservation in the output wavefunction of VQE is to impose a constraint on the cost function \cite{mccleanTheoryVariationalHybrid2015, Ryabinkin2019}. Namely, one can include a penalty term corresponding to violation of symmetries. The VQE cost function can therefore be re-written as
+\begin{equation}
+ E(\theta, \mu) = \bra{\psi(\theta)} \hat{H} \ket{\psi(\theta)} + \sum_i \mu \left[ \bra{\psi(\theta)} \hat{O}_i \ket{\psi(\theta)} - O_i \right]^2,
+\end{equation}
+where $\hat{O}_i$ represents the symmetry operators that can be independently measured, for instance, the electron number operator, or the spin operator (square of total spin). $O_i$ is the target expectation value for each of these operators, and $\mu$ is a Lagrangian parameter to determine the strength of the constraints. This method, referred to as Constrained VQE in Ref.~\cite{Ryabinkin2019}, was shown to also eliminate 'kinks' appearing in the VQE implementation that had been shown to appear in Ref.~\cite{Kandala2017}. It is worth pointing out (as done in Refs.~ \cite{mccleanTheoryVariationalHybrid2015, Ryabinkin2019}) that the Pauli strings used for operators representing the electron number or the total spin already need to be computed for the Hamiltonian thereby the method does not require additional Quantum costs with respect to the computation of the energy function. One caveat to this is that, as is the case for any constrained optimization problem, the optimization landscape becomes more complex with the addition of constraints. This, in addition to the management of the hyper-parameter $\mu$, could result in additional optimization costs and risks of local minima. The use of this method, and further considerations regarding optimal application have been discussed in Ref. \cite{KuroiwaPenaltyEigensolver2021}.
+
+\subsection{Discussion}
+
+In this Section, we have reviewed some of the latest optimization strategies adapted to optimize variational quantum ans\"atze. Some methods are adapted from the traditional numerical optimization, while some new methods are developed to provide some essential features specifically for variational quantum ansatz optimization. 
+
+\begin{table}[h]
+\caption{Comparison of optimization strategies mentioned in this section. $C_M$ denotes the number of different measurement expectation values per iteration that need to be evaluated from the quantum computer. $C_C$ denotes the complexity of the classical algorithm for each iteration. Since the gradient can be evaluated or approximated with different methods, one can use $g^{(1)}$ to denote the cost of evaluating first order gradients and $g^{(2)}$ to denote the cost of evaluation second order gradients. $S$ denote the required sample shot number. $k$ denote the number of Hamiltonians with different bond distance being optimized simultaneously. $p$ denote the number of parameters in the ansatz.}
+    \begin{tabularx}{\linewidth}{X l l l l l}
+        \toprule
+        Strategies             & Type                  & Meta parameters                                                                                                      & $C_M$                          & $C_C$            & References                                                                                                           \\ \midrule
+        Simple gradient descent         & First order & $\eta$:Learning rate.                                                                                                & $S g^{(1)}$         & $\mathcal{O}(p)$ & \cite{Pellow-Jarman2021,wierichs_avoiding_2020}                                                                                                                    \\ \hline
+        RMSProp                         & First order  & \begin{tabular}{@{}l@{}}$\gamma$: Moving average parameter. \\ $\eta$: Learning rate.\end{tabular}
+                                                                                                                & $S g^{(1)}$         & $\mathcal{O}(p)$ & \cite{ExponentiallyNetworks2021}                                                                                                                    \\ \hline
+        Adam                            & First order  & \begin{tabular}{@{}l@{}}$\beta_{1},\beta_{2}$: Moving average parameters. \\ $\eta$: Learning rate.\end{tabular}                                                                                                                 & $S g^{(1)}$         & $\mathcal{O}(p)$ & \cite{kingma_adam_2017}                                                                                              \\ \hline
+        BFGS                            & Second order  & $\eta$:Learning rate.                                                                                                                 & $S (g^{(1)} + g^{(2)})$ & $\mathcal{O}(p^3)$ & \cite{Lavrijsen2020ClassicalDevices,Pellow-Jarman2021,wierichs_avoiding_2020} \\ \hline
+        Quantum natural gradient decent & Second order & $\eta$:Learning rate.                                                                                                                 & $S (g^{(1)} + g^{(2)})$ & $\mathcal{O}(p^3)$ & \cite{amari_natural_1998,martens_new_2020,wierichs_avoiding_2020}                                                    \\ \hline
+        Nelder-Mead                     & Gradient free         & \begin{tabular}{@{}l@{}}$\alpha_r$: Reflection coefficient.\\ $\alpha_e$:  Expansion coefficient.\\$\alpha_c$:  Contraction coefficient. \\$\alpha_s$:    Shrink coefficient. \\\end{tabular}                                                                                                                 & $S$                              & $\mathcal{O}(p)$ & \cite{Lavrijsen2020ClassicalDevices,Pellow-Jarman2021}                                                                                           \\ \hline
+        Powell                          & Gradient free         & \begin{tabular}{@{}l@{}}$\alpha_k$:   Searching displacement. \\ $\mathbf{d}_k$:Searching direction.\end{tabular}                                                                                                                 & \begin{tabular}{@{}l@{}}Depends on linear \\  search method.\end{tabular}                              & $\mathcal{O}(1)$ & \cite{Pellow-Jarman2021}                                                                                                                    \\ \hline
+        Rotosolve                       & Gradient free         & None                                                                                                                 & $\mathcal{O}(3n)$              & $\mathcal{O}(1)$ & \cite{nakanishi_sequential_2020,ostaszewskiStructureOptimizationParameterized2021}                                   \\ \hline
+        Fraxis                       & Gradient free         & None                                                                                                                 & $\mathcal{O}(6n)$              & $\mathcal{O}(1)$ & \cite{Watanabe2021WatanabeOptimizingSelection,Wada2021SimulatingCircuits}                                   \\ \hline
+        Quantum analytical descent      & Gradient free         & $\eta$:Learning rate.                                                                                                                 & $S(1+2p^2-2p)$                              & NP & \cite{koczor_quantum_2020}                                                                                           \\ \hline
+        Anderson acceleration           & Addon         & None                                                                                                                 & No extra costs               & $\mathcal{O}(p)$ & \cite{golub_eigenvalue_2000}                                                                                         \\ \hline
+        Collective optimization         & Addon                 & \begin{tabular}{@{}l@{}}$\alpha$:    Coefficient for snake length \\ $\beta$:Coefficient for snake curvature.\end{tabular} & No extra costs              & $\mathcal{O}(k)$ & \cite{zhang_collective_2020}                                                                                         \\ \hline
+        CVaR                            & Addon                 & $\alpha$:Confident level                                                                                             & Multiply factor $1/\alpha$                              & $\mathcal{O}(1)$ & \cite{barkoutsos_improving_2020}                                                                                     \\
+        \bottomrule
+    \end{tabularx}
+\label{table:optimizer_comparison}
+\end{table}
+
+The first key feature to consider is the speedup of the convergence for variational quantum ansatz. From the convergence speed per iteration, the analytical method is much faster than the gradient descent strategies. However, the analytical methods would require taking more measurement points to finish a single iteration, which is unfair to directly compare the convergence speed per iteration between optimization strategies. Numerical studies have nonetheless shown in multiple occasions that Rotosolve (and by association its extensions) indeed reach convergence significantly faster than other methods \cite{nakanishi_sequential_2020,ostaszewskiStructureOptimizationParameterized2021,koczor_quantum_2020}. 
+
+Several studies have been performed to compare the relative strength of convergence of different optimizers. Mihlikov \textit{et al.} \cite{Mihlikov2022} show as part of a case study on Hydrogen that SPSA presents a clear advantage on the Nelder-Mead and the Powell optimizers. Bonet-Monroig \textit{et al.} \cite{BonetMonroig2021} test four different optimizers on a variety of small molecular systems and find that SPSA performs slightly better than all others. Beyond these studies, several methods allow for improved convergence on almost any optimizer: the covariance functions between the Hamiltonian and operator can also be used to increase the convergence speed when the optimization is almost converged~\cite{BoydCoVar2022}. Stochastic methods are also suggested as add-ons to reduce the impact of hardware noise, accelerating convergence speed~\cite{AcceleratingProcessesMueller2021,StochasticApplications2022Gidi,PattiMarkovChain2021}.  
+
+Another key feature is the resilience of the barren plateau problem. The natural-gradient-based strategy is considered resilient to barren plateau, and its absolute value of gradient has a lower bound $1/(2^{2N+1})$~\cite{haug_capacity_2021,haug_optimal_2021}.  The analytical method is gradient-free and directly jumps into an optimal or approximately optimal position in each iteration, which can prevent entering a barren plateau through optimization dependent on a learning rate \cite{Vidal2018, nakanishi_sequential_2020,ostaszewskiStructureOptimizationParameterized2021,koczor_quantum_2020}. However, this is at the cost of increasing the measurement points and conventional computation. 
+
+From the discussion above, no optimization strategy outperforms other strategies in every aspect; the convergence needs to trade with the implementation complexity and measurement points. In fact, multiple strategies can be applied together to improve the overall performance of the optimizer. In practice, the sequential analytical fitting method has been mainly used when a non-traditional optimizer optimizes the variational ansatz. Quantum natural gradient-based methods are more popular in simulation-based studies. 
+
+A final comment is worth raising on the optimization of VQE ans{\"{a}}tze: it does not need to be done entirely using samples from observable obtained on the quantum computer. In particular Okada \textit{et al.} \cite{Okada2022} have shown that one can use efficient circuit simulation to optimize local order parameters and subsequently use quantum devices post-optimization to measure the global quantities. 
