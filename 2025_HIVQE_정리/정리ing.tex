@@ -19,6 +19,8 @@
 \usepackage{csquotes}
 \usepackage{amssymb}
 \usepackage{mathrsfs}
+\usepackage{subcaption}
+\usepackage{braket}
 \setstretch{1.3}
 \setlength{\jot}{6pt}
 \title{
@@ -1138,7 +1140,7 @@ M개의 스핀오비탈을 갖고있는 시스템에 대해서 구성할 수 있
 
 \section{HIVQE}
 이제부터 HIVQE 와 관련된 내용을 다뤄볼것이다. 사실, 사전지식이 많이 필요했을뿐, 알고리즘자체로 다뤄야할 내용은 많지않다. 일단 지금까지 언급했던 두개의 양자화학계산 양자컴퓨터알고리즘인 VQE 와 QSCI의 간단한 pipeline을 살펴보자. 
-\begin{figure}[htbp]
+\begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{fig/VQE,QSCI2.png}
   \label{fig:example2}
@@ -1163,9 +1165,147 @@ HIVQE는 아주정확한 양자회로를 만들 필요는 없지만 적절한 �
 
 \subsection{Method}
 이게 과정이 여러 스텝이 있는데, 이를 천천히 따라가보자. 
+\begin{figure}[htbp]
+  \centering
+  \begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{fig/HIVQE_paper.png}
+    \caption{논문의 모식도}
+    \label{fig:first}
+  \end{subfigure}
+  \hfill
+  \vrule width 1pt  % 수직선 추가 (굵기: 1pt)
+  \hfill
+  \begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{fig/HIVQE_my.png}
+    \caption{내가정리}
+    \label{fig:second}
+  \end{subfigure}
+  \caption{HIVQE pipeline}
+  \label{fig:two_figures_side_by_side}
+\end{figure}
+왼쪽이 논문에서 제시한 모식도 이고, 오른쪽이 내가 정리한 그림이다. 
+왼쪽에서 하는 계산들이 오른쪽의 목차에도 다 반영이 되어있으니, 오른쪽그림을 기준으로 설명을 이어가보자. 
+여기서부터는 이제 Practical 한 내용들을 다루면서 내용과 함께 어떻게 구현하는지도 같이 이야기를 가보자. 
+
+\subsubsection{Problem Definition}
+여기는 이제 사실 이론적인 내용은 없다. 
+하는 이유는 우리가 바닥상태 에너지를 계산하고자 하는 어떤 분자가 있을텐데, 그 분자의 에너지를 계산하려면, 
+그 분자에 해당하는 헤밀토니안이나, 어떤 전자의 개수, 오비탈의 개수와같은 정보들이 필요할텐데, 이를 만들어주는 패키지를 이용하게된다. 
+Molecularinfo 에 시스템을 구성하는 각 원자들의 종류와 위치, 그리고 총 시스템의 전하량과 Multiplicity까지 총 4개? 의 정보를 넣어주게되면,
+그 시스템에 맞는 헤밀토니안과 각 정보들을 담은 하나의 클래스를 만들어준다. 이후의 계산들은 이 클래스에서 정보를 가져와서 계산을 진행하게 된다. 
+그래서 코드의 초반에는 이러한 코드가 들어가게 된다. 
+
 \subsubsection{Circuit Preperation}
+결론적으로 HIVQE 에서 해야하는것은, 각 Slater Determinant중 바닥상태에 기여가 높은 상태를 찾아내는것이다. 
+기여가 높다는것은 바닥상태를 표현할때 각 Slater Determinant의 선형계수가 가장 높은것들을 찾으면 된다. 
+그러기 위해 HIVQE 에서는 양자 회로의 샘플링을 통해 이러한 과정을 진행할것이고, 따라서 적절한 양자회로를 구성해야한다. 
+하지만 QSCI 에서처럼 어떤 그럴듯한 회로가 있는것이 아니므로, 파라미터화된 양자회로를 구성하는것이 필요하다. 
+이 파라미터화된 양자회로, PQC(Parameterized Quantum Circuit) 라고하는것은 구성하는데에 있어서 두가지의 척도가 있다. 
+첫째는 얼마나 파라미터를 이용해 주어진 Hilbert Space에서의 임의의 상태를 얼마나 잘 표현하는가 에 해당하는 표현력이고
+둘재는 얼마나 파라미터의 최적화를 통해 주어진 상태를 잘 찾아가는가에 대응되는 학습력이 있다. 
+이 표현력과 학습력은 보통 Trade-off 관계에 있으며, 문제에 적절한 회로를 선택하는것이 중요하다. 
+이러한 파라미터화된 양자회로를 소위 Ansatz 라고 부르며, 이 Ansatz를 만드는 방법에는 크게  1)Problem-inspired 방식과 2)Hardware-Efficient 의 두가지 방법이 있다. 
+각 방식을 간단하게 살펴보자. 
+
+\begin{enumerate}[label=\(1\))]
+\item {Hardware-Efficient Ansatz}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{fig/twolocal.png}
+  \caption{twolocal Circuit}
+  \label{fig:example3}
+\end{figure}
+첫번째 방식은 Hardware-Efficient 한 Ansatz의 예로 Twolocal Ansatz를 다뤄볼것이다. 
+Hardware-Efficient 한 Ansatz 라는것은 말그대로 풀고자하는 문제와 상관없이, 큐비트의 공간에서 임의의 상태를 만들어보자 라고하는것이다. 
+여기서, Twolocal Ansatz 경우 임의의 single qubit의 양자상태는 두개의 Rotation Gate를 통해 만들 수 있다는점에 착안하여, 
+두개의 Rotation Gate로 이루어진 Rotation Layer 와 Multi qubits 시스템이 갖는 특징인 Entanglement 를 CNOT 게이트로 구성된 Entanglement Layer를 번갈아여 구성한다. 
+여기서  Rotation Gate의 각도를 파라미터로하여 임의의 양자상태를 표현하게 된다. 하는 Ansatz이다. 이러한 Ansatz를 twolocal 혹은 Efficient SU2 라고 한다. 
+\end{enumerate}
+
+\begin{enumerate}[label=\(2\))]
+\item {Problem-inspired Ansatz}
+두번째는 Problem-inspired Ansatz 의 한 예시로 UCCSD 방법을 살펴보자.
+Problem-inspired Ansatz 라는것은 이번에는 풀고자하는 문제에 대해 임의의 양자상태를 구성하고 이를 양자 회로로 인코딩하는 방법이다. 
+그중 UCCSD(Unitary Coupled Cluster Singles and Doubles) Ansatz의 경우 기존의 양자화학계산인 CCSD 에서의 계산방법에 착안하여
+분자가 가질 수 있는 여러 Configuration들에 대응되는 Slater Determinant 를 basis로 양자상태를 표현한다. 
+이때 각 Configuration은 어떤 기준상태(Hartree-Fock State)의 Excitation으로 기술 될 수 있으며, 따라서 각 Configuration은 생성/소멸 연산자로 표현될 수 있다. 
+\[
+\ket{\Psi_{\mathrm{UCCSD}}}
+   \;=\;
+   \exp\bigl(\hat{T} - \hat{T}^\dagger\bigr)\,\ket{\Phi_0},
+\]
+\[
+\hat{T} \;=\; \hat{T}_1 + \hat{T}_2,
+\]
+\[
+\hat{T}_1 \;=\; \sum_{i,a} t_i^a \,a_a^\dagger\,a_i,
+\qquad
+\hat{T}_2 \;=\; \frac{1}{4}\sum_{i,j,a,b} t_{ij}^{ab}\;a_a^\dagger\,a_b^\dagger\,a_j\,a_i.
+\]
+
+\begin{itemize}
+  \item \(i,j\): 점유 궤도(occupied orbitals)
+  \item \(a,b\): 미점유 궤도(virtual orbitals)
+  \item \(t_i^a,\,t_{ij}^{ab}\): 클러스터 진폭(cluster amplitudes)
+\end{itemize}
+이렇게 문제에 맞는 헤밀토니안을 구성하고, 이를 파울리 게이트로써 Mapping 하게되면, 헤밀토니안에 잘 맞는 Ansatz를 구성할 수있으며, 이러한 형태의 Ansatz를 UCCSD Ansatz라고 한다. 
+\end{enumerate}
+
+적어도 VQE의 맥락에서는 UCCSD의 Ansatz가 표현력및 학습력의 부분에서 더 좋은 성능을 보이는것이 일반적이다. 하지만, HIVQE 에서는 상태의 "표현력" 자체가 계산의 에너지의 정밀도에는 크게 영향을 미치지 않는다. 
+그리고, 기본적으로 이 알고리즘의 최종목표는 아주 큰 시스템의 에너지를 계산하는것인데, UCCSD Ansatz의 경우 회로의 Cost가 매우 크다. 
+따라서 HIVQE 에서는 twolocal Ansatz를 이용하여 실험중에 있다. 
+
+\subsubsection{Sampling and Filtering}
+헤밀토니안을 projection 할 Slater Determinant를 basis로 하는공간을 구성하기 위해 
+이제 주어진 양자회로로 부터 Slater Determinant들을 Sampling 할것이다. 
+양자회로를 z-basis 측정 함으로써 각각의 큐비트의 상태에따라 0과 1의 binary string을 얻게된다. 
+그리고 각 binary 스트링은 Slater Determinant에 대응된다. 
+따라서 양자회로를 원하는 Sampling 횟수만큼 작동시켜 그 갯수만큼의 Slater Determinant를 얻고, 그 얻어진 공간을 core space로써 사용할것이다. 
+하지만, 이때 Slater Determinant가 만족해야할 두가지의 조건이 있다고 위에서 이야기 했었다.
+첫째는 전자수의 보존이고, 둘째는 Multiplicity의 보존이다.
+이 두가지의 조건을 만족하지 않는 Slater Determinant는 버린다(Filtering)
+전자수의 보존을 만족시키기위해 Sampling 된 binary String 에서 1의 합이 시스템의 전자수 N 과 같지 않은 상태는 모두 버린다. 
+또 Multiplicity의 보존을 위해, binary String 의 앞의 절반(up-spin orbital)에서의 1의 개수와 뒤의 절반(down-spin orbital)에서의 1의 개수의 차이를 \(\Delta S\) 를 확인하면,
+시스템의 스핀 각 운동량은 \(\frac{1}{2}\Delta S\) 가 되고, 따라서 Multiplicity는 \(\Delta S + 1\) 이 된다. 
+이때 이 \(\Delta S + 1\) 가 원하는 Multiplicity 가 아닌경우(ex, in singlet, Multiplicity=1)그 String을 버린다. 
+이 두가지 조건을 모두 만족하는 String(Slater Determinant)만을 모아 Filtered Basis집합 \(\{b'_i\}\)를 구성한다. 
+
+\subsubsection{Construct \(C_i\)}
+이전 과정에서 Sampling 된 상태에 Filtering을 하여 만들어진 Filtered Basis 를 이용하여 i번째 Iteration 에서 사용할 Core Space \(C_i\)를 구성한다. 
+\[
+C'_i = \text{span}\{b'_i\}
+\]
+prime 을 붙힌 이유는 이것만을 사용하는것이 아니라, 이전 Iteration 에서 사용된 공간인 \(C_{i-1}\)에 약간의 가공을 하여(Post Screening, Classical Expansion 과정, 이후 설명) \(\tilde{C}_{i-1}\) 공간을 합집합 하여
+i번째 Iteration 에서 사용할 Core Space \(C_i\)를 구성하게 된다. 
+\[
+C_i = C'_i \cup \tilde{C}_{i-1}
+\]
+\subsubsection{Screening}
+제약없이 매 Iteration에서 \(C_i\) 를 구성하게되면, 각 차원이 계속 커지게 된다. 이는 계산 Cost의 증가를 의미하고 이는 우리가 원하는 바가 아니므로, 그 기여가 적은 basis(Slater Determinant)를 버린다. 이 과정을 Screening이라고 한다. 
+그래서 기본적으로 이 과정은 \(C_i\)의 차원\(\left(D_{i}\right)\)이 사전에 지정된 특정 값 \(k\) 보다 클 경우에 수행한다. 
+\begin{enumerate}[label=\(\ast\)]
+\item {참고}
+
+이 k값은 논문에서 계산한것은 \(2 \times 10^{4} \thicksim  2 \times 10^{6}\) 정도의 스케일이다. 일단 내가 실험으로 구현중인 계산에서는 k= 2000정도로 하여 실험중에 있다. 
+\end{enumerate}
+그래서 할것은 \(C_i\) 공간에 헤밀토니안을 사영(projection) 시키는것이다. 
+\(C_i\) 공간의 basis sets인 \(\{b_i\}\)는 아래와같을 것이다. 
+\[
+\{b_i\} = \{\vert \Phi_1 \rangle, \vert \Phi_1 \rangle, \cdots, \vert \Phi_{L} \rangle \}
+\]
+
+그리고 이제 \(C_i\)로의 사영은 아래와같이 정의된다. 
 
 
 
+\subsubsection{Energy Calculations}
+\[
+\text{where}, \quad L \leq k
+\]
+
+\(L \leq k\)인 이유는 앞에서 Screening 과정을 거쳤기 때문이다. 
+
+\subsubsection{Post Screening}
+\subsubsection{Classical Expansion}
 
 \end{document}
