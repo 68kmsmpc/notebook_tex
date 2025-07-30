@@ -1,4 +1,4 @@
-\documentclass[10pt]{article} 
+\documentclass[11pt]{article} 
 \usepackage{fontspec}
 
 \usepackage{mdframed}
@@ -18,9 +18,35 @@
 \usepackage{tabularx}
 \usepackage{csquotes}
 \usepackage{amssymb}
+\usepackage{xcolor}        % 색 지정
+\usepackage{listings}      % 코드 삽입
 \usepackage{mathrsfs}
 \usepackage{subcaption}
 \usepackage{braket}
+
+\definecolor{bggray}{gray}{0.95}
+\definecolor{keyword}{RGB}{0,0,180}
+\definecolor{comment}{RGB}{0,128,0}
+\definecolor{string}{RGB}{180,0,0}
+
+% Python 스타일 정의
+\lstdefinestyle{pythonstyle}{
+  language=Python,
+  backgroundcolor=\color{bggray},   % 배경색
+  basicstyle=\ttfamily\small,       % 코드 기본 폰트
+  keywordstyle=\color{keyword}\bfseries,
+  commentstyle=\color{comment}\itshape,
+  stringstyle=\color{string},
+  showstringspaces=false,
+  numbers=left,                      % 왼쪽 줄 번호
+  numberstyle=\tiny\color{gray},
+  stepnumber=1,
+  numbersep=8pt,
+  frame=single,                      % 테두리
+  breaklines=true,                   % 자동 줄바꿈
+  captionpos=b                       % 캡션 위치 (b=아래)
+}
+
 \setstretch{1.3}
 \setlength{\jot}{6pt}
 \title{
@@ -924,16 +950,7 @@ i) 에서와 마찬가지로 정리를 해보자.
 그래서 이러한 Slater Determinant를 가지고 전체 분자의 파동함수를 어떻게 기술할것인가? 가 관건인데, 여기에는 두가지 논리가 있다. 둘다 논리적으로 틀리지는 않지만, 두번째의 경우가 조금더 엄밀하다는 느낌이 있다. 
 
 \begin{enumerate}[label=\(\mathrm{i}\))]
-\item {Linear Algebra Ver.}
-
-\end{enumerate}
-
-\begin{enumerate}[label=\(\mathrm{ii}\))]
-\item {Exterior Algebra Ver.}
-
-\end{enumerate}
-
-
+\item {Slater Determinant 집합이 Anti-symmetry Hilbert space 를 span 하는가? (추가 정리 필요)}
 
 N개의 전자로 이루어진 시스템에 대해서, 각 전자의 정보 (위치,스핀,...)들의 좌표로 기술되는 함수로 구성되는 Hilbert Space \(\mathcal{H}_N\)이 있을것이고, 우리가 다루는 파동함수는 그러한 \(\mathcal{H}_N\) 에서 기술될것이다. 
 그리고 \(\mathcal{H}_N\) 은 전자 한개에 대한 Hilbert space \(\mathcal{H}_1\) 의 N번의 텐서곱으로 표현될것이다. 
@@ -977,6 +994,11 @@ L^2 (\left\{b\right\}) &: \left\{b\right\} \text{를 basis로 구성된 공간�
 \[
 \mathcal{A} := \frac{1}{N!} \sum_{\pi \in S_N} (-1)^{\text{sgn}(\pi)} \hat{P}_\pi
 \]
+
+\begin{center}
+\textbf{\Large ~이후 추가 예정~}
+\end{center}
+\end{enumerate}
 
 \subsection{FCI(Full Configuration Interaction)}
 FCI에 관한 이야기를 다뤄보자. 그중에 FCI 는 모든 계산방법중 \(\langle \psi|H|\psi \rangle\)를 가장  \enquote{정확히} 계산하기 위한 계산방법이다. 
@@ -1291,21 +1313,508 @@ C_i = C'_i \cup \tilde{C}_{i-1}
 그래서 할것은 \(C_i\) 공간에 헤밀토니안을 사영(projection) 시키는것이다. 
 \(C_i\) 공간의 basis sets인 \(\{b_i\}\)는 아래와같을 것이다. 
 \[
-\{b_i\} = \{\vert \Phi_1 \rangle, \vert \Phi_1 \rangle, \cdots, \vert \Phi_{L} \rangle \}
+\{b_i\} = \{\vert \Phi_1 \rangle, \vert \Phi_2 \rangle, \cdots, \vert \Phi_{D_i} \rangle \}
 \]
+따라서 \(C_i\)로의 사영은 아래와같이 정의된다. 
+\[
+\mathbf{H} = \sum_{a,b=1}^{D_i} \vert \Phi_a \rangle \langle \Phi_a \vert \hat{H} \vert \Phi_b \rangle \langle \Phi_b \vert
+\]
+따라서 \(\mathbf{H}\) 는 \(D_i \times D_i \) 차원의 행렬이 된다. 
+여기서 \(\langle \Phi_a \vert \hat{H} \vert \Phi_b \rangle\)의 계산은 3.1.6 Energy Calculation 에서도 쓰이는 계산이며,
+HIVQE에서 가장 긴 소요시간이 걸리는 과정이다. 
 
-그리고 이제 \(C_i\)로의 사영은 아래와같이 정의된다. 
+이 계산과정에 대한 디테일은 3.1.6 Energy Calculation 이후에 한꺼번에 다루겠다. 일단은 저런 계산을 한다 라는것만 이해하자. 
 
-
+이제 \(C_i\) 공간에 사영된 헤밀토니안 을 대각화 한다. 즉, 헤밀토니안의 고유상태를 \(\{b_i\}\) 들의 선형결합으로 나타내자는것이다. 
+이떄의 대각화 과정에서 얻고자 하는것은 고유상태중 고유값이 가장 작은 고유상태가 이며, 그 계산이 아주 정확할 필요는 없다. 그래서 scipy 의 smallest Algebraic 함수를 사용하고, 수렴조건도 매우 느슨하게 정의한다. 
+\begin{lstlisting}[style=pythonstyle]
+eigenvalue, eigenvector = eigsh(H, k=1,tol = 1e-4, which='SA')  
+# SA : smallest algebraic
+# tol : 수렴조건
+\end{lstlisting}
+이렇게하면 얻은 고유상태가 바닥상태와 비슷한 어떤 상태일것이고, 아래와같이 나타낼 수 있을것이다.
+\[
+\vert \tilde{\psi}_g \rangle = \sum_{a} c_a \vert \Phi_a \rangle 
+\]
+여기서 \(c_a\)는 대각화과정을 통해 얻어지는 고유벡터의 성분값이고, \(\backsim\) 를 붙힌 이유는 이후 Energy Calculations 에서 진짜 바닥상태를 구할것이기 때문이다. 
+그렇다면 여기서 \(c_a\) 가 큰 \(\vert \Phi_a \rangle \) 는 바닥상태에 기여가 클것을 기대할 수 있고, 
+반대로 \(c_a\) 가 작은 \(\vert \Phi_a \rangle \) 는 바닥상태에 기여가 작을것임을 생각할 수 있다.
+이 Screening 이라고 하는 과정은 기여가 작은 basis(Slater Determinant)를 버리고 더 compact 한 \(C_i\) 를 구성하는것이 목표이기 때문에,
+\(c_a\) 가 큰 k개의 \(\vert \Phi_a \rangle \) 를 basis로 하여 새로운 \(C_i\)를 정의하고, 나머지 basis는 버린다. 이렇게하면, 바닥상태를 잘 표현할 수 있는 basis는 유지하여
+계산의 정밀도는 유지하면서, 계산의 Cost 를 줄일 수 있다. 
 
 \subsubsection{Energy Calculations}
+이제 여기서 이번 i번째 Iteration에서의 에너지를 계산할 것 이다.
+i번째 Iteration에서의 \(C_i\) 의 차원은 앞에서 Screening 과정을 거쳤기 때문에 최대 \(k\) 차원이다. 
 \[
 \text{where}, \quad L \leq k
 \]
+이제 이 \(C_i\)에 hamiltonian을 사영시켜 헤밀토니안 행렬을 구성하자. 이 방식은 위에서와 같다. 
+\[
+\{b_i\} = \{\vert \Phi_1 \rangle, \vert \Phi_2 \rangle, \cdots, \vert \Phi_{D_i} \rangle \}
+\]
+\[
+\mathbf{H} = \sum_{a,b=1}^{D_i} \vert \Phi_a \rangle \langle \Phi_a \vert \hat{H} \vert \Phi_b \rangle \langle \Phi_b \vert
+\]
 
-\(L \leq k\)인 이유는 앞에서 Screening 과정을 거쳤기 때문이다. 
+그리고 이 헤밀토니안 행렬을 대각화 한다. 이때도 마찬가지로 바닥상태만을 필요로 하기때문에 SA 방식을 사용하지만 이때는 정확한 고유값과 고유상태가 필요하므로 계산의 Cost는 올라가지만, 엄밀한 수렴조건을 사용한다. 
+\begin{lstlisting}[style=pythonstyle]
+eigenvalue, eigenvector = eigsh(H, k=1, which='SA')  
+# SA : smallest algebraic
+# tol : 수렴조건 (Default = 1e-10))
+\end{lstlisting}
+앞서 말했던것 처럼 \(\langle \Phi_a \vert \hat{H} \vert \Phi_b \rangle\) 의 계산의 Cost가 크기때문에, Screening을 한경우에는, 이미 대각화 된 행렬이 있으므로, 
+대각화 되었다는것은 basis 별로 정리가 되어있다는 뜻이고, Screening과정에서 버린 basis를 제거한 행렬을 구성할 수 있으므로, 이경우에는 이렇게 계산한다. 
+그래서 사영된 헤밀토니안의 가장 작은 고유값과 고유상태를 얻었다면, 이 두값이 i번째 Iteration 에서 계산된 바닥상태에너지와 바닥상태가 된다. 
+이 에너지가 Iteration 과정 내에서 수렴되었다면, 이 값을 알고리즘의 최종 결과로써 반환하고, 수렴되지 않았다면, i+1 번째의 Iteration 을 준비한다. 
+앞에 내용에서처럼 i+1 번째 Iteration에서의 에너지계산에 i번째의 Core space\(C_i\) 에 대한 정보가 필요하므로 이를 다음 Iteration에 넘겨줄건데, 약간의 가공을 할것이다. 
+이 가공하는 방식또한 살펴볼것인데 그 사이에 \(\langle \Phi_a \vert \hat{H} \vert \Phi_b \rangle\) 를 계산하는 방법에 대해서 잠깐 짚고 넘어가자. 
 
+\paragraph{How to Calculate \(\langle \Phi_a \vert \hat{H} \vert \Phi_b \rangle\)}. \leavevmode \newline
+사실 이것은 수학적으로는 그냥 적분이다. 하지만, 이 적분이 상당히 Cost가 크므로 다른 방식을 택할거고 우리는 Second Quantizatized 된 hamiltonian이 있으니까, 
+이거를 활용해서 이를 계산하는 방법을 찾으려 했고, 내가 고민했던 과정 그대로 적어 정리하였다. 
+
+\begin{enumerate}
+  \item \textbf{using Pauli Matrix}\\ 
+  가장 처음 시도했던 방법으로 가장 직관적일 수 있는 계산방식이다. 헤밀토니안은 second Quantized 된 형태로 주어져 있다. 
+  \[
+  \hat{H} = \sum_{p,q} h_{pq} \hat{a}_p^\dagger \hat{a}_q
+  + \frac{1}{2} \sum_{p,q,r,s} h_{pqrs} \hat{a}_p^\dagger \hat{a}_q^\dagger \hat{a}_r \hat{a}_s
+  \]
+
+  그리고 이는 Jordan-Wigner 나 다른 매핑 방식을 통해 파울리 스트링의 선형결합된 형태로 표현될 수 있다. 
+  여기서 각 파울리 스트링은 파울리 연산자의 텐서곱의 형태로 주어진다. 
+  \[
+  \hat{H} = \sum_{a} \omega_a P_a, \quad \text{where} \quad
+  P_a = \hat{p}_0 \otimes \hat{p}_1 \otimes \cdots \otimes \hat{p}_N, \quad
+  \hat{p}_i \in \{I, X, Y, Z\}
+  \]
+  여기서 \(N\)은 스핀오비탈의 개수이다. 즉, 하나의 파울리 스트링\(P_a\)는 \(2^N \times 2^N \) 행렬이며, 따라서 이것의 합으로 쓰여지는 헤밀토니안 또한 \(2^N \times 2^N \) 크기의 행렬이 된다.
+  그런데, \(N\)은 스핀오비탈의 개수이며, 이는 문제해결에 필요한 큐비트의 개수와 비슷하다. 우리가 이 알고리즘을 구현하고자 하는 이유는, 큰 시스템에서 기존의 VQE 혹은 기존의 Classical 계산으로는 수행하지 못하는 계산들을 수행하기 위함인데, 
+  예를들어 30큐비트 정도의 그렇게 크지도 작지도 않은 시스템에 대해서 해결하기 위해서는, \(2^{30} \times 2^{30} \backsimeq 10억 \times 10억 \) 정도 크기의 행렬의 연산을 진행해야한다. 
+
+  하지만, \(\langle \Phi_a \vert \hat{H} \vert \Phi_b \rangle\)는 모든 a와 b에 대해서 계산되어야 하므로 
+  이 연산을 한번하는것도 아니고, 보통 측정의 샷수, 혹은 임계값 \(k\)의 제곱번 수행해야한다. 
+  이는, 매우 비효율적이고 Cost가 매우 크다. 가장 직관적인 방법이지만 이러한 계산에는 적합하지 않았다. 
+
+  \item  \textbf{using Slater-Condon rule}\\
+  행렬로 만들면 \(2^N \times 2^N \)가 되어 사이즈가 너무 커지니까, 행렬로 다루지 않는 방법을 생각하다보니, Second-Quantized 된 형태의 헤밀토니안을 가지고 연산하는것을 생각하게 되었다. 
+  이 방식이 사실 고전적인 컴퓨터에서 FCI, CCSD 등을 계산하는 방식이다. 에너지의 계산과정은 아래와같이 정리된다. 
+  \begin{align*}
+  \langle \Phi_a \vert \hat{H} \vert \Phi_b \rangle &= \langle \Phi_a \vert \sum_{p,q} h_{pq} \hat{a}_p^\dagger \hat{a}_q
+  + \frac{1}{2} \sum_{p,q,r,s} h_{pqrs} \hat{a}_p^\dagger \hat{a}_q^\dagger \hat{a}_r \hat{a}_s \vert \Phi_b \rangle \\
+  & = \sum_{p,q} h_{pq} \langle \Phi_a \vert \hat{a}_p^\dagger \hat{a}_q 
+  \vert \Phi_b \rangle + \frac{1}{2} \sum_{p,q,r,s} h_{pqrs} \langle \Phi_a \vert \hat{a}_p^\dagger \hat{a}_q^\dagger \hat{a}_r \hat{a}_s \vert \Phi_b \rangle
+  \end{align*}
+  여기서 집중해서 봐야할것은 \(\langle \Phi_a \vert \Phi_b \rangle = \delta_{ab}\) 라는것이고, 한쌍의 \(\hat{a}_p^\dagger \hat{a}_q\) 는 가해지는 Slater Determinant 의 
+  전자점유상태에 대해서 전자 하나를 q오비탈에서 p오비탈로 바꾸게 된다. 
+
+  즉, Single term \(\langle \Phi_a \vert \hat{a}_p^\dagger \hat{a}_q  \vert \Phi_b \rangle \) 에 대해서는 
+  최대 두 Slater Determinant가 한개의 점유상태만 다를경우에만 값이 존재할 수 있고, 이외에는 직교성에 의해 그 계산값이 0이된다. 
+  마찬가지로 Double term \(\langle \Phi_a \vert \hat{a}_p^\dagger \hat{a}_q^\dagger \hat{a}_r \hat{a}_s \vert \Phi_b \rangle\) 에 대해서도,
+  두 Slater Determinant가 최대 2개까지만 다를경우에만 값이 존재할 수 있고, 이외에는 0이된다. 
+  또한 0이 아닌성분에 대해서도, 같은 Excitation을 기술하는 조합이 여러가지 있을 수 있으므로, 이것들을 포함하여 에너지를 계산하게 된다. 
+  하지만, 이 계산방법이 나는 정직하게 모든 인덱스에 대해서 for 구문을 통해 돌렸는데, 이렇게 계산하니 그렇게 계산이 빨라지지 않았다. pyscf 에서는 좀더 효율적인 방법으로 계산을 하는것 같았으나, 
+  그 방법을 알기 힘들어 일단 다른방식을 찾아보기로 하였다. 
+
+  \item \textbf{using Pauli Matrix with sparse matrix Representation}\\
+  이후에는 다시 파울리 연산자를 통한 헤밀토니안 행렬의 표현방법으로 돌아왔다. 이 항들을 다시 살펴보면 대부분의 항들이 0이다. 우리가 이전에 VQE로써 다뤘던 가장 큰 시스템인 Co-O Dimer에 대해서 헤밀토니안 행렬을 살펴보면, 
+  \begin{enumerate}[label=\(Ex.\)]
+  \item {Co-O Dimer \(\left(N=16\right)\)}
+  
+  총 원소수 : \(2^{16} \times 2^{16} = 65535 \times 65535 \approx 4.29\times 10^{9}\) 
+
+  0이 아닌 성분의 개수 : \(3.21 \times 10^{7}\)   
+  \end{enumerate}
+  즉, 전체 행렬의 원소중 약 \(99 \% \)가 0이다. 
+  이러한 행렬에 대해서는 행렬의 모든 성분을 저장하는것이 아니라, 0이 아닌 값들에 대해서만, 그 값이 있는 위치와 값을 저장하는 sparse Matrix의 표현방법으로 데이터를 저장하고 연산하면 
+  \(\langle \Phi_a \vert \hat{H} \vert \Phi_b \rangle\)의 계산을 이전보다는 더 빨리 수행할 수 있게된다. 
+  실제로 이 방법은 효과가 있었고 계산이 빨라졌지만, 이후 내가 채택한 방법에 비해서는 느리다. 
+
+  \item \textbf{using bitwise Algebra}\\
+  이건 사실 GPT 와 씨름하다 GPT 가 제안해준 방식이였다. 이 논리는 다음과같다.
+  
+  우리가 가진 헤밀토니안은 아래와같다. 
+  \[
+  \hat{H} = \sum_{\alpha} \omega_{\alpha} P_{\alpha}, \quad \text{where} \quad
+  P_a = \hat{p}_0 \otimes \hat{p}_1 \otimes \cdots \otimes \hat{p}_N, \quad
+  \hat{p}_i \in \{I, X, Y, Z\}
+  \]
+  그리고 우리가 계산해야 할 것은 아래와 같다. 
+  \[
+  \langle \Phi_a \vert \hat{H} \vert \Phi_b \rangle 
+  \]
+  \[\text{where ,} \quad \vert \Phi_a \rangle = \vert n_1 n_2\cdots n_N \rangle ,\quad n_i \in \{0,1\}\]
+
+  그런데, \(\vert \Phi_a \rangle= \vert n_1 n_2\cdots n_N \rangle \)는 양자회로에서 z-basis 측정을통해 샘플링된 결과이기 때문에 \(n_i\) 는 0과 1일수 밖에 없고, 따라서 Separable 하며 텐서곱으로 표현할 수있다. 
+  \[\vert \Phi_a \rangle = \vert n_1 \rangle \otimes \vert n_2 \rangle \otimes \cdots \otimes \vert n_N \rangle \]
+  이것을 이용하여 이제 우리가 원래 계산하려고 했던것을 잠깐 다른시선으로 바라보자. 
+  \begin{align*}
+  \langle \Phi_a \vert \hat{H} \vert \Phi_b \rangle &= \langle \Phi_a \vert \hat{H} \Phi_b \rangle \\
+  & = \sum_{\alpha} \omega_{\alpha} \langle \Phi_a \vert P_{\alpha} \Phi_b \rangle \\
+  & = \sum_{\alpha} \omega_{\alpha} \langle \Phi_a \vert \tilde{\Phi_b} \rangle
+  \end{align*}
+  즉, 어떤 연산자의 내적값? 을 구한다는 맥락보다는, 어떤 상태와 또 다른 어떤 상태에 연산자가 가해진상태와의 내적값을 계산하는거로 보자는것이다. 
+  요 관점에서 \(\vert \tilde{\Phi_b} \rangle\)를 좀만 더 정리해보자. 
+  \begin{align*}
+  \vert \tilde{\Phi_b} \rangle &=  P_{\alpha} \vert \Phi_b \rangle \\
+  &= \left[\hat{p}_0 \otimes \hat{p}_1 \otimes \cdots \otimes \hat{p}_N\right] \left[\vert n_1 \rangle \otimes \vert n_2 \rangle \otimes \cdots \otimes \vert n_N \rangle\right] \\
+  &= \hat{p}_1 \vert n_1 \rangle \otimes \hat{p}_2 \vert n_2 \rangle \otimes \cdots \otimes \hat{p}_N  \vert n_N \rangle \\
+  &= \left(\text{phase}\right) \vert \tilde{n}_1 \rangle \otimes \vert \tilde{n}_2 \rangle \otimes \cdots \otimes \vert \tilde{n}_N \rangle \\
+  &\text{where, } \quad \tilde{n}_i \in \{0,1,+,-,i,-i\}
+  \end{align*}
+  각 큐비트에 대해서 가해지는 연산자는 파울리 연산자이므로, 그 파울리 연산자에 따라 나올 수 있는 결과는 phase 는 제외한다면 \(\{0,1,+,-,i,-i\}\) 밖에 없다. 여기에 양자상태의 직교성을 이용하면 위의 내적계산을 아래와같이 정리할 수 있다. 
+  \begin{align*}
+  \langle \Phi_a \vert \tilde{\Phi_b} \rangle &= \left(\text{phase}\right)\left[\langle n_1 \vert \otimes \langle n_2 \vert \otimes \cdots \otimes \langle n_N \vert\right]
+  \left[\vert \tilde{n}_1 \rangle \otimes \vert \tilde{n}_2 \rangle \otimes \cdots \otimes \vert \tilde{n}_N \rangle\right] \\
+  & = \left(\text{phase}\right) \langle n_1 \vert \tilde{n}_1 \rangle \cdot \langle n_2 \vert \tilde{n}_2 \rangle \cdots \langle n_N \vert \tilde{n}_N \rangle \\
+  & = \left(\text{phase}\right) \delta_{n_1,\tilde{n}_1} \cdot \delta_{n_2,\tilde{n}_2} \cdots \delta_{n_N,\tilde{n}_N}
+  \end{align*}
+  직교성을 이용하면, 하나의 성분이라도 다르면 0이 되기 때문에 위와같이 간단하게 연산할 수 있다. 추가로, 0과 1은 boolean 으로 표현할 수 있으므로, 아래와같이 정말로 bitwise한 연산으로 계산을 수행 할 수 있다. 
+
+  \begin{lstlisting}[style=pythonstyle, caption={apply\_pauli\_string\_bits 함수}]
+  def apply_pauli_string_bits(state, pauli_string, n_qubits):
+      """
+      state: binary string 을 하나의 Integer 값으로 매핑 시킨 값 
+      ex) 0b0101 → 5
+      여기서 b: binary 를 의미함. 
+      pauli_string: 문자열. 예) "XIZY..."
+      n_qubits: 큐빗 수
+      Returns:
+          (new_state: int, phase: complex)
+      """
+      phase = 1.0
+      # 큐빗0을 오른쪽(Little Endian)으로 가정하므로,
+      # pauli_string은 오른쪽부터 큐빗0 → 왼쪽 큐빗N-1
+      for i, p in enumerate(reversed(pauli_string)):  # LSB부터 순회
+          bit = (state >> i) & 1
+          if p == 'I': 
+              continue. # I니까 아무 연산도 하지않음
+          elif p == 'Z':
+              if bit:
+                  phase *= -1 # i번째 비트가 1일때만 phase 추가
+          elif p == 'X':
+              state ^= (1 << i)  # i번째 비트 flip
+          elif p == 'Y':
+              if bit:
+                  phase *= -1j #i번째 비트가 1일때 -i 의 phase 추가 
+              else:
+                  phase *= 1j #i번째 비트가 1일때 i 의 phase 추가 
+              state ^= (1 << i) #해주고, flip
+      return state, phase
+  \end{lstlisting}
+  이렇게 연산하는것이 지금 나열한 방법중에서는 가장 빠르기 때문에, 지금은 이 계산으로 실험을 진행중에 있다. 
+\end{enumerate}
+
+이제 다시 HIVQE 알고리즘의 흐름으로 돌아오자. i+1 번째 Iteration에서의 에너지계산에서 i번째의 에 대한 정보가 필요하므로 이를 다음 Iteration에 넘겨줄건데, 
+더 효율적인 계산을 위해 Core space \(C_i\) 를 가공해서 넘겨줄것이다. 그 두가지가 Post Screening 과 Classical Expansion 이고 간단하다. 
 \subsubsection{Post Screening}
+이름처럼 Screening 과정을 에너지 계산이후에 한번 더 진행한다. 그런데 Screening 과정에는 특정 공간에 사영시키는 연산이 들어있다고 했는데, 그럼 이건 오래걸리는거 아니냐? 할 수 있는데, 
+우리는 이미 \(C_i\) 에 사영과 대각화를 에너지를 계산하면서 진행헀다. 그래서 에너지 계산을 하면서 같이 받았던 바닥상태를 가져오면 된다. 
+이는 어떤 벡터의 형태일텐데 각 성분은 각 basis에 대응되는 선형계수이다. 이 선형계수가 크다는것은 그 basis가 바닥상태에 기여가 크다는것을 의미하고, 반대로 작다는것은 기여가 작다는것을 의미한다. 
+그래서, 이 선형계수가 특정 임계값 \(\epsilon\) 이하인 basis는 바닥상태를 올바르게 표현할 수 없다고 판단하여 모두 버린다. 이후 i+1 번째의 샘플링에 포함되더라도, 이 basis들은 제거한다.
+즉, 여기서 버려진 basis 들은 이 알고리즘에서 banned 된다. 
 \subsubsection{Classical Expansion}
+샘플링 이라고하는것은 확률적인 부분이 있기때문에, 분명 그 기여가 클것이라 기대되어 선형계수도 클것이라 기대되는 어떤 basis가 샘플링 되지 않을 수 있다. 이러한 상태들을 효율적으로 포함시키기 위해서 
+Classical Expansion 이라는 과정을 거친다. 
+여기서는 반대로 바닥상태를 나타내는 모든 선형계수 \(c_a\) 중에서 가장 큰 값에 대응되는 basis(Slater Determinant) 즉, 바닥상태에 기여가 가장 큰 basis를 고르고, 그것을 \(\vert \Phi_{ref} \rangle \) 라고 하자. 
+이때, \(\vert \Phi_{ref} \rangle \) 가 기여가 크다면, \(\vert \Phi_{ref} \rangle \) 에서 한개나 두개가 여기된 상태또한 그 기여가 클것이라는 기대를 가지고, 
+\(\vert \Phi_{ref} \rangle \) 의 single , Double 여기상태의 집합 \(\{\vert \Phi_j \rangle \}\)을 구성한다. 
+이때, \(\langle \Phi_{ref} \vert \hat{H} \vert \Phi_j \rangle\) 값이 가장 큰 m개의 \(\vert \Phi_j \rangle \)를 \(C_i\)에 추가한다. 
+이 두 과정을 거쳐 다음 Iteration으로 넘겨주게 된다. 
 
+\subsubsection{정리}
+이제 이 과정들을 계속 반복하는것이고 이제 아까 그림을 다시보면 이해가 될 수 있을것이다. 
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{fig/HIVQE_paper.png}
+    \caption{논문의 모식도}
+    \label{fig:first}
+  \end{subfigure}
+  \hfill
+  \vrule width 1pt  % 수직선 추가 (굵기: 1pt)
+  \hfill
+  \begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{fig/HIVQE_my.png}
+    \caption{내가정리}
+    \label{fig:second}
+  \end{subfigure}
+  \caption{HIVQE pipeline}
+  \label{fig:two_figures_side_by_side}
+\end{figure}
+여기서 헷갈릴 수 있는것은 계산의 흐름에서 3개의 사전지정 파라미터\(\left(k,\epsilon, m \right)\)가 나왔고, 그 3가지는 모두 다른 역할을 한다는것을 헷갈리면 안된다.
+
+\newpage
+
+\section{Result}
+여러 분자에 대해서 실혐한 결과들을 나열해볼것이다. 정말로 각 시스템이 무엇인지는 사실 중요하지 않고, 우리가 볼것은 각 시스템의 Symmetric Space 의 차원이 몇이고, 우리의 계산에서는 몇개의 Basis 만을 사용했는지 (k) 가 중요하다. 
+Symmetric Space 의 차원은 결국 FCI 계산을 위해 필요한 Slater Determinant의 개수를 의미하고, k값은 HIVQE 계산에서 필요한 Slater Determinant의 개수를 의미한다. 
+즉, k 값이 Symmetric Space의 차원과 비슷해질 수록 FCI 계산에 가까워지며 Cost가 높아지지만 정밀도가 높아진다. 
+여기서 보고자 하는것을 k값이 작더라도 화학적 정밀도를 유지 할 수 있는지를 확인해볼것이다. 
+계산과정과 결과의 그래프에 대한 설명을 간단히 남기자면, 에너지의 계산결과는 FCI 보다 에너지가 낮게 나올 수는 없으므로, 오차는 양수일것이고, 이를 이후 Log 스케일로 그리기 위해 \(10^{-7}\) 이하의 오차는 모두 \(10^{-7}\) 로 plot 하였다.
+그리고 사용하는 Cobyla 이외에도 3개의 iteration의 에너지 차이 이하라면 최적화 과정을 종료한다는 조건을 주었다. 이는 에너지 계산과정에 Sampling 과정이 들어있어, 이에의해 최적화과정이 제대로 수렴하지 못 할 가능성을 고려하였다. 
+
+\subsection{\(H_2\) (\# of Electron : 2, \# of spin orbital : 4)}
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{fig/H2_E}
+    \caption{Energy Calc accuracy}
+    \label{fig:first}
+  \end{subfigure}
+  \hfill
+  \vrule width 1pt  % 수직선 추가 (굵기: 1pt)
+  \hfill
+  \begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{fig/H2_PES}
+    \caption{Potential Energy Surface}
+    \label{fig:second}
+  \end{subfigure}
+  \caption{H2 HIVQE Calculation}
+  \label{fig:two_figures_side_by_side}
+\end{figure}
+\begin{center}
+\textbf{number of Qubits : 4}\\
+\textbf{Dimension of Symmetric Space:\(\binom{2}{1}\cdot\binom{2}{1}=4\)}\\
+\textbf{k = 3}
+\end{center}
+
+왼쪽의 그림 (a) 는 Dist = 0.735 에서 \(H_2\)의 바닥상태 에너지를 계산하여 FCI 값과 비교하여 그린 그래프이다. 파란색 선은 HIVQE 의 계산결과와 FCI의 계산결과의 차이를 그린 그림이며, 
+빨간선은 화학적 정밀도 \( \left(1.4 mHa\right)\) 를 나타낸 그림이다. 
+모든 오비탈이 닫혀있으므로 이경우는 Singlet 이고, 따라서 upspin 와 downspin에 대응되는 전자와 스핀오비탈의 개수가 같다. 
+따라서, Symmetric space 의 차원은 4이다. 이때 k 값은 3이였다. 즉, 전체 dimension의 75\% 만 사용하여 에너지를 계산하였고, 이때 3번의 iteration만에 수렴하였으며, 화학적 정밀도 이내의 정밀한 계산을 수행하였다. 
+오른쪽의 그림 (b) 는 소위 PES(Potential Energy Surface)로, 거리를 변화시켜가며 에너지를 계산하여 plot한 그림이다. 빨간색 선은 FCI 를 통해 계산한 결과이며, 파란색은 HIVQE 를 통해 계산한 결과이다. 이경우도 모두 FCI 와 같은
+결과를 보여주고 있음을 확인할 수있다. 
+이 실험으로 HIVQE 알고리즘의 분자의 바닥상태 에너지를 정밀하게 계산할 수 있음을  확인했다. 하지만, 우리가 알고싶은것은, 이 HIVQE가 과연 큰 시스템에서도 정확하게, 그리고 효율적으로 에너지를 계산할 수 있는가 이다. 
+그래서 이후에는 더 큰 시스템에 대해서 다뤄볼것이다. 
+
+\subsection{\(LiH\) (\# of Electron : 4, \# of spin orbital : 12)}
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}[b]{0.25\textwidth}
+    \includegraphics[width=\textwidth]{fig/LiH_E.png}
+    \caption{Energy Calc}
+    \label{fig:first}
+  \end{subfigure}
+  \hfill
+  \vrule width 1pt  % 수직선 추가 (굵기: 1pt)
+  \hfill
+  \begin{subfigure}[b]{0.40\textwidth}
+    \includegraphics[width=\textwidth]{fig/LiH_dE.png}
+    \caption{Energy Calc accuracy}
+    \label{fig:second}
+  \end{subfigure}
+  \hfill
+  \vrule width 1pt  % 수직선 추가 (굵기: 1pt)
+  \hfill
+  \begin{subfigure}[b]{0.25\textwidth}
+    \includegraphics[width=\textwidth]{fig/LiH_PES.png}
+    \caption{PES}
+    \label{fig:second}
+  \end{subfigure} 
+  \caption{LiH HIVQE Calculation}
+  \label{fig:two_figures_side_by_side}
+\end{figure}
+\begin{center}
+\textbf{number of Qubits : 12}\\
+\textbf{Dimension of Symmetric Space:\(\binom{6}{2}\cdot\binom{6}{2}=225\)}\\
+\textbf{k = 100}
+\end{center}
+이번에는 에너지의 값 자체도 같이 그린 그래프를 추가하였다.
+한가지 의문이 들 수 있는것은, 두 원자의 오비탈 점유를 표현해보면 H 는 \((1s)^{1}\) 이고, Li 는 \((1s)^{2}(2s)^{1}\) 니까 스핀오비탈이 6개여야 할 것 같은데 왜 스핀오비탈이 12개냐 이다.
+이는 이러한 계산에 있어서 더 정밀한 계산을 위해서는 Virtual orbital, 즉 전자가 점유하지는 않지만, 전자가 \underline{점유할 수 있는} 오비탈도 고려해야 한다는것이다. 따라서 이경우는 Li 원자의 \(2p\) 오비탈 까지 고려하여 
+조금 더 정밀한 계산을 시도하였기 때문에 총 6개의 Spartial orbital을 가지며 즉 12개의 Spin orbital 을 가진 시스템을 시뮬레이션 하였다. 
+그림 (a)는 고정된 Dist 에서 Iteration 별로 계산된 에너지를 그린것이고, 파란색은 HIVQE, 빨간선은 그림에는 옵션을 수정하지 않아 Numpy Minimum Eigensolver라고 되어있지만, FCI 값이다. 
+당연히 FCI 값은, Iteration별로 변하지 않으므로 상수이다. 최적화 과정이 진행되며 FCI 값과 비슷한 값이 됨을 볼 수 있으며 다음 그림을 통해 정확한 차이를 볼 수 있다. 
+그림 (b)는 HIVQE와 FCI의 계산결과의 차이를 왼쪽에는 Hartree 단위, 오른쪽에는 Log 스케일로 그림을 그린것이며, 파란색은 HIVQE 와 FCI의 차이, 그리고 빨간선은 화학적 정밀도 \(1.3mHa\) 이다. 
+2번에 Iteration 안에 화학적 정밀도 이내로 떨어졌고, 최종 결과 또한 화학적 정밀도 이내로 계산하였음을 알 수 있다. 
+그림 (c)는 거리별로 옵션을 변화시켜가며 에너지를 계산하여 그린 PES 이다. 빨간색은 FCI의 계산결과이며, 파란색은 HIVQE의 계산결과이다. 
+한 군데 튀는값이 있는데, 이 원인은 정확히는 모르겠으나, 추측컨데 최적화 과정이 제대로 되지 않은것이라 판단할 수 있다. 
+실험당 걸린 시간은 하나의 거리에 대해서, 즉 (a), (b) 그림을 얻는 계산에서 약 10분정도 소요되었다. 이는 기존의 VQE 보다는 더 짧은 시간이다. 
+총 12개의 큐비트를 사용하는 시스템도 정확히 시뮬레이션 할 수 있음을 확인할 수 있었다. 다음 시스템으로 넘어가보자. 
+
+\subsection{\(H_2O\) (\# of Electron : 10, \# of spin orbital : 14)}
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}[b]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{fig/H2O_E.png}
+    \caption{Energy Calc}
+    \label{fig:first}
+  \end{subfigure}
+  \hfill
+  \vrule width 1pt  % 수직선 추가 (굵기: 1pt)
+  \hfill
+  \begin{subfigure}[b]{0.6\textwidth}
+    \includegraphics[width=\textwidth]{fig/H2O_dE.png}
+    \caption{Potential Energy Surface}
+    \label{fig:second}
+  \end{subfigure}
+  \caption{H2O HIVQE Calculation}
+  \label{fig:two_figures_side_by_side}
+\end{figure}
+\begin{center}
+\textbf{number of Qubits : 14}\\
+\textbf{Dimension of Symmetric Space:\(\binom{7}{5}\cdot\binom{7}{5}=441\)}\\
+\textbf{k = 150}
+\end{center}
+k 값을 올리니 이경우에는 한 계산에서 약 1시간정도 걸려서 PES 를 그리기는 힘들어 그리지않았다. 특히 H2O의 경우 각도도 변화시켜 그림을 그려야하기 때문에 더 걸리게될것이다. 
+이번에는 각 원자의 오비탈 점유를 표현해보면 H 는 \((1s)^{1}\) 이고, O 는 \((1s)^{2}(2s)^{2}(2p)^{4}\) 여서 총 스핀오비탈이 14개가 된다. 
+마찬가지로 (a)는 에너지의 계산결과, (b)는 에너지의 오차이다. 
+H2O 까지도 효과적으로 에너지를 계산 할 수 있다. 이정도 계산에서는 효과적으로 에너지를 계산할 수있음을 확인했으니, 우리가 기존에 다루던 LiCoO2의 분자에 대해서 다뤄보자.
+
+\subsection{\(LiCoO2\) (FMO)}
+우리가 기존의 LiCoO2 에서 아주정확한 결과를 내지 못한 이유에서 메인이 되는이유는 FMO 방식에서도 있었지만, 각 Fragment 에서의 VQE도 최적화 과정에 인한 오차가 있었다. 
+만약 HIVQE를 통해 각 Fragment의 에너지를 잘 계산해 낸다면, 뭔가 다른 이야기를 할 수 도 있을것이다. FMO 방식에 대해서 간단하게만 이야기 하자면, LiCoO2 분자는 아래의 그림 (a)와같이 생겼는데, 
+이를 통째로 다루기에는 그 시스템이 너무 크기때문에 오른쪽의 각각 조각으로 쪼개서 에너지를 계산하고 이를 적절한 방식을 이용해서 합치자는것이다. 
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}[b]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{fig/LiCoO2.png}
+    \caption{LiCoO2 diagram}
+    \label{fig:first}
+  \end{subfigure}
+  \hfill
+  \vrule width 1pt  % 수직선 추가 (굵기: 1pt)
+  \hfill
+  \begin{subfigure}[b]{0.6\textwidth}
+    \includegraphics[width=\textwidth]{fig/LiCoO2_FMO.png}
+    \caption{Fragment}
+    \label{fig:second}
+  \end{subfigure}
+  \caption{LiCoO2 FMO diagram}
+  \label{fig:two_figures_side_by_side}
+\end{figure}
+
+일단 monomer에 대해서는 에너지를 계산할 수 있을것 같으니, 테스트해보고 싶은것은 Dimer 에 대해서 이다. 
+\subsubsection{Li-O Dimer (near, far)(\# of Valence Electron : 5, \# of Valence spin orbital : 8)}
+여기서 부터는 다른 Fragment들과의 일관성을 위해 모두 Active Space 를 다루기 때문에, 최외곽의 전자와 스핀오비탈에 대한 정보가 중요하다. 
+Active Space 란 결국 헤밀토니안은 생성과 소멸 연산자로 이루어져있으며, VQE를 통해 에너지를 계산 하고자하는것은 이들간의 잘 모르는 Dynamics를 보고자 하는것인데, 
+각 원자의 Core 오비탈은 보통 결합에 참여하지 않고, 그 자체로 존재할것이기 때문에 그 Dynamics를 상수로 볼 수 있을것이다. 그래서, 이러한 Core orbital에 대해서 
+VQE를 통해 계산하지 않고, 따로 상수로써 계산하여 문제를 해결하는데에 필요한 큐비트 수를 줄이는 전략이 Active Space 방식이다. 
+이경우를 보자면, Li의 \((1s)^{2}\) 의 오비탈과 O의 \((1s)^{2}(2s)^{2}\) 오비탈을 Core 오비탈로 하여 VQE 로 계산해야하는 Spin orbital을 총 6개 줄일 수 있다. 
+저 위에 그림 19-(b) 를 보면, Li-O 의 구성을 갖는 Dimer는 총 2개이다. 이 2개에 대해서 에너지를 계산해본 결과를 볼것이다. 
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{fig/LiO_far.png}
+    \caption{LiO Dimer(far)}
+    \label{fig:first}
+  \end{subfigure}
+  \hfill
+  \vrule width 1pt  % 수직선 추가 (굵기: 1pt)
+  \hfill
+  \begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{fig/LiO_near.png}
+    \caption{LiO Dimer(near)}
+    \label{fig:second}
+  \end{subfigure}
+  \caption{Li-O Energy calc}
+  \label{fig:two_figures_side_by_side}
+\end{figure}
+
+\begin{center}
+\textbf{number of Qubits : 8}\\
+\textbf{Dimension of Symmetric Space:\(\binom{4}{3}\cdot\binom{4}{2}=24\)}\\
+\textbf{k = 150}
+\end{center}
+여기서부터는 이제 닫혀있는 시스템이 아니므로, upspin과 downspin의 개수가 달라지게 된다. 사실 이부분이 좀 깊게 고민을 해보았는데 아직까지 조금 애매한 부분이 있긴 하지만, 기존의 FMO/VQE 에서 다루던대로 다루어보겠다.
+그림 (a)는 두 원자가 멀리 떨어져있는 Dimer, 그림(b)는 두 원자가 가깝게 있는 Dimer 이다. 이 맥락에서 이 FMO에 관한 디테일한 내용은 다룰 필요가 없으니, 그냥 구성은 갖지만 기하학적인 구조가 다른 두 시스템 이라고 생각하자. 
+각 그림에서 왼쪽은 Ha 단위로, 파란색이 Iteration별로 HiVQE를 통해 계산된 에너지와 Numpy Minimum Eigensolver로 계산된 에너지의 차이이고, 그리고 빨간색이 화학적 정밀도를 표시해둔것이다. 
+그리고 각그림에서 오른쪽은 이전의 오차를 log 스케일로 표현해둔것이며, 초록색으로 VQE를 통해 계산된 에너지의 정밀도 또한 표현하였다. 
+기존에 VQE에서는 화학적 정밀도에는 도달하지 못했지만, HIVQE 에서는 화학적 정밀도이상으로 정확하게 계산해낸것을 확인 할 수 있다. 
+사실 애매한 부분이 여기에 있는데, 이경우는 Dimension of Symmetric Space 가 24 이다. 즉, 내가 k값을 30으로 했다는것은 쓸데없는 6개의 Slater Determinant를 포함하여 FCI 를 계산한것이라 당연히 정확하게 나온게 맞는데, 
+과연 저렇게 계산한게 맞는가? 하는 생각은 있다. 그래서 이 FMO를 다루려면 저렇게 닫혀있지 않은 시스템을 다루는 방법에 대한 논의가 필요한데, 이부분이 다룰수록 애매해지는것 같다. 
+일단은, 특정 시스템에 대해서 VQE보다 정확하게 에너지를 계산해내었다 정도만 이해하고 넘어가자. 
+
+\subsubsection{O-O Dimer (\# of Valence Electron : 8, \# of Valence spin orbital : 12)}
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}[b]{0.5\textwidth}
+    \includegraphics[width=\textwidth]{fig/OO_conf.png}
+    \caption{O-O Configuration}
+    \label{fig:first}
+  \end{subfigure}
+  \hfill
+  \vrule width 1pt  % 수직선 추가 (굵기: 1pt)
+  \hfill
+  \begin{subfigure}[b]{0.4\textwidth}
+    \includegraphics[width=\textwidth]{fig/OO_exp.png}
+    \caption{LiO Dimer(near)}
+    \label{fig:second}
+  \end{subfigure}
+  \caption{O-O experiment}
+  \label{fig:two_figures_side_by_side}
+\end{figure}
+\begin{center}
+\textbf{number of Qubits : 12}\\
+\textbf{Dimension of Symmetric Space:\(\binom{6}{6}\cdot\binom{6}{2}=15\)}\\
+\textbf{k = ??}
+\end{center}
+분명 Symmetric Space의 정의대로, 계산해보면, 그림(a)에서 보이는것이 서로 결합하지 않은 O-O 가 보일 수 있는 Configuration 일것인데, 저렇게 조건을 주게되면, 차원이 15로 계산된다. 
+그런데 샘플링되는 상태의 수가 Symmetric space의 차원보다 크게된다. 그래서 이러한 열린상황에서는 다른 논리가 필요하다는것을 느껴 실험을 약간 다르게 세팅하였다. 
+spin에 해당하는 정보가 필요했던건, 계산에 필요했던 basis의 갯수를 줄이기 위함이였다. 따라서 spin에 해당하는 제약을 없애더라도, 계산의 정밀도 자체는 변하지 않는다. 
+계산이 진행되는 흐름이 계속해서 낮은 에너지를 갖는 Slater Determinant를 찾는것이므로, 최적화 과정에서 알아서 적절한 Spin에 해당하는 Configuration을 찾아줄 것이다. 
+일단 지금까지의 실험에서는 UCCSD ansatz를 사용하였고, 그렇게되면, 앞서말했던 전자수와 스핀에 해당하는 정보가 Ansatz에도 들어있게된다. 그래서 이후로는 twolocal Anstz를 이용해서 계산을 수행한다. 
+그렇게 계산된 결과가 아래와같다. 
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{fig/OO_EE.png}
+  \caption{O-O Energy Calculation}
+  \label{fig:first}
+\end{figure}
+마찬가지로 왼쪽 그림이 Hartree 단위로 HIVQE 의 결과와 Numpy Minimum Eigensolver 의 오차를 그린 그림이고, 오른쪽 그림이 Log scale로 VQE의 결과까지 포함하여 그린 그림이다. 
+이경우도 마찬가지로 화학적 정밀도 이내의 정밀도로 계산을 해낼 수 있었다. 
+
+\subsubsection{Co-Li Dimer (\# of Valence Electron : 8, \# of Valence spin orbital : 12)}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{fig/Co-Li.png}
+  \caption{Co-Li Energy Calculation}
+  \label{fig:first}
+\end{figure}
+twolocal을 사용하니 확실히 시작점 에서의 오차가 커지게된다. 
+일단 왼쪽그림은 이번에는 Hartree 단위로 파란색은 HIVQE 의 결과, 빨간색은 Numpy Minimum Eigensolver의 결과를 나타낸다.
+그리고 오른쪽 그림은 둘의 오차를 log 스케일로 그린 그림이다. 마찬가지로 화학적 정밀도 이내의 계산을 수행하였다. 
+이제 다음순서는 Co-O Dimer 두개의 에너지를 계산하는것이 순서이지만, 이렇게 계산이 되는걸 보니 LiCoO2를 통째로 계산하는것도 가능하지 않을까? 라는 생각이 들었다. 
+그렇게 하게되면 LiCoO2 분자는 닫혀있기 떄문에 Spin에 관한 고민을 하지 않아도 되고, 여기서 테스트 해보는것이 실제 논문에서 다룬 시스템의 크기와 비슷한 정도라 오히려 그것이 합리적으로 보였다. 
+
+\subsection{\(LiCoO2\) (total) (\# of Valence Electron : 12, \# of Valence spin orbital : 24)}
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}[b]{0.6\textwidth}
+    \includegraphics[width=\textwidth]{fig/LiCoO2_tot.png}
+    \caption{LiCoO2 total Energy Calculation}
+    \label{fig:first}
+  \end{subfigure}
+  \hfill
+  \vrule width 1pt  % 수직선 추가 (굵기: 1pt)
+  \hfill
+  \begin{subfigure}[b]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{fig/tot_exp.png}
+    \caption{experiment time}
+    \label{fig:second}
+  \end{subfigure}
+  \caption{LiCoO2 calc}
+  \label{fig:two_figures_side_by_side}
+\end{figure}
+
+\textbf{number of Qubits : 24}\\
+\textbf{Dimension of Symmetric Space:\(\binom{12}{6}\cdot\binom{12}{6}=853776\)}\\
+\textbf{k = 2000}
+확실히 시스템이 커지니 Symmetric Space 가 커진다. 그리고 계산 소요시간도 거의 1주일 정도 걸리게된다. 
+그리고 수렴이 된 값을 확인해보니, 같은 Active Space 조건을 부여한 FCI 에 비해서는 훨씬 정확하지 않다. 이 원인은 k값을 너무 작게 잡았기 때문이다. 
+하지만 에너지의 계산이 충분히 진행되는것을 보아, 서버컴퓨터를 활용해 더 높은 k값을 주어 에너지를 계산하면 정확한 에너지를 계산할 수 있음을 기대해볼 수 있다. 
+
+\section{Conclusion}
+HIVQE 에 관해 필요한 기초지식들과 실제로 적용한 방식들에 대해서 다루고, 실험 결과 데이터도 같이 다루었다. 
+분명 이 알고리즘은 정밀하게 시스템의 바닥상태 에너지를 계산해 내는것을 확인 할 수 있다. 하지만, 이게 과연 양자적 현상을 이용해 발전한 양자알고리즘이 맞나? 라는생각이 계속해서 들었다. 
+일단 계산에 있어서도 대부분의 계산소요시간은 고전컴퓨터에서 소모하게 되고 실제 양자회로를 사용하는것은 Sampling과정밖에 없다. 
+시스템의 CI류 계산에 필요한 Determinant의 개수는 시스템의 크기에 Exponential 하게 커진다. 논문에서도 전체 시스템의 차원이 2\% 정도를 사용했을때 소위말하는 화학적 정밀도를 얻었다고했는데, 
+그럼 계산에 필요한 Determinant의 개수를 \(\frac{1}{50}\) 정도로 줄인건데, 이러한 계산이 과연 시스템이 더욱 커질때에도 유효할지는 사실 논리적으로 봤을때 그렇지 않을 가능성이 높아보인다. 
+하지만 그럼에도 기존의 VQE로 다루는것 보다는 더 적은 시간에 더 좋은 정밀도로 계산한것은 사실이긴했다. 과연 더 큰시스템에서도 잘 계산할지에 관해서는 서버컴퓨터를 활용하면서 논문의 결과를 같이 얻어보면서 테스트 해보고자 한다. 
+\subsection{Future Work}
+일단 추가로 더 큰 시스템에 대해서 잘 작동하는지를 테스트 해보아야하고, 열린시스템에서 spin의 옵션을 어떻게 주어야할지, 그리고 CI 계산에 필요한 논리인 Slater Determinant 집합 시스템의 anti-Symmetric 공간을
+Span 하는지에 대해서 조금 더 공부해보아야 할것이다. 
 \end{document}
