@@ -1,0 +1,94 @@
+%==============  code_only_box.tex  =================
+\documentclass[12pt]{article}
+
+% 레이아웃/폰트 (필요 없으면 빼도 됨)
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{fontspec}
+\usepackage{xeCJK}          % ← minted와의 verbatim 충돌 피하려면 [space] 옵션은 쓰지 마세요
+\setCJKmainfont{Noto Sans KR}
+
+\usepackage{setspace}
+\setstretch{1.2}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+
+% tcolorbox + (minted|listings) 토글
+\newif\ifuseminted
+\usemintedtrue             % minted 사용(하이라이트 예쁨). 안 되면 false로 바꿔 listings 사용
+
+\usepackage[many]{tcolorbox}
+\tcbuselibrary{skins,breakable,listings,minted}
+\usepackage{xcolor}
+\definecolor{codebg}{RGB}{248,248,248}
+
+% --- minted 버전: "코드 전용" 박스 (listing only)
+\ifuseminted
+  \usepackage{minted}       % 컴파일: xelatex -shell-escape code_only_box.tex
+  \newtcblisting{CodeBox}[1][]{
+    enhanced, breakable,
+    colback=codebg, frame hidden,
+    boxrule=0pt, borderline={0.5pt}{0pt}{black!15, dashed},
+    sharp corners, before skip=8pt, after skip=12pt,
+    listing engine=minted,
+    listing only,            % ★ 박스 안엔 오직 코드만
+    minted language=python,  % 필요 시 \begin{CodeBox}[minted language=c++] 로 덮어쓰기
+    minted options={
+      fontsize=\small,
+      breaklines,
+      autogobble,
+      linenos,
+      numbersep=6pt,
+      tabsize=2
+    },
+    #1                       % 사용자 옵션 전달
+  }
+\else
+% --- listings 버전: shell-escape 불가 시
+  \usepackage{listings}
+  \lstdefinestyle{mylist}{
+    basicstyle=\ttfamily\small,
+    numbers=left, numbersep=6pt,
+    breaklines=true,
+    tabsize=2,
+    backgroundcolor=\color{codebg},
+    showstringspaces=false
+  }
+  \newtcblisting{CodeBox}[1][]{
+    enhanced, breakable,
+    colback=codebg, frame hidden,
+    boxrule=0pt, borderline={0.5pt}{0pt}{black!15, dashed},
+    sharp corners, before skip=8pt, after skip=12pt,
+    listing engine=listings,
+    listing only,            % ★ 박스 안엔 오직 코드만
+    listing options={style=mylist, language=Python},
+    #1
+  }
+\fi
+
+\begin{document}
+
+\section{코드 박스만 쓰기 (주석은 박스 밖에 작성)}
+
+% 박스 안: 원문 코드만
+\begin{CodeBox}[title={Example: Python snippet}]
+def reset_intermediate_info():
+    global intermediate_info
+    intermediate_info.clear()
+    print(intermediate_info)
+    intermediate_info = {
+        'nfev ': [],
+        'parameters ': [],
+        'energy ': [],
+        'stddev ': []
+    }
+\end{CodeBox}
+
+% 박스 밖: 자유롭게 설명/주석
+L1: numpy를 np로 임포트.  
+L2: norm 함수 정의 시작.  
+L3: L2 노름(유클리드 norm) 반환.  
+L5: 예제 벡터 v 초기화.  
+L6: 결과 출력.
+
+\end{document}

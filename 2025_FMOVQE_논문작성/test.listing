@@ -1,0 +1,10 @@
+def reset_intermediate_info():
+    global intermediate_info
+    intermediate_info.clear()
+    print(intermediate_info)
+    intermediate_info = {
+        'nfev ': [],
+        'parameters ': [],
+        'energy ': [],
+        'stddev ': []
+    }

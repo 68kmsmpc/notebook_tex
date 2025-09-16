@@ -1,0 +1,44 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{n}{molecule\PYGZus{}name} \PYG{o}{=} \PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{Li\PYGZhy{}O}\PYG{l+s+s1}{\PYGZsq{}}
+\PYG{c+c1}{\PYGZsh{} 이후 편의설정을 위해 분자의 구성 정의(현재는 사용하지 않음)}
+\PYG{n}{O\PYGZus{}Li\PYGZus{}dimer\PYGZus{}atoms} \PYG{o}{=} \PYG{p}{[}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{O}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{,} \PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{Li}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{]}
+\PYG{c+c1}{\PYGZsh{} Dirver를 구성하기 위한 원자 구성 정의}
+\PYG{n}{O\PYGZus{}Li\PYGZus{}dimer\PYGZus{}coords} \PYG{o}{=} \PYG{p}{[}\PYG{n}{O\PYGZus{}1}\PYG{p}{,} \PYG{n}{Li}\PYG{p}{]}
+\PYG{c+c1}{\PYGZsh{} driver를 구성하기 위한 각 원자의 좌표 정의}
+\PYG{c+c1}{\PYGZsh{} 위에서 정의한 것을 바탕으로 (x,y,z) 좌표 사용}
+\PYG{n}{O\PYGZus{}Li\PYGZus{}dimer\PYGZus{}charge} \PYG{o}{=} \PYG{l+m+mi}{0}
+\PYG{c+c1}{\PYGZsh{} Dimer의 전하량 정의}
+\PYG{n}{O\PYGZus{}Li\PYGZus{}dimer\PYGZus{}multiplicity} \PYG{o}{=} \PYG{l+m+mi}{2}
+\PYG{c+c1}{\PYGZsh{} Dimer 의 multiplicity(Singlet, Doublet,...) 정의. 이경우 Doublet}
+\PYG{n}{O\PYGZus{}Li\PYGZus{}moleculeinfo} \PYG{o}{=} \PYG{n}{MoleculeInfo}\PYG{p}{(}\PYG{n}{O\PYGZus{}Li\PYGZus{}dimer\PYGZus{}atoms}\PYG{p}{,} \PYG{n}{O\PYGZus{}Li\PYGZus{}dimer\PYGZus{}coords}\PYG{p}{,} \PYG{n}{charge}\PYG{o}{=}\PYG{n}{O\PYGZus{}Li\PYGZus{}dimer\PYGZus{}charge}\PYG{p}{,} \PYG{n}{multiplicity}\PYG{o}{=}\PYG{n}{O\PYGZus{}Li\PYGZus{}dimer\PYGZus{}multiplicity}\PYG{p}{)}
+\PYG{c+c1}{\PYGZsh{} 위의 정보들을 바탕으로 MoleculeInfo를 통해 분자의 정보 정의}
+\PYG{n}{driver} \PYG{o}{=} \PYG{n}{PySCFDriver}\PYG{o}{.}\PYG{n}{from\PYGZus{}molecule}\PYG{p}{(}\PYG{n}{O\PYGZus{}Li\PYGZus{}moleculeinfo}\PYG{p}{,} \PYG{n}{basis}\PYG{o}{=}\PYG{n}{basis}\PYG{p}{)}
+\PYG{n}{E\PYGZus{}problem} \PYG{o}{=} \PYG{n}{driver}\PYG{o}{.}\PYG{n}{run}\PYG{p}{(}\PYG{p}{)}
+\PYG{c+c1}{\PYGZsh{} MoleculeInfo를 통해 PySCF에서 계산되어있는 정보를 가져온다.}
+\PYG{n}{num\PYGZus{}spatial\PYGZus{}orbitals} \PYG{o}{=} \PYG{n}{E\PYGZus{}problem}\PYG{o}{.}\PYG{n}{num\PYGZus{}spatial\PYGZus{}orbitals}
+\PYG{c+c1}{\PYGZsh{} Dimer의 공간오비탈 수}
+\PYG{n}{num\PYGZus{}particles} \PYG{o}{=} \PYG{n}{E\PYGZus{}problem}\PYG{o}{.}\PYG{n}{num\PYGZus{}particles}
+\PYG{c+c1}{\PYGZsh{} Dimer의 전자수}
+\PYG{c+c1}{\PYGZsh{} 위 두가지 정보는 ActiveSpaceTransformer를 잘 정의하기 위함.}
+\PYG{n}{as\PYGZus{}transformer} \PYG{o}{=} \PYG{n}{ActiveSpaceTransformer}\PYG{p}{(}\PYG{p}{(}\PYG{l+m+mi}{3}\PYG{p}{,}\PYG{l+m+mi}{2}\PYG{p}{)}\PYG{p}{,} \PYG{l+m+mi}{4}\PYG{p}{)}
+\PYG{c+c1}{\PYGZsh{} 원자의 오비탈 배치를 기반으로 ActiveSpace 를 정의하여 ActiveSpaceTransformer정의}
+\PYG{c+c1}{\PYGZsh{} ActiveSpace 를 지정하는 방식은 다음과 같다}
+\PYG{c+c1}{\PYGZsh{} ((up\PYGZhy{}spin 전자수, down\PYGZhy{}spin 전자수), 사용할 공간오비탈 수)}
+\PYG{n}{as\PYGZus{}problem} \PYG{o}{=} \PYG{n}{as\PYGZus{}transformer}\PYG{o}{.}\PYG{n}{transform}\PYG{p}{(}\PYG{n}{E\PYGZus{}problem}\PYG{p}{)}
+\PYG{c+c1}{\PYGZsh{} 정의한 ActiveSpaceTransformer 를 바탕으로 새로운 problem을 정의}
+\PYG{n}{energy\PYGZus{}arr}\PYG{p}{,} \PYG{n}{ansatz\PYGZus{}order}\PYG{p}{,} \PYG{n}{opt\PYGZus{}order} \PYG{o}{=} \PYG{n}{least\PYGZus{}Energy}\PYG{p}{(}\PYG{n}{as\PYGZus{}problem}\PYG{p}{)}
+\PYG{c+c1}{\PYGZsh{} 새로운 problem을 앞서 정의한 least\PYGZus{}Energy함수에 집어넣어 에너지 계산}
+\PYG{n+nb}{print}\PYG{p}{(}\PYG{n}{energy\PYGZus{}arr}\PYG{p}{)}
+\PYG{k}{for} \PYG{n}{k} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{n+nb}{len}\PYG{p}{(}\PYG{n}{energy\PYGZus{}arr}\PYG{p}{)}\PYG{p}{)}\PYG{p}{:}
+    \PYG{n}{e}\PYG{o}{=}\PYG{n}{energy\PYGZus{}arr}\PYG{p}{[}\PYG{n}{k}\PYG{p}{]}
+    \PYG{k}{if} \PYG{n}{e} \PYG{o}{==} \PYG{n}{np}\PYG{o}{.}\PYG{n}{min}\PYG{p}{(}\PYG{n}{energy\PYGZus{}arr}\PYG{p}{)}\PYG{p}{:}
+        \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{optimal\PYGZus{}calc :}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
+        \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{anstaz: }\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{ansatz\PYGZus{}order}\PYG{p}{[}\PYG{n}{k}\PYG{p}{]}\PYG{p}{)}
+        \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{optimizer: }\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{opt\PYGZus{}order}\PYG{p}{[}\PYG{n}{k}\PYG{p}{]}\PYG{p}{)}
+        \PYG{n+nb}{print}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{Energy: }\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{n}{e}\PYG{p}{)}
+\PYG{c+c1}{\PYGZsh{} 총 6개의 에너지가 담겨있는 리스트에서,}
+\PYG{c+c1}{\PYGZsh{} 에너지가 가장 작을때의 값과, 그떄의 Ansatz, Optimizer에 대한 정보를 Print한다.}
+
+\PYG{n}{O\PYGZus{}Li\PYGZus{}dimer\PYGZus{}energy}\PYG{o}{=}\PYG{n}{e}
+\PYG{c+c1}{\PYGZsh{} 그리고 그 가장 작은 에너지를 해당 Dimer에서의 계산결과로 사용하기위해 새로운 변수로 정의한다.}
+\end{MintedVerbatim}

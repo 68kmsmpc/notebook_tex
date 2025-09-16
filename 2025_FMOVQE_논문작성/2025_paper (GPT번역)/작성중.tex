@@ -1,0 +1,590 @@
+%Version 3.1 December 2024
+% See section 11 of the User Manual for version history
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                                                 %%
+%% Please do not use \input{...} to include other tex files.       %%
+%% Submit your LaTeX manuscript as one .tex document.              %%
+%%                                                                 %%
+%% All additional figures and files should be attached             %%
+%% separately and not embedded in the \TeX\ document itself.       %%
+%%                                                                 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%\documentclass[referee,sn-basic]{sn-jnl}% referee option is meant for double line spacing
+
+%%=======================================================%%
+%% to print line numbers in the margin use lineno option %%
+%%=======================================================%%
+
+%%\documentclass[lineno,pdflatex,sn-basic]{sn-jnl}% Basic Springer Nature Reference Style/Chemistry Reference Style
+
+%%=========================================================================================%%
+%% the documentclass is set to pdflatex as default. You can delete it if not appropriate.  %%
+%%=========================================================================================%%
+
+%%\documentclass[sn-basic]{sn-jnl}% Basic Springer Nature Reference Style/Chemistry Reference Style
+
+%%Note: the following reference styles support Namedate and Numbered referencing. By default the style follows the most common style. To switch between the options you can add or remove �Numbered� in the optional parenthesis. 
+%%The option is available for: sn-basic.bst, sn-chicago.bst%  
+ 
+%%\documentclass[pdflatex,sn-nature]{sn-jnl}% Style for submissions to Nature Portfolio journals
+%%\documentclass[pdflatex,sn-basic]{sn-jnl}% Basic Springer Nature Reference Style/Chemistry Reference Style
+\documentclass[pdflatex,sn-mathphys-num]{sn-jnl}% Math and Physical Sciences Numbered Reference Style
+%%\documentclass[pdflatex,sn-mathphys-ay]{sn-jnl}% Math and Physical Sciences Author Year Reference Style
+%%\documentclass[pdflatex,sn-aps]{sn-jnl}% American Physical Society (APS) Reference Style
+%%\documentclass[pdflatex,sn-vancouver-num]{sn-jnl}% Vancouver Numbered Reference Style
+%%\documentclass[pdflatex,sn-vancouver-ay]{sn-jnl}% Vancouver Author Year Reference Style
+%%\documentclass[pdflatex,sn-apa]{sn-jnl}% APA Reference Style
+%%\documentclass[pdflatex,sn-chicago]{sn-jnl}% Chicago-based Humanities Reference Style
+
+%%%% Standard Packages
+%%<additional latex packages if required can be included here>
+
+\usepackage{graphicx}%
+\usepackage{multirow}%
+\usepackage{amsmath,amssymb,amsfonts}%
+\usepackage{amsthm}%
+\usepackage{mathrsfs}%
+\usepackage[title]{appendix}%
+\usepackage{xcolor}%
+\usepackage{textcomp}%
+\usepackage{manyfoot}%
+\usepackage{booktabs}%
+\usepackage{algorithm}%
+\usepackage{algorithmicx}%
+\usepackage{algpseudocode}%
+\usepackage{listings}%
+\usepackage{caption} % 추가
+\usepackage{subcaption} % 추가
+\usepackage{fontspec} %
+
+% --- XeLaTeX용 폰트 설정
+\usepackage{fontspec}
+\usepackage[space]{xeCJK} % 한글용 추가
+\setCJKmainfont{Noto Sans KR} % 마찬가지
+%%%%
+
+%%%%%=============================================================================%%%%
+%%%%  Remarks: This template is provided to aid authors with the preparation
+%%%%  of original research articles intended for submission to journals published 
+%%%%  by Springer Nature. The guidance has been prepared in partnership with 
+%%%%  production teams to conform to Springer Nature technical requirements. 
+%%%%  Editorial and presentation requirements differ among journal portfolios and 
+%%%%  research disciplines. You may find sections in this template are irrelevant 
+%%%%  to your work and are empowered to omit any such section if allowed by the 
+%%%%  journal you intend to submit to. The submission guidelines and policies 
+%%%%  of the journal take precedence. A detailed User Manual is available in the 
+%%%%  template package for technical guidance.
+%%%%%=============================================================================%%%%
+
+%% as per the requirement new theorem styles can be included as shown below
+\theoremstyle{thmstyleone}%
+\newtheorem{theorem}{Theorem}%  meant for continuous numbers
+%%\newtheorem{theorem}{Theorem}[section]% meant for sectionwise numbers
+%% optional argument [theorem] produces theorem numbering sequence instead of independent numbers for Proposition
+\newtheorem{proposition}[theorem]{Proposition}% 
+%%\newtheorem{proposition}{Proposition}% to get separate numbers for theorem and proposition etc.
+
+\theoremstyle{thmstyletwo}%
+\newtheorem{example}{Example}%
+\newtheorem{remark}{Remark}%
+
+\theoremstyle{thmstylethree}%
+\newtheorem{definition}{Definition}%
+
+\raggedbottom
+%%\unnumbered% uncomment this for unnumbered level heads
+
+\begin{document}
+
+\title[Article Title]{Calculating Ground-State-Energy of \(\mathrm{LiCoO_2}\) by using Fragment molecular orbital-based Variational Quantum Eigensolver}
+
+%%=============================================================%%
+%% GivenName	-> \fnm{Joergen W.}
+%% Particle	-> \spfx{van der} -> surname prefix
+%% FamilyName	-> \sur{Ploeg}
+%% Suffix	-> \sfx{IV}
+%% \author*[1,2]{\fnm{Joergen W.} \spfx{van der} \sur{Ploeg} 
+%%  \sfx{IV}}\email{iauthor@gmail.com}
+%%=============================================================%%
+
+\author[1]{\fnm{Choi} \sur{Yoonho}}\email{cyh195535@hanyang.ac.kr}
+
+\author[1]{\fnm{Kim} \sur{Doyeon}}\email{rlaehdus3333@hanyang.ac.kr}
+
+
+\author[1]{\fnm{Kim} \sur{Doha}}\email{lichkim01@hanyang.ac.kr}
+
+\author*[1,2]{\fnm{Kwon} \sur{Younghun}}\email{yyhkwon@hanyang.ac.kr}
+
+
+\affil[1]{\orgdiv{Department of applied Phisics}, \orgname{Hanyang University}, \orgaddress{\city{Ansan}, \postcode{15588}, \state{Republic of Korea}}}
+
+\affil[2]{\orgdiv{Department of Intelligence, Information, and Quantum}, \orgname{Hanyang University}, \orgaddress{\city{Ansan}, \postcode{15588}, \state{Republic of Korea}}}
+
+
+%%==================================%%
+%% Sample for unstructured abstract %%
+%%==================================%%
+
+\abstract{The Variational Quantum Eigensolver (VQE) is a quantum algorithm for estimating ground-state energies, with promising applications in material science, drug discovery, and battery research. A key challenge is the limited number of qubits available on current quantum devices, which restricts the size of molecular systems that can be studied. To address this limitation, we apply the Fragment Molecular Orbital (FMO) method in combination with VQE, referred to as FMO-VQE. This approach divides a system into smaller fragments, making the quantum calculations more tractable. While earlier studies demonstrated this method only for simple hydrogen clusters, we extend the application to lithium cobalt oxide, a widely used cathode material in lithium-ion batteries. Using FMO-VQE, we estimate the ground-state energy of this complex system while reducing the number of required qubits from 24 to 14, without significant loss of accuracy compared to classical methods. This reduction highlights the potential of FMO-VQE to overcome hardware limitations and make quantum simulations of larger molecules feasible. The results suggest a practical path for applying near-term quantum computers to real-world challenges, opening opportunities for advancements in energy storage and pharmaceutical design.}
+
+%%================================%%
+%% Sample for structured abstract %%
+%%================================%%
+
+% \abstract{\textbf{Purpose:} The abstract serves both as a general introduction to the topic and as a brief, non-technical summary of the main results and their implications. The abstract must not include subheadings (unless expressly permitted in the journal's Instructions to Authors), equations or citations. As a guide the abstract should not exceed 200 words. Most journals do not set a hard limit however authors are advised to check the author instructions for the journal they are submitting to.
+% 
+% \textbf{Methods:} The abstract serves both as a general introduction to the topic and as a brief, non-technical summary of the main results and their implications. The abstract must not include subheadings (unless expressly permitted in the journal's Instructions to Authors), equations or citations. As a guide the abstract should not exceed 200 words. Most journals do not set a hard limit however authors are advised to check the author instructions for the journal they are submitting to.
+% 
+% \textbf{Results:} The abstract serves both as a general introduction to the topic and as a brief, non-technical summary of the main results and their implications. The abstract must not include subheadings (unless expressly permitted in the journal's Instructions to Authors), equations or citations. As a guide the abstract should not exceed 200 words. Most journals do not set a hard limit however authors are advised to check the author instructions for the journal they are submitting to.
+% 
+% \textbf{Conclusion:} The abstract serves both as a general introduction to the topic and as a brief, non-technical summary of the main results and their implications. The abstract must not include subheadings (unless expressly permitted in the journal's Instructions to Authors), equations or citations. As a guide the abstract should not exceed 200 words. Most journals do not set a hard limit however authors are advised to check the author instructions for the journal they are submitting to.}
+
+\keywords{VQE, Quantum Computing, Lithium-ion batteries}
+
+
+%%\pacs[JEL Classification]{D8, H51}
+
+%%\pacs[MSC Classification]{35A01, 65L10, 65L12, 65L20, 65L70}
+
+\maketitle
+
+\section{Introduction}\label{sec1}
+
+The ground-state energy of a molecule is fundamental to understanding molecular bonds and their structural properties. 
+This information is essential across a wide range of chemical research areas, including the development of new drugs [2-4], materials [5, 6], and advanced cathode materials for secondary batteries [7, 8]. 
+Currently, classical computers are used to calculate the ground-state energy of molecules [9-11].
+However, as the number of atoms in a molecule increases, or as the atomic number of the elements involved grows, the complexity of the system also increases exponentially.
+This results in a rapid rise in the number of particles and their interactions, which are represented in the molecule’s Hamiltonian. 
+The need to process these interactions requires significant computational resources and memory. 
+Consequently, calculating the ground-state energy of large molecules becomes increasingly challenging on classical computers.
+
+Quantum computers, which are an emerging technology, offer a promising alternative. Unlike classical computers, quantum computers use qubits, having superpositions of  0 and 1 states. 
+This allows quantum computers to potentially calculate the ground-state energy of a molecule much more efficiently. 
+While classical computers require exponential increases in memory as the system size grows, quantum computers only need a polynomial increase in qubits to handle the same task. 
+This enables quantum computers to process large molecules that would be infeasible for classical computers.
+One approach to calculating the ground-state energy of a molecule on a quantum computer is the Quantum Phase Estimation (QPE) algorithm, which determines the eigenvalues and eigenstates of a unitary matrix [12-16]. 
+However, QPE is highly accurate but requires a large number of qubits, which makes it impractical for current quantum devices, particularly noisy intermediate-scale quantum (NISQ) devices [17]. 
+These devices are limited by noise, lack of precision, and a relatively small number of qubits, making it difficult to implement QPE effectively.
+
+The Variational Quantum Eigensolver (VQE) is another algorithm designed to solve eigenvalue problems on NISQ-level quantum computers by combining both quantum and classical computing [18-21].
+VQE uses a variational approach with constructing a parameterized trial wavefunction as a Quantum Circuit, 
+which is iteratively adjusted until it converges to provide an upper bound for the ground-state energy. 
+The quantum computer performs the expectation value calculations, while the classical computer optimizes the parameters of trial wavefunction.
+Unlike QPE, VQE requires fewer qubits and allows for the optimization process to be handled by a classical computer, 
+making it a promising candidate for commercial quantum computing applications in the NISQ era. 
+Despite its potential, current quantum computers still face significant challenges, including errors and decreased accuracy as circuit depth increases. 
+Additionally, the limited number of available qubits restricts the ability to calculate the ground-state energy of very large molecules. 
+To address these issues, one promising approach is the Fragment Molecular Orbital-based Variational Quantum Eigensolver (FMO-VQE).
+Initially proposed by Lim et al. [1], the FMO-VQE method applies the classical FMO technique, which divides a molecule into smaller fragments and calculates the ground-state energy for individual monomers and dimers [22-25]. 
+These results are then used to estimate the total ground-state energy of the entire molecule. 
+While Lim et al. demonstrated the FMO-VQE method on hydrogen clusters, its application to more complex molecules remain unexplored. 
+This raises the question of whether the FMO-VQE approach is effective for real-world applications. 
+In this study, we investigate the performance of FMO-VQE by considering \(\mathrm{LiCoO_2}\), a key material used as a cathode in lithium-ion batteries. We calculate the ground-state energy of \(\mathrm{LiCoO_2}\) and compare the results with those from classical computations, demonstrating the potential of FMO-VQE for handling complex materials like \(\mathrm{LiCoO_2}\).
+
+\section{Methods}\label{sec2}
+
+\subsection{Lithium-ion battery}\label{subsec2.1}
+Lithium-ion batteries are widely used secondary batteries in various industries. A lithium-ion battery consists of a cathode material, an anode material, and an electrolyte, with lithium oxide typically used as the cathode material. This compound has a layered structure of CoO₂⁻, with \(\mathrm{Li^+}\) ions bonded between each layer. The energy charge of the battery depends on the extent to which the lithium ions are oxidized in the oxide [1-3].
+Lithium is known to have limited reserves in the world, prompting the need for sustainable solutions [4]. One such solution is to maximize the energy charged per lithium ion. 
+This is critical both in terms of conserving lithium resources and for advancing battery miniaturization[5, 6]. 
+To calculate the amount of energy stored per lithium ion, it is essential to compute the ground state of the molecule. However, this calculation is typically done using classical methods, 
+and the ability to calculate larger molecules or more complex combinations is limited.
+In this study, we demonstrate the application of the VQE algorithm to \(\mathrm{LiCoO_2}\) molecules and highlight the potential of quantum computers in the field of battery development.
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{fig/Cha_discha.png}
+    \caption{}
+    \label{fig:first}
+  \end{subfigure}
+  \hfill
+  %\vrule width 1pt  % 수직선 추가 (굵기: 1pt)
+  \hfill
+  \begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{fig/char.png}
+    \caption{}
+    \label{fig:second}
+  \end{subfigure}
+  \caption{(a) a Schematic of battery charging and discharging. The red-colored elements represent the cathode, while the blue-colored elements represent the anode. The arrows represent the movement of lithium ions and electrons. (b) Depending on the oxidation state (denoted as x in \(\mathrm{Li_xCoO_2}\)) of each compound, the upper figure represents the relative number of lithium ions separated from the cathode, while the lower figure illustrates the average geometry of \(\mathrm{LiCoO_2}\).}
+  \label{fig:two_figures_side_by_side}
+\end{figure}
+When a voltage is applied to the anode and cathode to supply electrons (i.e., during charging), the  \(\mathrm{Li^+}\) ions migrate to the anode. 
+Upon discharging from this charged state, the \(\mathrm{Li^+}\) ions from the anode recombine with the cathode, as shown in the Fig. 1 (a) right, and current flows through the resistor. 
+During this process, depending on the oxidation state of lithium, the average geometry of the molecular structure changes, as illustrated in Fig. 1 (b).
+Therefore, the energy stored in the bulk can be estimated using this geometry. 
+The energy of the molecule is calculated by assuming a gas-phase model, which treats the average oxide structure as a single molecule.
+
+\subsection{VQE(Variational Quantum Eigensolver)}\label{subsec2.2}
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{fig/VQE_pipeline.png}
+\caption{VQE Pipeline. Starting from the Schrödinger equation of the system, the process involves finding an appropriate measurement basis using the Hamiltonian, constructing an Ansatz to represent an arbitrary state with a parameterized quantum circuit, and finding the ground state energy through the variational method by performing measurements and updating the parameters}\label{Fig.2}
+\end{figure}
+The Variational Quantum Eigensolver (VQE) algorithm is an eigenvalue problem-solving method first proposed by Peruzzo et al [18]. 
+It works by computing the energy in Hilbert space, providing an upper bound on the ground state energy according to the variational principle. 
+VQE calculates the ground state energy of a system by measuring the energy on a quantum computer and performing optimization on a classical computer. 
+To measure the energy of a system on a quantum computer, the Ham-iltonian must be mapped to a form that can be represented as a quantum circuit. 
+Additionally, an arbitrary quantum state needs to be encoded into the circuit for the measurement process.
+
+\subsubsection{Hamiltonian}\label{subsec2.2.1}
+The Hamiltonian of a molecule is represented by the Electronic Structure Hamiltonian as follows:
+\begin{align}
+\hat{H}_{el} 
+&= \sum_{i} \frac{\nabla_{\mathbf{r}_i}^2}{m_i}
++ \sum_{I} \sum_{i} \frac{Z_I e^2}{\left| \mathbf{R}_I - \mathbf{r}_i \right|}
++ \sum_{i} \sum_{j>i} \frac{e^2}{\left| \mathbf{r}_i - \mathbf{r}_j \right|}
+\end{align}
+where \(r_i\) denotes the position vector of the i-th electron, 
+\(R_I\) denotes the position of the I-th nucleon, and \(Z_I\) is the atomic number of the I-th nucleon. 
+To map this Hamiltonian to the Pauli gates, we express it in second quantized form using fermionic creation/annihilation operators [7-9], as follows:
+\begin{align}
+\hat{H} 
+&= \sum_{p,q} h_{pq} \, \hat{a}_p^{\dagger} \hat{a}_q
++ \frac{1}{2} \sum_{p,q,r,s} h_{pqrs} \, \hat{a}_p^{\dagger} \hat{a}_q^{\dagger} \hat{a}_r \hat{a}_s
+\end{align}
+\begin{equation*}
+\text{where,} \quad 
+h_{pq} = \langle \phi_p \vert \hat{H}_{\mathrm{el}} \vert \phi_q \rangle, \quad
+h_{pqrs} = \langle \phi_p \, \phi_q \vert \hat{H}_{\mathrm{el}} \vert \phi_r \, \phi_s \rangle
+\end{equation*}
+Fermionic operators can be mapped to Pauli gates through widely adopted mapping methods such as Jordan-Wigner mapping, Parity mapping, and bravyi-kitaev mapping [10, 11]. 
+In this experiment, we will use the Parity mapping method. 
+Parity mapping expresses the creation/annihilation operator through a Pauli gate by corresponding the parity of the i-th qubit to the parity of the electron occupancy of the i-th orbital. 
+In this case, the parity of the \(\alpha-\) spin and \(\beta-\) spin of the molecule can be utilized to reduce the number of qubits required by two. 
+The resulting Hamiltonian of the mapping is represented by a Pauli string \(P_a\) and its weights or linear coefficients \(\omega_a\) as shown below.
+\begin{equation}
+\hat{H} = \sum_{a} \omega_{a} \, \mathcal{P}_{a}
+\end{equation}
+
+\subsubsection{Ansatz}\label{subsec2.2.2}
+To apply the variational principle, a parameterized quantum state is required, and in VQE, this is represented by a parameterized quantum circuit, 
+referred to as an Ansatz. In general, the Ansatz can be constructed using either hardware-efficient methods or Hamiltonian-inspired approaches.
+The performance of the ansatz is difficult to evaluate, and it is not known a priori which ansatz is better for different systems. 
+In this experiment, we compare two representative types of Ansatz, one hardware-efficient and the other Hamiltonian-inspired, and adopt the one yielding better results for our calculations.
+
+\paragraph{Two-local(Efficient SU2) Ansatz} \leavevmode \newline
+Since the quantum state of a single qubit can be represented on the Bloch sphere with two rotation gate, we take this idea as a basis. 
+By treating the rotation gate angles as variational parameters and introducing entanglement—a defining property of multi-qubit systems—through CNOT gates, 
+the quantum state of an arbitrary multi-qubit system can then be efficiently expressed in terms of these parameters.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{fig/twolocal.png}
+\caption{An example of a Two-Local Ansatz for a 4-Qubit system with 2 repetitions. The regions represented by dashed lines and the gray area distinguish the layers. The regions represent-ed by Rx and Ry gates, which include the parameter θ, represent the "rotation layer", while the regions represented by CNOT gates correspond to the "entanglement layer".}\label{Fig.3}
+\end{figure}
+The construction of the Two-Local Ansatz does not require an interpretation of the Hamiltonian. It is a representation of an arbitrary quantum state that is encoded in hardware, making it hardware-efficient.
+
+\paragraph{UCCSD(Unitary Coupled Cluster Singles and Doubles) Ansatz} \leavevmode \newline
+Through second quantization, we express the Hamiltonian operator in terms of the basis of the molecular orbitals of the system. Ultimately, the state we are looking for is represented in the same Hilbert space as the Hamiltonian. By using the same spin-orbitals as the basis, we can express any quantum state in the Hilbert space where the Hamiltonian exists. In this way, the quantum state is expressed through Coupled-Cluster Theory, using the spin-orbital wavefunctions of the molecule as the basis [12, 13]. When considering only second-order excitations, it is represented as a unitary operator, UCCSD (Unitary Coupled-Cluster Singles and Doubles), with the following expression[14]:
+\begin{equation*}
+\hat{T} = \hat{T}_1 + \hat{T}_2 \quad \text{(Cluster operator)}
+\end{equation*}
+\begin{equation*}
+\text{where,} \quad 
+\hat{T}_1 = \sum_{i,a} c_i^a \, \hat{a}_a^{\dagger} \hat{a}_i, \quad
+\hat{T}_2 = \sum_{i,j,a,b} t_{ij}^{ab} \, \hat{a}_a^{\dagger} \hat{a}_b^{\dagger} \hat{a}_j \hat{a}_i
+\end{equation*}
+The states are represented by creation and annihilation operators, which can be encoded in quantum circuits using either Jordan-Wigner mapping or parity mapping. 
+
+\subsubsection{Energy calculation}\label{subsec2.2.3}
+
+The energy of the system for each interaction is evaluated by measuring the expectation value of each Pauli string in the Hamiltonian within the quantum circuits. 
+\begin{equation}
+E(\mathbf{\theta}) = \sum_{a} \omega_a \langle \Psi(\mathbf{\theta}) \vert \mathcal{P}_a \vert \Psi(\mathbf{\theta}) \rangle
+\end{equation}
+
+By iteratively performing these measurements and optimizing the ansatz parameters to minimize the energy,
+an upper bound on the ground-state energy is obtained. 
+\begin{equation}
+E_{ground}\leq E_{VQE} = \min_{\mathbf{\theta}} E(\mathbf{\theta})
+\end{equation}
+The converged  value achieved corresponds to the ground-state energy estimated by the VQE algorithm for the system.
+
+%The energy of the system is calculated by measuring the expectation value for each Pauli string in the Hamiltonian within these quantum circuits.
+%By iterating over these measurements and optimizing the parameters of the ansatz to minimize the calculated energy, 
+%an upper bound on the ground state energy is determined. 
+%The resulting minimum corresponds to the ground state energy calculated by the VQE algorithm for the system.
+
+
+\subsection{FMO (Fragmental Molecular orbital)}\label{subsec2.3}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{fig/LiCoO2_FMO.png}
+\caption{An example of the FMO scheme in \(\mathrm{LiCoO_2}\)}\label{Fig.4}
+\end{figure}
+The FMO method is a method that divides a whole molecular system into smaller system fragments and approximates the energy of the whole system by using the energy of one fragment (monomer) and the energy of pairs of fragments (dimers). When calculating the ground state energy of a molecule by the usual method, the computational complexity is exponential in the size of the system. However, the FMO method can effectively reduce the computational complexity by dividing a large system into parts. 
+The FMO method has two main steps. The first is the FMO-based restricted Hartree-Fock (FMO-RHF) process, which calculates the RHF through the Hamiltonian of monomers and dimers. The Hamiltonian of monomer \(\mathrm{(\hat{H}_{A})}\) and the Hamiltonian of dimer\(\mathrm{(\hat{H}_{AB})}\) are as follows. 
+\begin{equation}
+\hat{H}_A = 
+\sum_{i \in A} \Bigg[
+    -\frac{\nabla_{\mathbf{r}_i}^2}{m_e}
+    - \sum_I \frac{Z_I}{|\mathbf{r}_i - \mathbf{R}_I|}
+    + \sum_{C \neq A}^{N_{\mathrm{tot}}} 
+      \int d\mathbf{r}' \, \frac{\rho_J(\mathbf{r}')}{|\mathbf{r}_i - \mathbf{r}'|}
+\Bigg]
++ \sum_{i<j \in A} \frac{1}{|\mathbf{r}_i - \mathbf{r}_j|}\label{eq5}
+\end{equation}
+\begin{equation}
+\hat{H}_{AB} = 
+\sum_{i \in A,B} \Bigg[
+    -\frac{\nabla_{\mathbf{r}_i}^2}{m_e}
+    - \sum_I \frac{Z_I}{|\mathbf{r}_i - \mathbf{R}_I|}
+    + \sum_{C \neq A,B}^{N_{\mathrm{tot}}} 
+      \int d\mathbf{r}' \, \frac{\rho_J(\mathbf{r}')}{|\mathbf{r}_i - \mathbf{r}'|}
+\Bigg] + \sum_{i<j \in A,B} \frac{1}{|\mathbf{r}_i - \mathbf{r}_j|}
+\end{equation}
+(Where A,B are the respective fragments. C refers to the fragments that are not included in monomer A or dimer AB, and the term \(\rho_J(r')\) is the electric charge density of the fragments outside the monomer or dimer.) By calculating the RHF of each monomer and dimer through the Hamiltonian above, we can get \({E^\mathrm{FMO-RHF}}\), which can be expressed as follows.
+\begin{equation}
+E^{\mathrm{FMO2\!-\!RHF}} = E^{\mathrm{FMO1\!-\!RHF}} + \Delta E^{\mathrm{FMO2\!-\!RHF}}
+\end{equation}
+\begin{equation}
+E^{\mathrm{FMO1\!-\!RHF}} = \sum_{A}^{N} E_A
+\end{equation}
+\begin{equation}
+\Delta E^{\mathrm{FMO2\!-\!RHF}} = \sum_{A > B}^{N} \Big[ E_{IJ} - E_I - E_J \Big]
+\end{equation}
+In the above equations, N refers to all fragments. From the above equations, we can get the HF energy including the electrostatic potential of the whole molecule. The next step is to proceed with FMO based coupled-cluster (FMO-CC). This process is performed to obtain a more accurate value of the FMO-RHF energy, and since this process does not include the electrostatic potential, the Hamiltonian can be calculated using the Electronic Structure Hamiltonian defined earlier. The process of calculating the total energy \(E^\mathrm{FMO-CC}\) and correlation energy \(E^\mathrm{FMO-corr}\) obtained through FMO-CC is as follows.
+\begin{equation}
+E^{\mathrm{FMO}n\!-\!\mathrm{CC}} = E^{\mathrm{FMO}n\!-\!\mathrm{RHF}} + E^{\mathrm{FMO}n\!-\!\mathrm{corr}}
+\end{equation}
+\begin{equation}
+E^{\mathrm{FMO2\!-\!corr}} = E^{\mathrm{FMO1\!-\!corr}} + \Delta E^{\mathrm{FMO2\!-\!corr}}
+\end{equation}
+\begin{equation}
+E^{\mathrm{FMO1\!-\!corr}} = \sum_{A}^{N} E_A^{\mathrm{corr}}
+\end{equation}
+\begin{equation}
+\Delta E^{\mathrm{FMO2\!-\!corr}} = \sum_{A>B}^{N} 
+\left( E_{IJ}^{\mathrm{corr}} - E_I^{\mathrm{corr}} - E_J^{\mathrm{corr}} \right)
+\end{equation}
+In the above, the FMO-RHF and FMO-CC processes should be separated because the Hamiltonian used in the two processes may be different, and the FMO-CC process should proceed after the SCF calculation of FMO-RHF converges. However, in this experiment, the electrostatic potential term in the FMO-RHF Hamiltonian was approximated by ignoring it, so each process was carried out consecutively and the total energy was calculated from the obtained monomer and dimer energies as follows.
+
+\subsection{FMO-VQE (Fragment molecular orbital-based Varational Quantum Eigensolver)}\label{subsec2.4}
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{fig/FMO_VQE_schme.png}
+\caption{An illustration of applying the FMO/VQE method. 1) \(\mathrm{LiCoO_2}\) compound in the cathode material forms a layered structure, However, assuming a gas-phase model, it is considered that a single compound exists as a molecule. 2) The FMO scheme is applied to form monomers and dimers. 3) The ground state energy of each fragment is calculated using VQE. 4) The ground state energy of the entire molecule is then calculated using the energies of each fragment.}\label{Fig.5}
+\end{figure}
+FMO-VQE is an algorithm first introduced by Lim et al. that combines the VQE algorithm with the FMO method. In the VQE algorithm, the Hamiltonian is represented based on the molecular spin-orbitals, so it requires as many qubits as the number of molecular spin-orbitals. However, the number of qubits is currently limited, so the number of molecules that can be simulated in the existing VQE algorithm is limited. However, if the FMO Method is applied to the existing VQE algorithm, the number of qubits required for a single calculation can be reduced by parallelizing the calculation and simulating the total system in pieces. 
+
+We compare the number of qubits required with and without the FMO method. 
+In both cases, an Active Space was employed by selecting only the valence orbitals of each atom. 
+The core orbitals, which are less likely to participate in bonding, were treated as constant contributions, 
+while the Hilbert space was defined as the subspace constructed by only the valence spin orbitals. 
+Under these assumptions, the number of orbtal required for a conventional VQE calculation is shown in Table 1.
+
+\begin{table}[h]
+\caption{Orbital structure of each atom}\label{tab1}%
+\begin{tabular}{@{}lcc@{}}
+\toprule
+atom & Number of Valence spin-orbital  & Number of Valence electron\\
+\midrule
+\(\mathrm{Li}\)   & 2   & 1   \\
+\(\mathrm{O}\)   & 6   & 4  \\
+\(\mathrm{Co}\)   & 10   & 7   \\
+\botrule
+\end{tabular}
+\end{table}
+Therefore, the number of spin-orbitals required for the VQE calculation is 24, considering that oxygen has 2. 
+If we use the parity mapper here, we can reduce the number of qubits needed for the calculation by 2,
+so 22 qubits are needed to solve this system via conventional VQE. 
+
+Let's apply the FMO method, where each atom is a fragment, which means that 4 monomers are created and 6 dimer systems need to be calculated. 
+The number of spin-orbitals required for each calculation is shown in Table 2. (only one is shown for configurations with the same composition).
+\begin{table}[h]
+\caption{Orbital structure of each Fragment}\label{tab2}%
+\begin{tabular}{@{}lcc@{}}
+\toprule
+Configuration & Number of Valence spin-orbital  & Number of Valence electron\\
+\midrule
+"monomer"   &   &  \\
+\(\mathrm{Li}\)   & 2   & 1   \\
+\(\mathrm{O}\)   & 6   & 4  \\
+\(\mathrm{Co}\)   & 10   & 7   \\
+"Dimer"   &   &  \\
+\(\mathrm{Li-O}\)   & 6   & 5   \\
+\(\mathrm{Li-Co}\)   & 12   & 8  \\
+\(\mathrm{O-O}\)   & 12   & 8   \\
+\(\mathrm{Co-O}\)   & 16   & 11   \\
+\botrule
+\end{tabular}
+\end{table}
+
+Therefore, the maximum number of qubits required in the calculation is 14 (using Parity mapper). 
+By applying the FMO method, we can reduce the number of qubits required for the calculation by 8. 
+Furthermore, the potential of this method is in larger systems. 
+When simulating larger molecules such as \(\mathrm{Ni}\),\(\mathrm{Mn}\), etc. 
+added to the popular \(\mathrm{LiCoO_2}\) molecule, conventional VQE requires more qubits than the number of valence orbitals of those atoms.
+However, in FMO-VQE, the increase in the size of the system leads to an increase in the number of fragments, 
+so it is possible to calculate the energy of larger molecules using the same number of qubits.
+
+
+
+\section{Results}\label{sec3}
+\subsection{Monomer/Dimer Energy}\label{subsec3.1}
+
+\begin{table}[h]
+\caption{Energy of Monomer for each Ansatz/Optimizer}\label{tab3}
+\begin{tabular*}{\textwidth}{@{\extracolsep\fill}lcccccc}
+\toprule%
+& \multicolumn{3}{@{}c@{}}{UCCSD} & \multicolumn{3}{@{}c@{}}{twolocal} \\\cmidrule{2-4}\cmidrule{5-7}%
+System & COBYLA & SPSA & L-BFGS-B & COBYLA & SPSA & L-BFGS-B \\
+\midrule
+$\mathrm{"Li"}$  & \underline{-7.31553} & \underline{-7.31553} & \underline{-7.31553} & \underline{-7.31553} & -7.31543 & \underline{-7.31553} \\
+$\mathrm{"O"}$  & \underline{-73.80415} & \underline{-73.80415} & \underline{-73.80415} & \underline{-73.80415} & -73.80307 & \underline{-73.80415} \\
+$\mathrm{"Co"}$ & -1365.94392 & -1366.00204 & \underline{-1366.11826} & -1366.00679 & -1365.74025 & -1366.09208 \\
+\botrule
+\end{tabular*}
+\end{table}
+
+\begin{sidewaystable}
+\caption{Energy of Dimer for each Ansatz/Optimizer for each Oxidation State of \(\mathrm{Li_xCoO_2}\)}\label{tab4}
+\begin{tabular*}{\textwidth}{@{\extracolsep\fill}lcccccc}
+\toprule%
+& \multicolumn{3}{@{}c@{}}{UCCSD} & \multicolumn{3}{@{}c@{}}{twolocal} \\\cmidrule{2-4}\cmidrule{5-7}%
+Configuration & COBYLA & SPSA & L-BFGS-B & COBYLA & SPSA & L-BFGS-B \\
+\midrule
+$\left[x=1\right]$ &  &  &  &  &  & \\[4pt]
+$\mathrm{"Li-O"}$\footnotemark[1] & -81.03653 & -81.06298 & \underline{-81.06974} & -81.02363 & -80.97842 & \underline{-81.06970} \\
+$\mathrm{"Li-O"}$\footnotemark[2] & -81.11753 & -81.11795 & \underline{-81.11796} & -81.09424 & -81.03055 & -81.11758 \\
+$\mathrm{"Li-Co"}$ & -1373.42976 & -1373.56795 & \underline{-1373.61874} & -1373.57632 & -1373.51252 & -1373.60997 \\
+$\mathrm{"O-O"}$ & -147.43225 & -147.48575 & -147.59916 & -147.52889 & -147.33423 & \underline{-147.60586} \\
+$\mathrm{"Co-O"}$\footnotemark[1] & -1439.45921 & -1439.78893 & -1439.88888 & -1439.39615 & -1439.72779 & \underline{-1439.91849} \\
+$\mathrm{"Co-O"}$\footnotemark[2] & -1439.35582 & -1439.79679 & \underline{-1439.95726} & -1439.31519 & -1439.32178 & -1439.69541 \\ [8pt]
+
+$\left[x=0.94\right]$ &  &  &  &  &  & \\[4pt]
+$\mathrm{"Li-O"}$\footnotemark[1] & -81.07907 & -81.07138 & \underline{-81.08409} & -81.01432 & -81.04227 & \underline{-81.08406} \\
+$\mathrm{"Li-O"}$\footnotemark[2] & -81.11999 & -81.11970 & \underline{-81.12007} & -81.11776 & -81.06677 & \underline{-81.12007} \\
+$\mathrm{"Li-Co"}$ & -1373.43468 & -1373.56865 & -1373.56951 & -1373.34730 & -1373.52901 & \underline{-1373.58424} \\
+$\mathrm{"O-O"}$ & -147.39197 & -147.37439 & \underline{-147.60804} & -147.55176 & -147.52360 & -147.48999 \\
+$\mathrm{"Co-O"}$\footnotemark[1] & -1439.39364 & -1439.48572 & -1439.89885 & -1439.21082 & -1439.56425 & \underline{-1439.98606} \\
+$\mathrm{"Co-O"}$\footnotemark[2] & -1439.42366 & -1439.84332 & \underline{-1439.95203} & -1439.16988 & -1439.48588 & -1439.80339 \\ [8pt]
+
+$\left[x=0.78\right]$ &  &  &  &  &  & \\[4pt]
+$\mathrm{"Li-O"}$\footnotemark[1] & -81.01829 & -81.08457 & \underline{-81.08631} & -81.01166 & -81.00266 & \underline{-81.08630} \\
+$\mathrm{"Li-O"}$\footnotemark[2] & -81.11964 & -81.11963 & \underline{-81.12009} & -81.07204 & -81.08808 & -81.12001 \\
+$\mathrm{"Li-Co"}$ & -1373.20624 & -1373.31948 & -1373.35433 & -1373.59200 & -1373.38089 & \underline{-1373.72549} \\
+$\mathrm{"O-O"}$ & -147.41212 & -147.55173 & \underline{-147.60707} & -147.51741 & -147.16680 & -147.56082 \\
+$\mathrm{"Co-O"}$\footnotemark[1] & -1439.54718 & -1439.82803 & \underline{-1439.94469} & -1439.30031 & -1439.40886 & -1439.73855 \\
+$\mathrm{"Co-O"}$\footnotemark[2] & -1439.22604 & -1439.77836 & -1439.84005 & -1439.31985 & -1439.52320 & \underline{-1439.71484} \\ [8pt]
+
+$\left[x=0.75\right]$ &  &  &  &  &  & \\[4pt]
+$\mathrm{"Li-O"}$\footnotemark[1] & -81.08397 & -81.08142 & \underline{-81.08631} & -81.04908 & -81.07301 & -81.08508 \\
+$\mathrm{"Li-O"}$\footnotemark[2] & -81.11966 & -81.11962 & \underline{-81.12009} & -81.09597 & -81.08132 & -81.11975 \\
+$\mathrm{"Li-Co"}$ & -1373.22366 & -1373.35426 & -1373.32846 & -1373.58968 & -1373.58500 & \underline{-1373.79051} \\
+$\mathrm{"O-O"}$ & -147.41305 & -147.28127 & \underline{-147.60753} & -147.44585 & -147.44231 & -147.46299 \\
+$\mathrm{"Co-O"}$\footnotemark[1] & -1439.38835 & -1439.75818 & -1439.85708 & -1439.35451 & -1439.47900 & \underline{-1439.72300} \\
+$\mathrm{"Co-O"}$\footnotemark[2] & -1439.27606 & -1439.99437 & \underline{-1440.02488} & -1439.29817 & -1439.29598 & -1439.92656 \\
+\botrule
+\end{tabular*}
+\footnotetext{All values in the Table 3, Table 4 are in Ha units. The underlined values represent the lowest convergence values for each configuration. The configurations with superscripts refer to different dimers with the same composition but different geometric structures(The geometric structure refers to [42]).}
+$\mathrm{"Li-O"}$\footnotemark[1]{A dimer consisting of O and Li atoms that form a bond.}
+
+$\mathrm{"Li-O"}$\footnotemark[2]{A dimer consisting of O and Li atoms that do not form a bond.}
+
+$\mathrm{"Co-O"}$\footnotemark[1]{A dimer consisting of Co and O atoms forming a single bond.}
+
+$\mathrm{"Co-O"}$\footnotemark[2]{A dimer consisting of Co and O atoms forming a double bond.}
+\end{sidewaystable}
+
+Tables~3 and 4 present the VQE calculation results for monomers and dimers constructed from fragments of the $\mathrm{LiCoO_2}$ molecule. All calculations were performed for six cases, combining two different Ansatzes with three types of optimizers. Under the present conditions, the energy of a monomer does not depend on the relative coordinates of its fragments, and thus remains independent of the molecular geometry. In other words, the calculation results remain unchanged across oxidation states, and therefore a single calculation is sufficient.
+
+With respect to the choice of optimizer, differences on the order of 0.1$\,\mathrm{Ha}$ were observed between L-BFGS-B and the other optimizers, which is non-negligible compared to the target precision. While COBYLA and SPSA were significantly faster in terms of computational time, L-BFGS-B provided the most accurate results.
+
+The choice of Ansatz exhibited different behaviors depending on the configuration. 
+For ``Co--O\textsuperscript{2}'', ``Li--O\textsuperscript{1}'', and ``Li--O\textsuperscript{2}'', 
+UCCSD consistently yielded the lowest energies across all oxidation states. 
+In contrast, for ``Li--Co'', ``Co--O\textsuperscript{1}'', and ``O--O'', 
+the optimal Ansatz varied across oxidation states, even though the geometric structures of the fragments were similar. 
+For example, in ``Li--Co'', Two\_Local achieved lower convergence values than UCCSD for all oxidation states except $x=1$, 
+while in ``O--O'', UCCSD outperformed Two\_Local except at $x=1$. 
+For ``Co--O\textsuperscript{1}'', Two\_Local yielded the lowest energy at $x=1.00$ and $0.94$, 
+whereas UCCSD was superior at $x=0.78$ and $0.75$.
+
+These findings indicate that even for structurally similar systems, 
+the optimal choice of Ansatz may differ depending on the specific conditions. 
+Ultimately, the selection of an Ansatz corresponds to the choice of basis for representing the Hilbert space. 
+When the number of spin orbitals is small, the differences arising from basis choice remain minor; 
+however, as the dimension of the Hilbert space increases, 
+the representational power of different Ansatzes diverges significantly. 
+For instance, in ``Li--O\textsuperscript{1}'' and ``Li--O\textsuperscript{2}'' systems, 
+where the Hilbert space consists of approximately eight spin-orbital wavefunctions, 
+the differences were limited to the order of $10^{-3}\,\mathrm{Ha}$, which is negligible. 
+In contrast, for ``Li--Co'' and ``O--O\textsuperscript{2}'' systems with 12 spin orbitals, 
+and for ``Co--O\textsuperscript{1}'' and ``Co--O\textsuperscript{2}'' systems with 16 spin orbitals, 
+discrepancies on the order of $10^{-1}$ were observed, directly impacting the calculation accuracy. 
+Therefore, the expressive power of an Ansatz can vary significantly depending on the system, 
+and for calculations requiring high precision, 
+it is necessary to apply multiple Ansatzes and select the most suitable one for each system.
+\newpage
+
+\subsection{Molecular Energy}\label{subsec3.2}
+\begin{sidewaystable}
+\caption{Ground-state energies for each oxidation state calculated by each method.}\label{tab4}
+\begin{tabular*}{\textwidth}{@{\extracolsep\fill}lcccccc}
+\toprule%
+& \multicolumn{4}{@{}c@{}}{Oxidation Number} \\\cmidrule(lr){2-5}%
+Method & 0.75 & 0.78 & 0.94 & 1 \\
+\midrule
+FMO-VQE  & -1521.40221 & -1521.25034 & -1521.25034 & -1521.20387 \\
+FMO-VQE (Exact solution) & -1521.50447 & -1521.42864 & -1521.32872 & -1521.30037 \\
+VQE (Exact solution) & -1521.12516 & -1521.12433 & -1521.11858 & -1521.11845 \\
+CASCI &-1521.22651 & -1521.22809 & -1521.22826 & -1521.25025 \\
+CCSD & -1521.42181 & -1521.41163 & -1521.41806 & -1521.40465 \\
+\botrule
+\end{tabular*}
+
+\vspace{3em}
+
+\caption{The difference $dE$ (Ha) between the ground-state energies calculated by each method and those obtained from the FMO-VQE approach, and the corresponding error rate (\%).}\label{tab4}
+\begin{tabular*}{\textwidth}{@{\extracolsep\fill}lcccccccc}
+\toprule%
+& \multicolumn{8}{@{}c@{}}{Oxidation Number} \\\cmidrule(lr){2-9}%
+Method & \multicolumn{2}{@{}c@{}}{0.75} & \multicolumn{2}{@{}c@{}}{0.78} & \multicolumn{2}{@{}c@{}}{0.94} & \multicolumn{2}{@{}c@{}}{1} \\
+& $dE $\footnotemark[1]$ \, (Ha)$ & Error\footnotemark[2] $(\%)$ & $dE \, (Ha)$ & Error $(\%)$ & $dE \, (Ha)$ & Error $(\%)$ & $dE \, (Ha)$ & Error $(\%)$ \\
+\midrule
+FMO-VQE & - & - & - & - & - & - & - & - \\
+FMO-VQE (Exact solution) & 0.10226 & 0.007 & 0.17830 & 0.012 & 0.07838 & 0.005 & 0.09650 & 0.006 \\
+VQE (Exact solution)  & -0.27705 & 0.018 & -0.12601 & 0.008 & -0.13176 & 0.009 & 0.08542 & 0.006 \\
+CASCI & 0.02264 & 0.002 & -0.02226 & 0.002 & -0.02209 & 0.002 & -0.15195 & 0.010 \\
+CCSD & 0.21794 & 0.014 & 0.16129 & 0.011 & 0.16772 & 0.011 & 0.00244 & 0.000 \\
+\botrule
+\end{tabular*}
+\footnotetext{* All values in the Table 5, Table 6 are in Ha units.}
+
+$dE$\footnotemark[1] : {Difference between the energy obtained by FMO-VQE and each method (a positive value indicates that the method yields a lower energy than FMO-VQE)}
+
+error\footnotemark[2] : {Error of the energy difference, expressed in percentage.}
+
+\end{sidewaystable}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.8\textwidth]{fig/result2.png}
+\caption{The red dashed line marked with $”\blacktriangle”$ represents the energy obtained from CASCI calculations. For the CASCI calculation, the active space was chosen as eight occupied orbitals around the HOMO and four unoccupied orbitals around the LUMO, balancing computational cost and accuracy. The blue dashed line marked with $”\blacksquare”$ corresponds to the energy obtained from CCSD calculations. The magenta dashed line marked with $”\mathsf{X}”$ shows the result obtained by solving the diagonalization problem of a 16-qubit Hamiltonian (without the FMO scheme) corresponding to the same system as in the FMO-VQE calculation. The green solid line marked with $”\bullet”$ denotes the result obtained using the proposed FMO-VQE method. Finally, the orange solid line marked with $”\blacklozenge”$ corresponds to the exact solution of the Hamiltonian under the proposed FMO-VQE scheme.}\label{Fig.5}
+\end{figure}
+
+In this study, we aim to verify whether the FMO-VQE approach can approximately calculate the ground-state energy of larger molecular systems under a limited number of qubits.
+
+To evaluate the performance of conventional VQE under restricted qubit resources, we computed the optimal result obtainable by VQE with the same number of qubits used in the FMO-VQE calculation. Specifically, we constructed a Hamiltonian corresponding to 14 qubits and classically diagonalized it to obtain the exact value. This value serves as a reference, representing the ideal outcome in the absence of computational errors and assuming complete convergence in the optimization process of the VQE algorithm. The result is shown in magenta in Figure~1. The conventional VQE results exhibited relatively higher energies than those obtained from classical simulators such as CCSD and FCI, implying that even when optimization issues and circuit noise are disregarded, conventional VQE cannot achieve the same level of accuracy as classical methods under qubit constraints. In contrast, the ground-state energy obtained by the FMO-VQE approach was comparable to CASCI simulation results and, in some cases, yielded even lower energies.
+
+The orange curve in Figure~1 represents the ground-state energy obtained by exactly diagonalizing each fragment Hamiltonian under the FMO scheme employed in this work. This value serves as the reference energy achievable under the assumed FMO framework and represents the ideal benchmark for the FMO-VQE algorithm. A significant difference was observed between the results obtained with the FMO scheme and those obtained without it (CCSD, UCCSD, and conventional VQE), depending on the oxidation state. This discrepancy can be attributed to the approximation introduced by the FMO method, suggesting that certain inter-fragment interactions were either under- or overestimated. The primary source of this error is likely the omission of potential terms representing fragment–fragment interactions. Moreover, the difference observed between the FMO-VQE results and the orange benchmark curve may arise from convergence issues in the VQE optimization process or phenomena such as barren plateaus. These errors, however, are expected to be mitigated through improved optimization strategies or by employing more expressive Ansatzes.
+
+Nevertheless, the significance of the FMO-VQE approach lies in its ability to provide approximate solutions for large-scale systems, where exact FCI calculations become infeasible due to the exponential growth of computational cost. In this study as well, FCI calculations were impractical; thus, classical reference values were obtained using the CASCI method with a properly defined active space. Consequently, one of the central objectives in current quantum chemistry research is the development of better approximation schemes. In this context, comparisons among CASCI, CCSD, and FMO-VQE calculations are particularly important, and the results in Figure~1 demonstrate that FMO-VQE can serve as a competitive alternative. Notably, despite remaining room for improvement in terms of precision, the ability of FMO-VQE to approximate ground-state energies with reasonable accuracy under restricted qubit resources is promising.
+
+Accurate calculation of ground-state energies in complex molecular systems is a critical challenge for a wide range of applications, including battery material design and drug discovery. However, as system size increases, conventional exact methods such as Full Configuration Interaction (FCI) become computationally intractable due to their exponential resource requirements. To address this challenge, the Fragment Molecular Orbital (FMO) method has been proposed, which partitions the system into fragments; nevertheless, its performance in classical settings has often been regarded as insufficient in terms of computational efficiency [ref. needed]. In contrast, from a quantum perspective, the FMO method holds considerable promise, as it can reduce the number of qubits required for calculations—an essential advantage in the current NISQ era. The FMO-VQE approach, originally introduced by Lim et al. and applied in this study, effectively decreases the number of qubits by dividing the full system into smaller fragments and applying VQE to each fragment. Importantly, this approach exhibits sublinear scaling of qubit requirements with system size, thereby offering a potential path to overcome the limitations of NISQ hardware.
+
+Of course, the present implementation of FMO-VQE still requires improvements, including the incorporation of external field terms to more accurately capture inter-fragment interactions and strategies to ensure stable convergence during VQE optimization. Nonetheless, this study demonstrates that FMO-VQE enables approximate energy calculations for systems that are otherwise inaccessible to conventional VQE alone, highlighting its potential for handling increasingly complex molecules. While not yet fully matured, the FMO-VQE algorithm exhibits consistent scalability with system size, suggesting that it can provide meaningful energy estimates even in regimes where classical calculations are impractical.
+\section{Conclusions}
+In this study, we applied the quantum algorithm FMO-VQE to the calculation of the ground-state energy of the $\mathrm{LiCoO_2}$ molecule and compared the results with those obtained from classical simulators. As this work represents an early-stage attempt, we employed a small basis set and neglected external field terms in the FMO scheme; thus, chemically meaningful interpretations were not pursued. Nevertheless, by comparing against classical quantum chemistry algorithms such as CCSD and CASCI under the same active space, we were able to assess the accuracy and reliability of the FMO-VQE approach.
+
+Although the VQE algorithm has been proposed as a promising solution to the computational cost problem, its practical utility in the current NISQ (Noisy Intermediate-Scale Quantum) era has been limited by hardware constraints. The FMO-VQE method presented in this work, however, demonstrates the potential to exploit quantum hardware advantages even under such limitations.
+
+In particular, while conventional algorithms may fail to provide valid energy estimates for more complex molecules, the FMO-VQE approach is expected to yield more accurate energies under the same level of approximation by leveraging quantum resources. These findings suggest that FMO-VQE can serve as a practical strategy for addressing computational challenges in fields such as drug discovery and materials design, where increasingly complex molecular systems are of central importance.
+
+Although this study remains in its early stage, the results indicate that, while the FMO method alone may offer little advantage in classical contexts, its combination with VQE in the quantum setting reduces the required number of qubits while maintaining a level of accuracy comparable to classical methods. Thus, this work highlights the potential of FMO-VQE as a new computational paradigm for quantum chemistry of complex molecular systems, and points toward broader applicability through future improvements of the FMO scheme to incorporate diverse quantum systems and chemical environments.
+\end{document}
+

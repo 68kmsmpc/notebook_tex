@@ -1,0 +1,42 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{n}{basis} \PYG{o}{=} \PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{sto3g}\PYG{l+s+s1}{\PYGZsq{}}
+\PYG{c+c1}{\PYGZsh{} Slater Determinant의 한 원소가 되는 원자의 파동함수를 기술하기 위한 basis}
+\PYG{c+c1}{\PYGZsh{} 여기서는 STO\PYGZhy{}3G 사용}
+\PYG{n}{settings}\PYG{o}{.}\PYG{n}{use\PYGZus{}pauli\PYGZus{}sum\PYGZus{}op} \PYG{o}{=} \PYG{k+kc}{False}
+\PYG{c+c1}{\PYGZsh{} 파울리스트링으로 헤밀토니안을 표현할때 SparsePauliOp의 형태가 아닌, 파울리 스트링의 합으로써 지정할것인가의 유무}
+\PYG{c+c1}{\PYGZsh{} 구버전 Qiskit에서는 이러한 형태를 사용.}
+
+\PYG{c+c1}{\PYGZsh{} x = 1}
+\PYG{n}{C} \PYG{o}{=} \PYG{l+m+mf}{1.9220}
+\PYG{c+c1}{\PYGZsh{} Co\PYGZhy{}O 의 평균 결합거리}
+\PYG{n}{L} \PYG{o}{=} \PYG{l+m+mf}{2.0946}
+\PYG{c+c1}{\PYGZsh{} O\PYGZhy{}Li 의 평균 결합거리}
+\PYG{n}{theta} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{deg2rad}\PYG{p}{(}\PYG{l+m+mf}{94.24}\PYG{p}{)}
+\PYG{c+c1}{\PYGZsh{} O\PYGZhy{}Co\PYGZhy{}O 결합각을 라디안 단위로 변경}
+\PYG{c+c1}{\PYGZsh{} Co\PYGZhy{}O\PYGZhy{}Li 결합각의 경우, Symmetry 하도록 배치}
+\PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+\PYG{l+s+sd}{서로다른 x(산화상태)에 대응되는 결합거리, 결합각 을 정의}
+\PYG{l+s+sd}{다른 계산에서는 아래의 값중에서 대응되는 다른값을 사용}
+\PYG{l+s+sd}{\PYGZsh{} \PYGZsh{} x= 0.94}
+\PYG{l+s+sd}{\PYGZsh{} C = 1.9210}
+\PYG{l+s+sd}{\PYGZsh{} L = 2.0944}
+\PYG{l+s+sd}{\PYGZsh{} theta = np.deg2rad(94.27)}
+
+\PYG{l+s+sd}{\PYGZsh{} \PYGZsh{}x = 0.78}
+\PYG{l+s+sd}{\PYGZsh{} C = 1.9132}
+\PYG{l+s+sd}{\PYGZsh{} L = 2.07}
+\PYG{l+s+sd}{\PYGZsh{} theta = np.deg2rad(94.72)}
+
+\PYG{l+s+sd}{\PYGZsh{} \PYGZsh{}x = 0.75}
+\PYG{l+s+sd}{\PYGZsh{} C = 1.9059}
+\PYG{l+s+sd}{\PYGZsh{} L = 2.07}
+\PYG{l+s+sd}{\PYGZsh{} theta = np.deg2rad(95.07)}
+\PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+
+\PYG{n}{Co} \PYG{o}{=} \PYG{p}{(}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{)}
+\PYG{n}{O\PYGZus{}1} \PYG{o}{=} \PYG{p}{(}\PYG{n}{C}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{)}
+\PYG{n}{O\PYGZus{}2} \PYG{o}{=} \PYG{p}{(}\PYG{n}{C}\PYG{o}{*}\PYG{n}{np}\PYG{o}{.}\PYG{n}{cos}\PYG{p}{(}\PYG{n}{theta}\PYG{p}{)}\PYG{p}{,}\PYG{n}{C}\PYG{o}{*}\PYG{n}{np}\PYG{o}{.}\PYG{n}{sin}\PYG{p}{(}\PYG{n}{theta}\PYG{p}{)}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{)}
+\PYG{n}{Li} \PYG{o}{=} \PYG{p}{(}\PYG{n}{C}\PYG{o}{+}\PYG{n}{L}\PYG{o}{*}\PYG{n}{np}\PYG{o}{.}\PYG{n}{cos}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{pi}\PYG{o}{\PYGZhy{}}\PYG{n}{theta}\PYG{p}{)}\PYG{p}{,}\PYG{o}{\PYGZhy{}}\PYG{n}{L}\PYG{o}{*}\PYG{n}{np}\PYG{o}{.}\PYG{n}{sin}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{pi}\PYG{o}{\PYGZhy{}}\PYG{n}{theta}\PYG{p}{)}\PYG{p}{,}\PYG{l+m+mi}{0}\PYG{p}{)}
+
+\PYG{c+c1}{\PYGZsh{} Fig 1과 같이 결합각과 결합거리를 이용하여 분자의 기하학적인 구조를 정의.}
+\end{MintedVerbatim}
