@@ -1,6 +1,0 @@
-\begin{MintedVerbatim}[commandchars=\\\{\}]
-\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{exact\PYGZus{}solver}\PYG{p}{(}\PYG{n}{qubit\PYGZus{}op}\PYG{p}{,} \PYG{n}{problem}\PYG{p}{)}\PYG{p}{:}
-    \PYG{n}{sol} \PYG{o}{=} \PYG{n}{NumPyMinimumEigensolver}\PYG{p}{(}\PYG{p}{)}\PYG{o}{.}\PYG{n}{compute\PYGZus{}minimum\PYGZus{}eigenvalue}\PYG{p}{(}\PYG{n}{qubit\PYGZus{}op}\PYG{p}{)}
-    \PYG{n}{result} \PYG{o}{=} \PYG{n}{problem}\PYG{o}{.}\PYG{n}{interpret}\PYG{p}{(}\PYG{n}{sol}\PYG{p}{)}
-    \PYG{k}{return} \PYG{n}{result}
-\end{MintedVerbatim}

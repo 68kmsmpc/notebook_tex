@@ -1,0 +1,35 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{GBBD}\PYG{p}{(}\PYG{n}{mol}\PYG{p}{)}\PYG{p}{:}
+  \PYG{c+c1}{\PYGZsh{} 입력 : qiskit 의 molecularinfo 와 같이 분자의 정보를 담고있는 클래스인 MolecularData}
+  \PYG{c+c1}{\PYGZsh{} 이후에 추가 설명}
+  \PYG{n}{mol} \PYG{o}{=} \PYG{n}{run\PYGZus{}pyscf}\PYG{p}{(}\PYG{n}{mol}\PYG{p}{,} \PYG{n}{run\PYGZus{}scf}\PYG{o}{=}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n}{run\PYGZus{}fci}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{)}
+  \PYG{c+c1}{\PYGZsh{} 3. 2차 정량화 Hamiltonian 얻기}
+  \PYG{n}{ham\PYGZus{}int} \PYG{o}{=} \PYG{n}{mol}\PYG{o}{.}\PYG{n}{get\PYGZus{}molecular\PYGZus{}hamiltonian}\PYG{p}{(}\PYG{p}{)}
+  \PYG{n}{ham\PYGZus{}fci} \PYG{o}{=} \PYG{n}{get\PYGZus{}fermion\PYGZus{}operator}\PYG{p}{(}\PYG{n}{ham\PYGZus{}int}\PYG{p}{)}
+  \PYG{c+c1}{\PYGZsh{}H = get\PYGZus{}sparse\PYGZus{}operator(ham\PYGZus{}fci, n\PYGZus{}qubits=mol.n\PYGZus{}qubits)}
+  \PYG{n}{H} \PYG{o}{=} \PYG{n}{get\PYGZus{}number\PYGZus{}preserving\PYGZus{}sparse\PYGZus{}operator}\PYG{p}{(}
+  \PYG{n}{fermion\PYGZus{}op}\PYG{o}{=}\PYG{n}{ham\PYGZus{}fci}\PYG{p}{,}
+  \PYG{n}{num\PYGZus{}qubits}\PYG{o}{=}\PYG{n}{mol}\PYG{o}{.}\PYG{n}{n\PYGZus{}qubits}\PYG{p}{,}
+  \PYG{n}{num\PYGZus{}electrons}\PYG{o}{=}\PYG{n}{mol}\PYG{o}{.}\PYG{n}{n\PYGZus{}electrons}\PYG{p}{,}       \PYG{c+c1}{\PYGZsh{} 필수}
+  \PYG{n}{spin\PYGZus{}preserving}\PYG{o}{=}\PYG{k+kc}{True} \PYG{p}{,}        \PYG{c+c1}{\PYGZsh{} S\PYGZus{}z 고정 (필요 없으면 None)}
+  \PYG{n}{reference\PYGZus{}determinant}\PYG{o}{=}\PYG{k+kc}{None}\PYG{p}{,}
+  \PYG{n}{excitation\PYGZus{}level}\PYG{o}{=}\PYG{k+kc}{None}\PYG{p}{)}
+  \PYG{n+nb}{print}\PYG{p}{(}\PYG{n}{H}\PYG{p}{)}
+  \PYG{n}{H\PYGZus{}real} \PYG{o}{=} \PYG{n}{H}\PYG{o}{.}\PYG{n}{real}
+  \PYG{n}{G} \PYG{o}{=} \PYG{n}{sparse\PYGZus{}to\PYGZus{}graph}\PYG{p}{(}\PYG{n}{H\PYGZus{}real}\PYG{p}{,} \PYG{n}{directed}\PYG{o}{=}\PYG{k+kc}{False}\PYG{p}{,} \PYG{n}{weight}\PYG{o}{=}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{abs}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{,} \PYG{n}{symmetrize}\PYG{o}{=}\PYG{k+kc}{True}\PYG{p}{,} \PYG{n}{tol}\PYG{o}{=}\PYG{l+m+mf}{0.0}\PYG{p}{)}
+  \PYG{n}{ccs} \PYG{o}{=} \PYG{n+nb}{list}\PYG{p}{(}\PYG{n}{nx}\PYG{o}{.}\PYG{n}{connected\PYGZus{}components}\PYG{p}{(}\PYG{n}{G}\PYG{p}{)}\PYG{p}{)}
+
+  \PYG{n}{sub\PYGZus{}mat\PYGZus{}idx\PYGZus{}g} \PYG{o}{=} \PYG{n+nb}{list}\PYG{p}{(}\PYG{n}{ccs}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{)}
+  \PYG{n}{H\PYGZus{}sub\PYGZus{}g} \PYG{o}{=} \PYG{n}{H}\PYG{p}{[}\PYG{n}{sub\PYGZus{}mat\PYGZus{}idx\PYGZus{}g}\PYG{p}{,} \PYG{p}{:}\PYG{p}{]}\PYG{p}{[}\PYG{p}{:}\PYG{p}{,} \PYG{n}{sub\PYGZus{}mat\PYGZus{}idx\PYGZus{}g}\PYG{p}{]}
+  \PYG{n+nb}{print}\PYG{p}{(}\PYG{n}{H\PYGZus{}sub\PYGZus{}g}\PYG{p}{)}
+  \PYG{n}{eigval\PYGZus{}g}\PYG{p}{,} \PYG{n}{eigvec} \PYG{o}{=} \PYG{n}{eigsh}\PYG{p}{(}\PYG{n}{H\PYGZus{}sub\PYGZus{}g}\PYG{p}{,} \PYG{n}{k}\PYG{o}{=}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n}{which}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{SA}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
+  \PYG{n}{E\PYGZus{}g} \PYG{o}{=} \PYG{n}{eigval\PYGZus{}g}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}
+
+  \PYG{n}{sub\PYGZus{}mat\PYGZus{}idx\PYGZus{}e} \PYG{o}{=} \PYG{n+nb}{list}\PYG{p}{(}\PYG{n}{ccs}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{p}{)}
+  \PYG{n}{H\PYGZus{}sub\PYGZus{}e} \PYG{o}{=} \PYG{n}{H}\PYG{p}{[}\PYG{n}{sub\PYGZus{}mat\PYGZus{}idx\PYGZus{}e}\PYG{p}{,} \PYG{p}{:}\PYG{p}{]}\PYG{p}{[}\PYG{p}{:}\PYG{p}{,} \PYG{n}{sub\PYGZus{}mat\PYGZus{}idx\PYGZus{}e}\PYG{p}{]}
+  \PYG{n+nb}{print}\PYG{p}{(}\PYG{n}{H\PYGZus{}sub\PYGZus{}e}\PYG{p}{)}
+  \PYG{n}{eigval\PYGZus{}e}\PYG{p}{,} \PYG{n}{eigvec} \PYG{o}{=} \PYG{n}{eigsh}\PYG{p}{(}\PYG{n}{H\PYGZus{}sub\PYGZus{}e}\PYG{p}{,} \PYG{n}{k}\PYG{o}{=}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n}{which}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{SA}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
+  \PYG{n}{E\PYGZus{}e} \PYG{o}{=} \PYG{n}{eigval\PYGZus{}e}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}
+
+  \PYG{k}{return} \PYG{n}{E\PYGZus{}g}\PYG{p}{,} \PYG{n}{E\PYGZus{}e}
+\end{MintedVerbatim}

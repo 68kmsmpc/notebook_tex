@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.7.1)  19 SEP 2025 15:30
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.7.1)  27 AUG 2025 22:59
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -655,35 +655,25 @@ Package: enumitem 2025/02/06 v3.11 Customized lists
 \enit@inbox=\box92
 \enit@count@id=\count377
 \enitdp@description=\count378
-) (./FMOVQE_코드_주석.aux
-
-LaTeX Warning: Label `fig:my_image' multiply defined.
-
-
-LaTeX Warning: Label `fig:my_image' multiply defined.
-
-
-LaTeX Warning: Label `fig:my_image' multiply defined.
-
-)
+) (./FMOVQE_코드_주석.aux)
 \openout1 = `FMOVQE_코드_주석.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 74.
-LaTeX Font Info:    ... okay on input line 74.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 74.
-LaTeX Font Info:    ... okay on input line 74.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 74.
-LaTeX Font Info:    ... okay on input line 74.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 74.
-LaTeX Font Info:    ... okay on input line 74.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 74.
-LaTeX Font Info:    ... okay on input line 74.
-LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 74.
-LaTeX Font Info:    ... okay on input line 74.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 74.
-LaTeX Font Info:    ... okay on input line 74.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 74.
-LaTeX Font Info:    ... okay on input line 74.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 72.
+LaTeX Font Info:    ... okay on input line 72.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 72.
+LaTeX Font Info:    ... okay on input line 72.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 72.
+LaTeX Font Info:    ... okay on input line 72.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 72.
+LaTeX Font Info:    ... okay on input line 72.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 72.
+LaTeX Font Info:    ... okay on input line 72.
+LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 72.
+LaTeX Font Info:    ... okay on input line 72.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 72.
+LaTeX Font Info:    ... okay on input line 72.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 72.
+LaTeX Font Info:    ... okay on input line 72.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: xetex
@@ -726,56 +716,56 @@ Package fontspec Info:
 
 \symlegacymaths=\mathgroup4
 LaTeX Font Info:    Overwriting symbol font `legacymaths' in version `bold'
-(Font)                  OT1/cmr/m/n --> OT1/cmr/bx/n on input line 74.
-LaTeX Font Info:    Redeclaring math accent \acute on input line 74.
-LaTeX Font Info:    Redeclaring math accent \grave on input line 74.
-LaTeX Font Info:    Redeclaring math accent \ddot on input line 74.
-LaTeX Font Info:    Redeclaring math accent \tilde on input line 74.
-LaTeX Font Info:    Redeclaring math accent \bar on input line 74.
-LaTeX Font Info:    Redeclaring math accent \breve on input line 74.
-LaTeX Font Info:    Redeclaring math accent \check on input line 74.
-LaTeX Font Info:    Redeclaring math accent \hat on input line 74.
-LaTeX Font Info:    Redeclaring math accent \dot on input line 74.
-LaTeX Font Info:    Redeclaring math accent \mathring on input line 74.
-LaTeX Font Info:    Redeclaring math symbol \Gamma on input line 74.
-LaTeX Font Info:    Redeclaring math symbol \Delta on input line 74.
-LaTeX Font Info:    Redeclaring math symbol \Theta on input line 74.
-LaTeX Font Info:    Redeclaring math symbol \Lambda on input line 74.
-LaTeX Font Info:    Redeclaring math symbol \Xi on input line 74.
-LaTeX Font Info:    Redeclaring math symbol \Pi on input line 74.
-LaTeX Font Info:    Redeclaring math symbol \Sigma on input line 74.
-LaTeX Font Info:    Redeclaring math symbol \Upsilon on input line 74.
-LaTeX Font Info:    Redeclaring math symbol \Phi on input line 74.
-LaTeX Font Info:    Redeclaring math symbol \Psi on input line 74.
-LaTeX Font Info:    Redeclaring math symbol \Omega on input line 74.
-LaTeX Font Info:    Redeclaring math symbol \mathdollar on input line 74.
-LaTeX Font Info:    Redeclaring symbol font `operators' on input line 74.
+(Font)                  OT1/cmr/m/n --> OT1/cmr/bx/n on input line 72.
+LaTeX Font Info:    Redeclaring math accent \acute on input line 72.
+LaTeX Font Info:    Redeclaring math accent \grave on input line 72.
+LaTeX Font Info:    Redeclaring math accent \ddot on input line 72.
+LaTeX Font Info:    Redeclaring math accent \tilde on input line 72.
+LaTeX Font Info:    Redeclaring math accent \bar on input line 72.
+LaTeX Font Info:    Redeclaring math accent \breve on input line 72.
+LaTeX Font Info:    Redeclaring math accent \check on input line 72.
+LaTeX Font Info:    Redeclaring math accent \hat on input line 72.
+LaTeX Font Info:    Redeclaring math accent \dot on input line 72.
+LaTeX Font Info:    Redeclaring math accent \mathring on input line 72.
+LaTeX Font Info:    Redeclaring math symbol \Gamma on input line 72.
+LaTeX Font Info:    Redeclaring math symbol \Delta on input line 72.
+LaTeX Font Info:    Redeclaring math symbol \Theta on input line 72.
+LaTeX Font Info:    Redeclaring math symbol \Lambda on input line 72.
+LaTeX Font Info:    Redeclaring math symbol \Xi on input line 72.
+LaTeX Font Info:    Redeclaring math symbol \Pi on input line 72.
+LaTeX Font Info:    Redeclaring math symbol \Sigma on input line 72.
+LaTeX Font Info:    Redeclaring math symbol \Upsilon on input line 72.
+LaTeX Font Info:    Redeclaring math symbol \Phi on input line 72.
+LaTeX Font Info:    Redeclaring math symbol \Psi on input line 72.
+LaTeX Font Info:    Redeclaring math symbol \Omega on input line 72.
+LaTeX Font Info:    Redeclaring math symbol \mathdollar on input line 72.
+LaTeX Font Info:    Redeclaring symbol font `operators' on input line 72.
 LaTeX Font Info:    Encoding `OT1' has changed to `TU' for symbol font
-(Font)              `operators' in the math version `normal' on input line 74.
+(Font)              `operators' in the math version `normal' on input line 72.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
-(Font)                  OT1/cmr/m/n --> TU/lmr/m/n on input line 74.
+(Font)                  OT1/cmr/m/n --> TU/lmr/m/n on input line 72.
 LaTeX Font Info:    Encoding `OT1' has changed to `TU' for symbol font
-(Font)              `operators' in the math version `bold' on input line 74.
+(Font)              `operators' in the math version `bold' on input line 72.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
-(Font)                  OT1/cmr/bx/n --> TU/lmr/m/n on input line 74.
+(Font)                  OT1/cmr/bx/n --> TU/lmr/m/n on input line 72.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
-(Font)                  TU/lmr/m/n --> TU/lmr/m/n on input line 74.
+(Font)                  TU/lmr/m/n --> TU/lmr/m/n on input line 72.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
-(Font)                  OT1/cmr/m/it --> TU/lmr/m/it on input line 74.
+(Font)                  OT1/cmr/m/it --> TU/lmr/m/it on input line 72.
 LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `normal'
-(Font)                  OT1/cmr/bx/n --> TU/lmr/b/n on input line 74.
+(Font)                  OT1/cmr/bx/n --> TU/lmr/b/n on input line 72.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `normal'
-(Font)                  OT1/cmss/m/n --> TU/lmss/m/n on input line 74.
+(Font)                  OT1/cmss/m/n --> TU/lmss/m/n on input line 72.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `normal'
-(Font)                  OT1/cmtt/m/n --> TU/lmtt/m/n on input line 74.
+(Font)                  OT1/cmtt/m/n --> TU/lmtt/m/n on input line 72.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
-(Font)                  TU/lmr/m/n --> TU/lmr/b/n on input line 74.
+(Font)                  TU/lmr/m/n --> TU/lmr/b/n on input line 72.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
-(Font)                  OT1/cmr/bx/it --> TU/lmr/b/it on input line 74.
+(Font)                  OT1/cmr/bx/it --> TU/lmr/b/it on input line 72.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
-(Font)                  OT1/cmss/bx/n --> TU/lmss/b/n on input line 74.
+(Font)                  OT1/cmss/bx/n --> TU/lmss/b/n on input line 72.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
-(Font)                  OT1/cmtt/m/n --> TU/lmtt/b/n on input line 74.
+(Font)                  OT1/cmtt/m/n --> TU/lmtt/b/n on input line 72.
 \c@lstlisting=\count379
 \g__tcobox_out_iow=\write5
 \openout5 = `FMOVQE_코드_주석.listing'.
@@ -783,61 +773,89 @@ LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
 \pydata@fh@_90CCC508BD8912A5289CE06AF8BB3C2F.data.minted=\write6
 \openout6 = `_90CCC508BD8912A5289CE06AF8BB3C2F.data.minted'.
 
-runsystem(latexminted config  --timestamp 20250919153034 90CCC508BD8912A5289CE06AF8BB3C2F)...executed safely (allowed).
+runsystem(latexminted config  --timestamp 20250827225958 90CCC508BD8912A5289CE06AF8BB3C2F)...executed safely (allowed).
 
 (./_90CCC508BD8912A5289CE06AF8BB3C2F.config.minted)
-runsystem(latexminted cleanconfig  --timestamp 20250919153034 90CCC508BD8912A5289CE06AF8BB3C2F)...executed safely (allowed).
+runsystem(latexminted cleanconfig  --timestamp 20250827225958 90CCC508BD8912A5289CE06AF8BB3C2F)...executed safely (allowed).
 
- (./_minted/default.style.minted) (./_minted/8E750E134CF7FCF5F108C8583A842F5B.highlight.minted
+ (./_minted/default.style.minted) (./_minted/F0F8773A24C06D19DBE433FA6F51339C.highlight.minted
 
 Package xeCJK Warning: Unknown CJK family `\CJKttdefault' is being ignored.
 (xeCJK)                
 (xeCJK)                Try to use `\setCJKmonofont[<...>]{<...>}' to define
 (xeCJK)                it.
 
-
-LaTeX Font Warning: Font shape `TU/NotoSansKR(0)/m/it' undefined
-(Font)              using `TU/NotoSansKR(0)/m/n' instead on input line 8.
-
+LaTeX Font Info:    Font shape `TU/lmtt/bx/n' in size <10> not available
+(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 2.
 )
-File: /Users/choeyunho/Documents/mygit/2025_GBBD/실험코드_주석정리/fig/h2cluster.png Graphic file (type bmp)
-</Users/choeyunho/Documents/mygit/2025_GBBD/실험코드_주석정리/fig/h2cluster.png>
 \openout5 = `FMOVQE_코드_주석.listing'.
 
- (./_minted/55C945AB174460923BF20574ACFD5EC1.highlight.minted
-LaTeX Font Info:    Font shape `TU/lmtt/bx/n' in size <10> not available
-(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 18.
-)
+ (./_minted/8DE7C89215041BEE461E60EBCCC12D7C.highlight.minted)
+\openout5 = `FMOVQE_코드_주석.listing'.
+
+ (./_minted/68040043A4C8D7DC1D12DC544DCF9241.highlight.minted)
 
 [1
 
 ]
+\openout5 = `FMOVQE_코드_주석.listing'.
+
+ (./_minted/D24436937380044E7A278EB2BDC753BC.highlight.minted)
 
 [2]
-File: /Users/choeyunho/Documents/mygit/2025_GBBD/실험코드_주석정리/fig/ham_int.png Graphic file (type bmp)
-</Users/choeyunho/Documents/mygit/2025_GBBD/실험코드_주석정리/fig/ham_int.png>
-File: /Users/choeyunho/Documents/mygit/2025_GBBD/실험코드_주석정리/fig/ham_fci.png Graphic file (type bmp)
-</Users/choeyunho/Documents/mygit/2025_GBBD/실험코드_주석정리/fig/ham_fci.png>
+\openout5 = `FMOVQE_코드_주석.listing'.
 
+ (./_minted/BB88B0A17DE57731967215837FCED6DA.highlight.minted
+
+LaTeX Font Warning: Font shape `TU/NotoSansKR(0)/m/it' undefined
+(Font)              using `TU/NotoSansKR(0)/m/n' instead on input line 3.
+
+
+Overfull \hbox (31.19748pt too wide) in paragraph at lines 23--23
+\TU/lmtt/m/n/10 UCCSD(as_num_spatial_orbitals,as_num_particles,mapper,initial_state[]=[]as_init_state, 
+ []
+
+
+Overfull \hbox (20.69768pt too wide) in paragraph at lines 46--46
+\TU/lmtt/m/n/10 [COBYLA(maxiter[]=[]MAX_ITER),SPSA(maxiter[]=[]MAX_ITER),L_BFGS_B(maxiter[]=[]MAX_ITER)]|  
+ []
+
+)
 
 [3]
-File: /Users/choeyunho/Documents/mygit/2025_GBBD/실험코드_주석정리/fig/h_matrix.png Graphic file (type bmp)
-</Users/choeyunho/Documents/mygit/2025_GBBD/실험코드_주석정리/fig/h_matrix.png>
-
 
 [4]
-\openout5 = `FMOVQE_코드_주석.listing'.
-
- (./_minted/596F2BAB1AF6DAAF1BA67455DF2CF338.highlight.minted)
 
 [5]
-
-[6]
+File: Line Chart.png Graphic file (type bmp)
+<Line Chart.png>
 \openout5 = `FMOVQE_코드_주석.listing'.
 
- (./_minted/3B47CD11774A6BCFCACF8AD3CB9DB59C.highlight.minted)
+ (./_minted/D118FFD50314A0E58560462F607C2F7A.highlight.minted)
 
-[7] (./FMOVQE_코드_주석.aux)
+[6]
+
+[7]
+\openout5 = `FMOVQE_코드_주석.listing'.
+
+ (./_minted/47F641B45ADEABFD6C6E7E763DD0C72C.highlight.minted)
+
+[8]
+\openout5 = `FMOVQE_코드_주석.listing'.
+
+ (./_minted/4BAF265EF6767CA5D83C965312EE5347.highlight.minted)
+\openout5 = `FMOVQE_코드_주석.listing'.
+
+ (./_minted/16EB92A94DD0C0A172D1B03A2E0AED98.highlight.minted
+Overfull \hbox (183.44768pt too wide) in paragraph at lines 2--2
+\TU/lmtt/m/n/10 [O_Li_dimer_energy,O_Li_2_dimer_energy,Co_O_1_dimer_energy,Co_O_2_dimer_energy,O_O_dimer_energy,Co_Li_dimer_energy]|  
+ []
+
+)
+
+[9]
+
+[10] (./FMOVQE_코드_주석.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2022/08/05>
@@ -846,17 +864,14 @@ L3 programming layer <2022/08/05>
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
-
-LaTeX Warning: There were multiply-defined labels.
-
  ) 
 Here is how much of TeX's memory you used:
- 27617 strings out of 473832
- 678056 string characters out of 5729482
- 1242275 words of memory out of 5000000
- 50236 multiletter control sequences out of 15000+600000
- 563243 words of font info for 77 fonts, out of 8000000 for 9000
+ 27622 strings out of 473832
+ 677644 string characters out of 5729482
+ 1275501 words of memory out of 5000000
+ 50235 multiletter control sequences out of 15000+600000
+ 560968 words of font info for 69 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 116i,10n,121p,598b,1135s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 116i,12n,121p,1302b,1131s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on FMOVQE_코드_주석.pdf (7 pages).
+Output written on FMOVQE_코드_주석.pdf (10 pages).

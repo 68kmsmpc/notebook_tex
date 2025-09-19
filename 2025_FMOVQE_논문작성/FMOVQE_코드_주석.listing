@@ -1,19 +1,33 @@
-dimer_energy_arr = [O_Li_dimer_energy,O_Li_2_dimer_energy,Co_O_1_dimer_energy,Co_O_2_dimer_energy,O_O_dimer_energy,Co_Li_dimer_energy]
-#각 Dimer에 대한 에너지들로 이루어진 리스트
-#각 성분은 각 Dimer 계산에서 6개의 Ansatz와 Optimizer의 조합중 가장 작은 에너지에 대응된다.
+def GBBD(mol):
+  # 입력 : qiskit 의 molecularinfo 와 같이 분자의 정보를 담고있는 클래스인 MolecularData
+  # 이후에 추가 설명
+  mol = run_pyscf(mol, run_scf=1, run_fci=0)
+  # 3. 2차 정량화 Hamiltonian 얻기
+  ham_int = mol.get_molecular_hamiltonian()
+  ham_fci = get_fermion_operator(ham_int)
+  #H = get_sparse_operator(ham_fci, n_qubits=mol.n_qubits)
+  H = get_number_preserving_sparse_operator(
+  fermion_op=ham_fci,
+  num_qubits=mol.n_qubits,
+  num_electrons=mol.n_electrons,       # 필수
+  spin_preserving=True ,        # S_z 고정 (필요 없으면 None)
+  reference_determinant=None,
+  excitation_level=None)
+  print(H)
+  H_real = H.real
+  G = sparse_to_graph(H_real, directed=False, weight="abs", symmetrize=True, tol=0.0)
+  ccs = list(nx.connected_components(G))
 
-O_mon= -74.78751
-Co_mon = -1381.35417
-Li_mon = -7.43241
-# Monomer 에너지는 기하학적인 구조별로 다르지 않으므로
-# 한번 계산하여 미리 계산된 정보를 활용한다.
+  sub_mat_idx_g = list(ccs[0])
+  H_sub_g = H[sub_mat_idx_g, :][:, sub_mat_idx_g]
+  print(H_sub_g)
+  eigval_g, eigvec = eigsh(H_sub_g, k=1, which='SA')
+  E_g = eigval_g[0]
 
-FMO_VQE_energy = np.sum(dimer_energy_arr) - 2*(O_mon+Co_mon+Li_mon+O_mon)
-# FMO 계산의 정의를 통해 Dimer 에너지의 합에서 Monomer에너지를 (N-2)번 빼주게 된다.
-# 여기서 N 은 Fragment의 개수로, 이번 경우에는 4
+  sub_mat_idx_e = list(ccs[1])
+  H_sub_e = H[sub_mat_idx_e, :][:, sub_mat_idx_e]
+  print(H_sub_e)
+  eigval_e, eigvec = eigsh(H_sub_e, k=1, which='SA')
+  E_e = eigval_e[0]
 
-print(dimer_energy_arr)
-# 결과 저장을 위해 dimer_energy_arr를 프린트
-
-print("FMO_VQE_energy", FMO_VQE_energy)
-# 결과 저장을 위해 최종 결과인 FMO_VQE_energy 를 프린트
+  return E_g, E_e

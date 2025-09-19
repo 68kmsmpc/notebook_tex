@@ -1,0 +1,91 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{sparse\PYGZus{}to\PYGZus{}graph}\PYG{p}{(}\PYG{n}{A}\PYG{p}{,} \PYG{o}{*}\PYG{p}{,}
+                    \PYG{n}{weight}\PYG{o}{=}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{value}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{,}   \PYG{c+c1}{\PYGZsh{} \PYGZdq{}value\PYGZdq{} | \PYGZdq{}abs\PYGZdq{} | \PYGZdq{}binary\PYGZdq{}}
+                    \PYG{n}{symmetrize}\PYG{o}{=}\PYG{k+kc}{True}\PYG{p}{,}  \PYG{c+c1}{\PYGZsh{} 무향 그래프용: 패턴을 A + A.T로 합칠지}
+                    \PYG{n}{tol}\PYG{o}{=}\PYG{l+m+mf}{0.0}\PYG{p}{)} \PYG{p}{:}         \PYG{c+c1}{\PYGZsh{} |a\PYGZus{}ij|\PYGZlt{}=tol 은 0 취급}
+\PYG{+w}{    }\PYG{l+s+sd}{\PYGZdq{}\PYGZdq{}\PYGZdq{}}
+\PYG{l+s+sd}{    희소행렬 A \PYGZhy{}\PYGZgt{} NetworkX Graph/DiGraph 변환}
+
+\PYG{l+s+sd}{    Parameters}
+\PYG{l+s+sd}{    \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{l+s+sd}{    A : scipy.sparse matrix (이경우 FCI 행렬)}
+\PYG{l+s+sd}{    weight : \PYGZob{}\PYGZdq{}value\PYGZdq{},\PYGZdq{}abs\PYGZdq{},\PYGZdq{}binary\PYGZdq{}\PYGZcb{}}
+\PYG{l+s+sd}{        엣지 weight 설정 방법}
+\PYG{l+s+sd}{        \PYGZhy{} \PYGZdq{}value\PYGZdq{}: a\PYGZus{}ij (실수/복소 가능; 복소는 실수부 사용 권장)}
+\PYG{l+s+sd}{        \PYGZhy{} \PYGZdq{}abs\PYGZdq{}  : |a\PYGZus{}ij|}
+\PYG{l+s+sd}{        \PYGZhy{} \PYGZdq{}binary\PYGZdq{}: 1 (연결만 표현)}
+\PYG{l+s+sd}{    symmetrize : bool}
+\PYG{l+s+sd}{        무향 그래프에서 A의 패턴을 A + A\PYGZca{}T로 결합 (권장)}
+\PYG{l+s+sd}{    tol : float}
+\PYG{l+s+sd}{        임계값 이하 절댓값은 0으로 무시}
+
+\PYG{l+s+sd}{    Returns}
+\PYG{l+s+sd}{    \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{l+s+sd}{    G : nx.Graph}
+\PYG{l+s+sd}{    \PYGZdq{}\PYGZdq{}\PYGZdq{}}
+
+    \PYG{c+c1}{\PYGZsh{} 그래프 에서 다루기 편햔 COO로 변환}
+    \PYG{n}{A} \PYG{o}{=} \PYG{n}{A}\PYG{o}{.}\PYG{n}{tocoo}\PYG{p}{(}\PYG{n}{copy}\PYG{o}{=}\PYG{k+kc}{True}\PYG{p}{)}
+    \PYG{c+c1}{\PYGZsh{}COO 에서는 값을 아래와같이 3개의 어레이로 저장}
+    \PYG{c+c1}{\PYGZsh{}data : [3,4,2,7]}
+    \PYG{c+c1}{\PYGZsh{}row : [0,0,1,3]}
+    \PYG{c+c1}{\PYGZsh{}col : [2,4,1,3]}
+    \PYG{c+c1}{\PYGZsh{}그리고 같은 인덱스 순서대로 0행 2열에는 3이라는 값이 있고 마찬가지로 총 4개의 원소가 있는 행렬을 표현한다.}
+
+    \PYG{c+c1}{\PYGZsh{} tol 필터링}
+    \PYG{k}{if} \PYG{n}{tol} \PYG{o}{\PYGZgt{}} \PYG{l+m+mi}{0}\PYG{p}{:}
+        \PYG{n}{mask} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{abs}\PYG{p}{(}\PYG{n}{A}\PYG{o}{.}\PYG{n}{data}\PYG{p}{)} \PYG{o}{\PYGZgt{}} \PYG{n}{tol}
+        \PYG{n}{A} \PYG{o}{=} \PYG{n}{coo\PYGZus{}matrix}\PYG{p}{(}\PYG{p}{(}\PYG{n}{A}\PYG{o}{.}\PYG{n}{data}\PYG{p}{[}\PYG{n}{mask}\PYG{p}{]}\PYG{p}{,} \PYG{p}{(}\PYG{n}{A}\PYG{o}{.}\PYG{n}{row}\PYG{p}{[}\PYG{n}{mask}\PYG{p}{]}\PYG{p}{,} \PYG{n}{A}\PYG{o}{.}\PYG{n}{col}\PYG{p}{[}\PYG{n}{mask}\PYG{p}{]}\PYG{p}{)}\PYG{p}{)}\PYG{p}{,} \PYG{n}{shape}\PYG{o}{=}\PYG{n}{A}\PYG{o}{.}\PYG{n}{shape}\PYG{p}{)}
+
+    \PYG{c+c1}{\PYGZsh{} 대각 요소 처리}
+    \PYG{k}{if} \PYG{o+ow}{not} \PYG{n}{keep\PYGZus{}diagonal}\PYG{p}{:}
+        \PYG{n}{mask} \PYG{o}{=} \PYG{n}{A}\PYG{o}{.}\PYG{n}{row} \PYG{o}{!=} \PYG{n}{A}\PYG{o}{.}\PYG{n}{col}
+        \PYG{n}{A} \PYG{o}{=} \PYG{n}{coo\PYGZus{}matrix}\PYG{p}{(}\PYG{p}{(}\PYG{n}{A}\PYG{o}{.}\PYG{n}{data}\PYG{p}{[}\PYG{n}{mask}\PYG{p}{]}\PYG{p}{,} \PYG{p}{(}\PYG{n}{A}\PYG{o}{.}\PYG{n}{row}\PYG{p}{[}\PYG{n}{mask}\PYG{p}{]}\PYG{p}{,} \PYG{n}{A}\PYG{o}{.}\PYG{n}{col}\PYG{p}{[}\PYG{n}{mask}\PYG{p}{]}\PYG{p}{)}\PYG{p}{)}\PYG{p}{,} \PYG{n}{shape}\PYG{o}{=}\PYG{n}{A}\PYG{o}{.}\PYG{n}{shape}\PYG{p}{)}
+
+    \PYG{c+c1}{\PYGZsh{} 무향이면 패턴 대칭화(권장): A \PYGZlt{}\PYGZhy{} A + A.T (중복은 합쳐짐)}
+    \PYG{k}{if} \PYG{o+ow}{not} \PYG{n}{directed} \PYG{o+ow}{and} \PYG{n}{symmetrize}\PYG{p}{:}
+        \PYG{n}{AT} \PYG{o}{=} \PYG{n}{coo\PYGZus{}matrix}\PYG{p}{(}\PYG{p}{(}\PYG{n}{A}\PYG{o}{.}\PYG{n}{data}\PYG{p}{,} \PYG{p}{(}\PYG{n}{A}\PYG{o}{.}\PYG{n}{col}\PYG{p}{,} \PYG{n}{A}\PYG{o}{.}\PYG{n}{row}\PYG{p}{)}\PYG{p}{)}\PYG{p}{,} \PYG{n}{shape}\PYG{o}{=}\PYG{n}{A}\PYG{o}{.}\PYG{n}{shape}\PYG{p}{)}
+        \PYG{n}{A} \PYG{o}{=} \PYG{p}{(}\PYG{n}{A} \PYG{o}{+} \PYG{n}{AT}\PYG{p}{)}\PYG{o}{.}\PYG{n}{tocoo}\PYG{p}{(}\PYG{p}{)}
+
+    \PYG{c+c1}{\PYGZsh{} 그래프 타입 선택}
+    \PYG{n}{G} \PYG{o}{=} \PYG{n}{nx}\PYG{o}{.}\PYG{n}{DiGraph}\PYG{p}{(}\PYG{p}{)} \PYG{k}{if} \PYG{n}{directed} \PYG{k}{else} \PYG{n}{nx}\PYG{o}{.}\PYG{n}{Graph}\PYG{p}{(}\PYG{p}{)}
+    \PYG{n}{G}\PYG{o}{.}\PYG{n}{add\PYGZus{}nodes\PYGZus{}from}\PYG{p}{(}\PYG{n+nb}{range}\PYG{p}{(}\PYG{n}{A}\PYG{o}{.}\PYG{n}{shape}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{)}\PYG{p}{)}  \PYG{c+c1}{\PYGZsh{} 노드: 0..n\PYGZhy{}1}
+
+    \PYG{c+c1}{\PYGZsh{} weight 설정}
+    \PYG{k}{if} \PYG{n}{weight} \PYG{o}{==} \PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{binary}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{:}
+        \PYG{c+c1}{\PYGZsh{} 동일 (i,j) 중복 합치기 위해 집계}
+        \PYG{k+kn}{from}\PYG{+w}{ }\PYG{n+nn}{collections}\PYG{+w}{ }\PYG{k+kn}{import} \PYG{n}{defaultdict}
+        \PYG{n}{edges} \PYG{o}{=} \PYG{n}{defaultdict}\PYG{p}{(}\PYG{n+nb}{float}\PYG{p}{)}
+        \PYG{k}{for} \PYG{n}{i}\PYG{p}{,} \PYG{n}{j}\PYG{p}{,} \PYG{n}{v} \PYG{o+ow}{in} \PYG{n+nb}{zip}\PYG{p}{(}\PYG{n}{A}\PYG{o}{.}\PYG{n}{row}\PYG{p}{,} \PYG{n}{A}\PYG{o}{.}\PYG{n}{col}\PYG{p}{,} \PYG{n}{A}\PYG{o}{.}\PYG{n}{data}\PYG{p}{)}\PYG{p}{:}
+            \PYG{k}{if} \PYG{o+ow}{not} \PYG{n}{directed} \PYG{o+ow}{and} \PYG{n}{i} \PYG{o}{==} \PYG{n}{j} \PYG{o+ow}{and} \PYG{o+ow}{not} \PYG{n}{keep\PYGZus{}diagonal}\PYG{p}{:}
+                \PYG{k}{continue}
+            \PYG{n}{key} \PYG{o}{=} \PYG{p}{(}\PYG{n}{i}\PYG{p}{,} \PYG{n}{j}\PYG{p}{)} \PYG{k}{if} \PYG{n}{directed} \PYG{k}{else} \PYG{p}{(}\PYG{n+nb}{min}\PYG{p}{(}\PYG{n}{i}\PYG{p}{,} \PYG{n}{j}\PYG{p}{)}\PYG{p}{,} \PYG{n+nb}{max}\PYG{p}{(}\PYG{n}{i}\PYG{p}{,} \PYG{n}{j}\PYG{p}{)}\PYG{p}{)}
+            \PYG{n}{edges}\PYG{p}{[}\PYG{n}{key}\PYG{p}{]} \PYG{o}{=} \PYG{l+m+mf}{1.0}  \PYG{c+c1}{\PYGZsh{} 존재만 표시}
+        \PYG{k}{for} \PYG{p}{(}\PYG{n}{i}\PYG{p}{,} \PYG{n}{j}\PYG{p}{)}\PYG{p}{,} \PYG{n}{w} \PYG{o+ow}{in} \PYG{n}{edges}\PYG{o}{.}\PYG{n}{items}\PYG{p}{(}\PYG{p}{)}\PYG{p}{:}
+            \PYG{n}{G}\PYG{o}{.}\PYG{n}{add\PYGZus{}edge}\PYG{p}{(}\PYG{n}{i}\PYG{p}{,} \PYG{n}{j}\PYG{p}{,} \PYG{n}{weight}\PYG{o}{=}\PYG{n}{w}\PYG{p}{)}
+
+    \PYG{k}{else}\PYG{p}{:}
+        \PYG{c+c1}{\PYGZsh{} \PYGZdq{}value\PYGZdq{} 또는 \PYGZdq{}abs\PYGZdq{}}
+        \PYG{k}{if} \PYG{n}{weight} \PYG{o}{==} \PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{abs}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{:}
+            \PYG{n}{vals} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{abs}\PYG{p}{(}\PYG{n}{A}\PYG{o}{.}\PYG{n}{data}\PYG{p}{)}
+        \PYG{k}{elif} \PYG{n}{weight} \PYG{o}{==} \PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{value}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{:}
+            \PYG{c+c1}{\PYGZsh{} 복소인 경우 실수부만 쓰고 싶다면 .real 사용}
+            \PYG{c+c1}{\PYGZsh{} 필요에 따라 변경 가능: vals = np.real(A.data)}
+            \PYG{n}{vals} \PYG{o}{=} \PYG{n}{A}\PYG{o}{.}\PYG{n}{data}
+        \PYG{k}{else}\PYG{p}{:}
+            \PYG{k}{raise} \PYG{n+ne}{ValueError}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+s2}{weight must be }\PYG{l+s+s2}{\PYGZsq{}}\PYG{l+s+s2}{value}\PYG{l+s+s2}{\PYGZsq{}}\PYG{l+s+s2}{, }\PYG{l+s+s2}{\PYGZsq{}}\PYG{l+s+s2}{abs}\PYG{l+s+s2}{\PYGZsq{}}\PYG{l+s+s2}{, or }\PYG{l+s+s2}{\PYGZsq{}}\PYG{l+s+s2}{binary}\PYG{l+s+s2}{\PYGZsq{}}\PYG{l+s+s2}{\PYGZdq{}}\PYG{p}{)}
+
+        \PYG{c+c1}{\PYGZsh{} 동일 엣지 중복 합치기(무향일 때 i\PYGZlt{}j 묶기)}
+        \PYG{k+kn}{from}\PYG{+w}{ }\PYG{n+nn}{collections}\PYG{+w}{ }\PYG{k+kn}{import} \PYG{n}{defaultdict}
+        \PYG{n}{edges} \PYG{o}{=} \PYG{n}{defaultdict}\PYG{p}{(}\PYG{n+nb}{float}\PYG{p}{)}
+        \PYG{k}{for} \PYG{n}{i}\PYG{p}{,} \PYG{n}{j}\PYG{p}{,} \PYG{n}{v} \PYG{o+ow}{in} \PYG{n+nb}{zip}\PYG{p}{(}\PYG{n}{A}\PYG{o}{.}\PYG{n}{row}\PYG{p}{,} \PYG{n}{A}\PYG{o}{.}\PYG{n}{col}\PYG{p}{,} \PYG{n}{vals}\PYG{p}{)}\PYG{p}{:}
+            \PYG{k}{if} \PYG{o+ow}{not} \PYG{n}{directed} \PYG{o+ow}{and} \PYG{n}{i} \PYG{o}{==} \PYG{n}{j} \PYG{o+ow}{and} \PYG{o+ow}{not} \PYG{n}{keep\PYGZus{}diagonal}\PYG{p}{:}
+                \PYG{k}{continue}
+            \PYG{n}{key} \PYG{o}{=} \PYG{p}{(}\PYG{n}{i}\PYG{p}{,} \PYG{n}{j}\PYG{p}{)} \PYG{k}{if} \PYG{n}{directed} \PYG{k}{else} \PYG{p}{(}\PYG{n+nb}{min}\PYG{p}{(}\PYG{n}{i}\PYG{p}{,} \PYG{n}{j}\PYG{p}{)}\PYG{p}{,} \PYG{n+nb}{max}\PYG{p}{(}\PYG{n}{i}\PYG{p}{,} \PYG{n}{j}\PYG{p}{)}\PYG{p}{)}
+            \PYG{n}{edges}\PYG{p}{[}\PYG{n}{key}\PYG{p}{]} \PYG{o}{+}\PYG{o}{=} \PYG{n+nb}{float}\PYG{p}{(}\PYG{n}{v}\PYG{p}{)}  \PYG{c+c1}{\PYGZsh{} 누적(합). 필요시 max/mean 등으로 변경 가능.}
+
+        \PYG{k}{for} \PYG{p}{(}\PYG{n}{i}\PYG{p}{,} \PYG{n}{j}\PYG{p}{)}\PYG{p}{,} \PYG{n}{w} \PYG{o+ow}{in} \PYG{n}{edges}\PYG{o}{.}\PYG{n}{items}\PYG{p}{(}\PYG{p}{)}\PYG{p}{:}
+            \PYG{n}{G}\PYG{o}{.}\PYG{n}{add\PYGZus{}edge}\PYG{p}{(}\PYG{n}{i}\PYG{p}{,} \PYG{n}{j}\PYG{p}{,} \PYG{n}{weight}\PYG{o}{=}\PYG{n}{w}\PYG{p}{)}
+
+    \PYG{k}{return} \PYG{n}{G}
+\end{MintedVerbatim}
