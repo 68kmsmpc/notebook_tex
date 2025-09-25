@@ -1,0 +1,23 @@
+#H2
+H2_energy_arr_g = []
+H2_energy_arr_e1 = []
+# GBBD 함수에서는 바닥상태 에너지와 1차여기상태 에너지를 출력하므로,
+# 이 두가지를 담을 리스트를 준비한다.
+for dist in np.arange(0.4,2.5, 0.1):
+# 단위는 Angstrom이며, 0.4 부터 2.5 까지 거리를 0.1 만큼 변화시켜가며 에너지를 계산한다.
+    geometry = [('H', (0., 0., 0.)),
+                ('H', (dist, 0., 0.))]
+    # 위 H2 Cluster 구조에서 알 수 있듯이 두 수소원자는 dist 만큼 떨어져있어야하므로
+    # x축을 기준으로 dist 만큼 떨어져 있도록 기하학적 구조를 설정
+    basis = 'sto-3g'
+    # toy model 의 계산이므로 basis는 가장 작은 sto-3g를 사용
+    mol = MolecularData(geometry, basis, multiplicity=1, charge=0)
+    # 기하학적 구조와 basis, 그리고 H2분자의 spin과 전하를 고려하여 파라미터를 주고
+    # MolecularData() 함수를 통해 mol 이라는 객체를 생성
+    energy_g, energy_e1 = GBBD(mol)
+    # 입력 : 분자의 기하학적인 구조를 담고있는 객체 (mol)
+    # 출력 : 바닥상태 에너지, 1차 여기상태 에너지
+    H2_energy_arr_g.append(energy_g)
+    H2_energy_arr_e1.append(energy_e1)
+    # GBBD 함수의 두 결과를 각각 다른 리스트에 저장
+

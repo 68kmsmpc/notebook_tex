@@ -1,0 +1,9 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{n}{geometry} \PYG{o}{=} \PYG{p}{[}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{H}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{p}{(}\PYG{l+m+mf}{0.}\PYG{p}{,} \PYG{l+m+mf}{0.}\PYG{p}{,} \PYG{l+m+mf}{0.}\PYG{p}{)}\PYG{p}{)}\PYG{p}{,}
+            \PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{H}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{p}{(}\PYG{n}{dist}\PYG{p}{,} \PYG{l+m+mf}{0.}\PYG{p}{,} \PYG{l+m+mf}{0.} \PYG{p}{)}\PYG{p}{)}\PYG{p}{,}
+            \PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{H}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{p}{(}\PYG{l+m+mi}{2}\PYG{o}{*}\PYG{n}{dist}\PYG{p}{,} \PYG{l+m+mf}{0.}\PYG{p}{,} \PYG{l+m+mf}{0.} \PYG{p}{)}\PYG{p}{)}\PYG{p}{,}
+            \PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{H}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{p}{(}\PYG{l+m+mi}{3}\PYG{o}{*}\PYG{n}{dist}\PYG{p}{,} \PYG{l+m+mf}{0.}\PYG{p}{,} \PYG{l+m+mf}{0.}\PYG{p}{)}\PYG{p}{)}\PYG{p}{]}  \PYG{c+c1}{\PYGZsh{} Angstrom}
+\PYG{n}{basis} \PYG{o}{=} \PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{sto\PYGZhy{}3g}\PYG{l+s+s1}{\PYGZsq{}}
+\PYG{n}{mol} \PYG{o}{=} \PYG{n}{MolecularData}\PYG{p}{(}\PYG{n}{geometry}\PYG{p}{,} \PYG{n}{basis}\PYG{p}{,} \PYG{n}{multiplicity}\PYG{o}{=}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n}{charge}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{)}
+\PYG{c+c1}{\PYGZsh{} qiskit 의 molecularinfo 와 같이 분자의 정보를 담고있는 클래스를 생성 이때 필요한 정보는 기하학적인 구조(geometry), basis, 시스템의 multiplicity와 총 전하량 등의 정보가 필요하다.}
+\end{MintedVerbatim}

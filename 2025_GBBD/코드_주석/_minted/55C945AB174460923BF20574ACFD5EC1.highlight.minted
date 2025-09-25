@@ -1,0 +1,21 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{n}{mol} \PYG{o}{=} \PYG{n}{run\PYGZus{}pyscf}\PYG{p}{(}\PYG{n}{mol\PYGZus{}input}\PYG{p}{,} \PYG{n}{run\PYGZus{}scf}\PYG{o}{=}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n}{run\PYGZus{}fci}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{)}
+\PYG{c+c1}{\PYGZsh{} mol\PYGZus{}input : 앞서 MolecularData 클래스를 이용해 생성된 객체 분자의 여러 정보를 담고있다.}
+\PYG{c+c1}{\PYGZsh{} run\PYGZus{}pyscf : mol\PYGZus{}input 을 바탕으로 계산을 수행 2nd Quantized 헤밀토니안을 얻기위한 HF 계산을 수행한다.}
+\PYG{c+c1}{\PYGZsh{} 이때 옵션으로 여기서 FCI 계산을 수행할수도 있으나, 이는 Cost가 매우커서 수행하지 않는다.}
+\PYG{n}{ham\PYGZus{}int} \PYG{o}{=} \PYG{n}{mol}\PYG{o}{.}\PYG{n}{get\PYGZus{}molecular\PYGZus{}hamiltonian}\PYG{p}{(}\PYG{p}{)}
+\PYG{c+c1}{\PYGZsh{} pyscf 계산을 수행한 이후 정보를 담고있는 mol 이라는 객체로 부터 1차/2차 적분에 대한 정보를 가져온다.}
+\PYG{c+c1}{\PYGZsh{} (*) 이후 객체 정보에 대한 추가설명}
+\PYG{n}{ham\PYGZus{}fci} \PYG{o}{=} \PYG{n}{get\PYGZus{}fermion\PYGZus{}operator}\PYG{p}{(}\PYG{n}{ham\PYGZus{}int}\PYG{p}{)}
+\PYG{c+c1}{\PYGZsh{} 1차/2차 적분에 대한 정보를 담고있는 ham\PYGZus{}int로 부터 2nd Quantized된 헤밀토니안을 가져온다.}
+\PYG{c+c1}{\PYGZsh{} (**) 이후 객체 정보에 대한 추가설명}
+
+\PYG{n}{H} \PYG{o}{=} \PYG{n}{get\PYGZus{}number\PYGZus{}preserving\PYGZus{}sparse\PYGZus{}operator}\PYG{p}{(}
+\PYG{c+c1}{\PYGZsh{} 전자수 와 스핀량 보존을 포함하는 FCI 행렬을 만들기 위한 함수}
+\PYG{n}{fermion\PYGZus{}op}\PYG{o}{=}\PYG{n}{ham\PYGZus{}fci}\PYG{p}{,} \PYG{c+c1}{\PYGZsh{}사용할 2nd Quantized 헤밀토니안}
+\PYG{n}{num\PYGZus{}qubits}\PYG{o}{=}\PYG{n}{mol}\PYG{o}{.}\PYG{n}{n\PYGZus{}qubits}\PYG{p}{,} \PYG{c+c1}{\PYGZsh{}총 스핀오비탈 개수 openFermion 패키지에서는 이를 qubit 라는 이름으로 사용하지만, 같은 의미.}
+\PYG{n}{num\PYGZus{}electrons}\PYG{o}{=}\PYG{n}{mol}\PYG{o}{.}\PYG{n}{n\PYGZus{}electrons}\PYG{p}{,}  \PYG{c+c1}{\PYGZsh{} 시스템의 전자수}
+\PYG{n}{spin\PYGZus{}preserving}\PYG{o}{=}\PYG{k+kc}{True}\PYG{p}{)}        \PYG{c+c1}{\PYGZsh{} 시스템의 multiplicity가 보존되는 Determinant 만을 사용}
+\PYG{n}{H\PYGZus{}real} \PYG{o}{=} \PYG{n}{H}\PYG{o}{.}\PYG{n}{real} \PYG{c+c1}{\PYGZsh{} 행렬의 각 원소는 두 Determinant로 기술되는 내적이며 이는 에너지에 대응되는 값이므로 실수값을 갖게되므로, 이후 그래프 연산을 위해 실수로 변환}
+\PYG{c+c1}{\PYGZsh{} (***) 이후 객체 정보에 대한 추가설명}
+\end{MintedVerbatim}

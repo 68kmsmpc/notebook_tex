@@ -1,0 +1,62 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{k}{def}\PYG{+w}{ }\PYG{n+nf}{GBBD}\PYG{p}{(}\PYG{n}{mol}\PYG{p}{)}\PYG{p}{:}
+  \PYG{c+c1}{\PYGZsh{} 입력 : qiskit 의 molecule info 와 같이 분자의 정보를 담고있는 클래스인 MolecularData}
+  \PYG{c+c1}{\PYGZsh{} 이후에 추가 설명}
+  \PYG{n}{mol} \PYG{o}{=} \PYG{n}{run\PYGZus{}pyscf}\PYG{p}{(}\PYG{n}{mol}\PYG{p}{,} \PYG{n}{run\PYGZus{}scf}\PYG{o}{=}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n}{run\PYGZus{}fci}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{)}
+  \PYG{c+c1}{\PYGZsh{} 3. 2차 정량화 Hamiltonian 얻기}
+  \PYG{n}{ham\PYGZus{}int} \PYG{o}{=} \PYG{n}{mol}\PYG{o}{.}\PYG{n}{get\PYGZus{}molecular\PYGZus{}hamiltonian}\PYG{p}{(}\PYG{p}{)}
+  \PYG{n}{ham\PYGZus{}fci} \PYG{o}{=} \PYG{n}{get\PYGZus{}fermion\PYGZus{}operator}\PYG{p}{(}\PYG{n}{ham\PYGZus{}int}\PYG{p}{)}
+  \PYG{c+c1}{\PYGZsh{}H = get\PYGZus{}sparse\PYGZus{}operator(ham\PYGZus{}fci, n\PYGZus{}qubits=mol.n\PYGZus{}qubits)}
+  \PYG{n}{H} \PYG{o}{=} \PYG{n}{get\PYGZus{}number\PYGZus{}preserving\PYGZus{}sparse\PYGZus{}operator}\PYG{p}{(}
+  \PYG{n}{fermion\PYGZus{}op}\PYG{o}{=}\PYG{n}{ham\PYGZus{}fci}\PYG{p}{,}
+  \PYG{n}{num\PYGZus{}qubits}\PYG{o}{=}\PYG{n}{mol}\PYG{o}{.}\PYG{n}{n\PYGZus{}qubits}\PYG{p}{,}
+  \PYG{n}{num\PYGZus{}electrons}\PYG{o}{=}\PYG{n}{mol}\PYG{o}{.}\PYG{n}{n\PYGZus{}electrons}\PYG{p}{,}       \PYG{c+c1}{\PYGZsh{} 필수}
+  \PYG{n}{spin\PYGZus{}preserving}\PYG{o}{=}\PYG{k+kc}{True} \PYG{p}{,}        \PYG{c+c1}{\PYGZsh{} S\PYGZus{}z 고정 (필요 없으면 None)}
+  \PYG{n}{reference\PYGZus{}determinant}\PYG{o}{=}\PYG{k+kc}{None}\PYG{p}{,}
+  \PYG{n}{excitation\PYGZus{}level}\PYG{o}{=}\PYG{k+kc}{None}\PYG{p}{)}
+  \PYG{n+nb}{print}\PYG{p}{(}\PYG{n}{H}\PYG{p}{)}
+  \PYG{n}{H\PYGZus{}real} \PYG{o}{=} \PYG{n}{H}\PYG{o}{.}\PYG{n}{real}
+\PYG{+w}{  }\PYG{l+s+sd}{\PYGZsq{}\PYGZsq{}\PYGZsq{}}
+\PYG{l+s+sd}{  \PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{l+s+sd}{  메인코드에서 이부분까지는 2(FCI 행렬 생성) 에서 설명}
+\PYG{l+s+sd}{  H\PYGZus{}real : i,j 번째 Slater Determinant 의 헤밀토니안 에대한 내적값으로 기술된 행렬 (=FCI 행렬)}
+\PYG{l+s+sd}{  \PYGZsh{} 이를 대각화 하여 계산하는것이 FCI}
+\PYG{l+s+sd}{  \PYGZsh{} sparse 행렬로 표현됨.}
+\PYG{l+s+sd}{  \PYGZsq{}\PYGZsq{}\PYGZsq{}}
+  \PYG{n}{G} \PYG{o}{=} \PYG{n}{sparse\PYGZus{}to\PYGZus{}graph}\PYG{p}{(}\PYG{n}{H\PYGZus{}real}\PYG{p}{)}
+  \PYG{c+c1}{\PYGZsh{} 3(FCI 행렬 \PYGZhy{}\PYGZgt{} 그래프로 변경) 에서 정의한 함수를 통해 H\PYGZus{}real 행렬을 G 라는 그래프의 형태로 인코딩}
+  \PYG{n}{ccs} \PYG{o}{=} \PYG{n+nb}{list}\PYG{p}{(}\PYG{n}{nx}\PYG{o}{.}\PYG{n}{connected\PYGZus{}components}\PYG{p}{(}\PYG{n}{G}\PYG{p}{)}\PYG{p}{)}
+  \PYG{c+c1}{\PYGZsh{} nx.connected\PYGZus{}components() 함수를 통해 G 라는 그래프 객체에서, 연결된 노드들을 묶어서 표현.}
+  \PYG{c+c1}{\PYGZsh{} Closed loop 라기보다는, 각 노드들간 을 이동할 수 있다면 그는 하나의 연결요소로 택한다.}
+\PYG{+w}{  }\PYG{l+s+sd}{\PYGZsq{}\PYGZsq{}\PYGZsq{}}
+\PYG{l+s+sd}{  여기까지의 과정이 헤밀토니안 행렬을 그래프를 이용해서 Block 짓는 과정.}
+\PYG{l+s+sd}{  즉, 서로 연관성이 있는 basis(Slater Determinant) 끼리 묶어 부분 행렬을 생성}
+\PYG{l+s+sd}{  \PYGZsq{}\PYGZsq{}\PYGZsq{}}
+
+  \PYG{n}{sub\PYGZus{}mat\PYGZus{}idx\PYGZus{}g} \PYG{o}{=} \PYG{n+nb}{list}\PYG{p}{(}\PYG{n}{ccs}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}\PYG{p}{)}
+  \PYG{c+c1}{\PYGZsh{} nx.connected\PYGZus{}components(G) 를 통해 생성된 묶음들 중에서 0번 idx,}
+  \PYG{c+c1}{\PYGZsh{} 즉 제일 큰 묶음을 나타내는 그래프의 인덱스를 저장}
+  \PYG{n}{H\PYGZus{}sub\PYGZus{}g} \PYG{o}{=} \PYG{n}{H}\PYG{p}{[}\PYG{n}{sub\PYGZus{}mat\PYGZus{}idx\PYGZus{}g}\PYG{p}{,} \PYG{p}{:}\PYG{p}{]}\PYG{p}{[}\PYG{p}{:}\PYG{p}{,} \PYG{n}{sub\PYGZus{}mat\PYGZus{}idx\PYGZus{}g}\PYG{p}{]}
+  \PYG{c+c1}{\PYGZsh{} 제일 큰 묶음에 포함되는 인덱스들만을 이용하여 부분행렬을 생성.}
+  \PYG{n+nb}{print}\PYG{p}{(}\PYG{n}{H\PYGZus{}sub\PYGZus{}g}\PYG{p}{)}
+  \PYG{c+c1}{\PYGZsh{} 이를 확인용으로 출력}
+  \PYG{n}{eigval\PYGZus{}g}\PYG{p}{,} \PYG{n}{eigvec} \PYG{o}{=} \PYG{n}{eigsh}\PYG{p}{(}\PYG{n}{H\PYGZus{}sub\PYGZus{}g}\PYG{p}{,} \PYG{n}{k}\PYG{o}{=}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n}{which}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{SA}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
+  \PYG{c+c1}{\PYGZsh{} 이 부분행렬을 대각화}
+  \PYG{n}{E\PYGZus{}g} \PYG{o}{=} \PYG{n}{eigval\PYGZus{}g}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}
+  \PYG{c+c1}{\PYGZsh{} 제일 큰 묶음으로 구성된 부분행렬의 가장 작은 고윳값이 바닥상태 에너지에 대응된다.}
+  \PYG{c+c1}{\PYGZsh{} 이를 E\PYGZus{}g 로 저장.}
+
+  \PYG{n}{sub\PYGZus{}mat\PYGZus{}idx\PYGZus{}e} \PYG{o}{=} \PYG{n+nb}{list}\PYG{p}{(}\PYG{n}{ccs}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{p}{)}
+  \PYG{c+c1}{\PYGZsh{} 즉 제일 \PYGZdq{}두번째로 큰\PYGZdq{} 묶음을 나타내는 그래프의 인덱스를 저장}
+  \PYG{n}{H\PYGZus{}sub\PYGZus{}e} \PYG{o}{=} \PYG{n}{H}\PYG{p}{[}\PYG{n}{sub\PYGZus{}mat\PYGZus{}idx\PYGZus{}e}\PYG{p}{,} \PYG{p}{:}\PYG{p}{]}\PYG{p}{[}\PYG{p}{:}\PYG{p}{,} \PYG{n}{sub\PYGZus{}mat\PYGZus{}idx\PYGZus{}e}\PYG{p}{]}
+  \PYG{c+c1}{\PYGZsh{} 마찬가지로 이를 이용해 부분행렬을 생성}
+  \PYG{n+nb}{print}\PYG{p}{(}\PYG{n}{H\PYGZus{}sub\PYGZus{}e}\PYG{p}{)}
+  \PYG{c+c1}{\PYGZsh{} 확인용 출력}
+  \PYG{n}{eigval\PYGZus{}e}\PYG{p}{,} \PYG{n}{eigvec} \PYG{o}{=} \PYG{n}{eigsh}\PYG{p}{(}\PYG{n}{H\PYGZus{}sub\PYGZus{}e}\PYG{p}{,} \PYG{n}{k}\PYG{o}{=}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n}{which}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{SA}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
+  \PYG{c+c1}{\PYGZsh{} 이 부분행렬을 대각화}
+  \PYG{n}{E\PYGZus{}e} \PYG{o}{=} \PYG{n}{eigval\PYGZus{}e}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]}
+  \PYG{c+c1}{\PYGZsh{} 두번째로 큰 묶음으로 구성된 부분행렬의 가장 작은 고윳값이 1차 여기 상태 에너지에 대응된다.}
+  \PYG{c+c1}{\PYGZsh{} 이를 E\PYGZus{}g 로 저장.}
+
+  \PYG{k}{return} \PYG{n}{E\PYGZus{}g}\PYG{p}{,} \PYG{n}{E\PYGZus{}e} \PYG{c+c1}{\PYGZsh{} 바닥상태 에너지와 1차 여기상태 에너지를 함수의 결과로 출력.}
+\end{MintedVerbatim}

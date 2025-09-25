@@ -1,0 +1,25 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{}H2}
+\PYG{n}{H2\PYGZus{}energy\PYGZus{}arr\PYGZus{}g} \PYG{o}{=} \PYG{p}{[}\PYG{p}{]}
+\PYG{n}{H2\PYGZus{}energy\PYGZus{}arr\PYGZus{}e1} \PYG{o}{=} \PYG{p}{[}\PYG{p}{]}
+\PYG{c+c1}{\PYGZsh{} GBBD 함수에서는 바닥상태 에너지와 1차여기상태 에너지를 출력하므로,}
+\PYG{c+c1}{\PYGZsh{} 이 두가지를 담을 리스트를 준비한다.}
+\PYG{k}{for} \PYG{n}{dist} \PYG{o+ow}{in} \PYG{n}{np}\PYG{o}{.}\PYG{n}{arange}\PYG{p}{(}\PYG{l+m+mf}{0.4}\PYG{p}{,}\PYG{l+m+mf}{2.5}\PYG{p}{,} \PYG{l+m+mf}{0.1}\PYG{p}{)}\PYG{p}{:}
+\PYG{c+c1}{\PYGZsh{} 단위는 Angstrom이며, 0.4 부터 2.5 까지 거리를 0.1 만큼 변화시켜가며 에너지를 계산한다.}
+    \PYG{n}{geometry} \PYG{o}{=} \PYG{p}{[}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{H}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{p}{(}\PYG{l+m+mf}{0.}\PYG{p}{,} \PYG{l+m+mf}{0.}\PYG{p}{,} \PYG{l+m+mf}{0.}\PYG{p}{)}\PYG{p}{)}\PYG{p}{,}
+                \PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{H}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{,} \PYG{p}{(}\PYG{n}{dist}\PYG{p}{,} \PYG{l+m+mf}{0.}\PYG{p}{,} \PYG{l+m+mf}{0.}\PYG{p}{)}\PYG{p}{)}\PYG{p}{]}
+    \PYG{c+c1}{\PYGZsh{} 위 H2 Cluster 구조에서 알 수 있듯이 두 수소원자는 dist 만큼 떨어져있어야하므로}
+    \PYG{c+c1}{\PYGZsh{} x축을 기준으로 dist 만큼 떨어져 있도록 기하학적 구조를 설정}
+    \PYG{n}{basis} \PYG{o}{=} \PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+s1}{sto\PYGZhy{}3g}\PYG{l+s+s1}{\PYGZsq{}}
+    \PYG{c+c1}{\PYGZsh{} toy model 의 계산이므로 basis는 가장 작은 sto\PYGZhy{}3g를 사용}
+    \PYG{n}{mol} \PYG{o}{=} \PYG{n}{MolecularData}\PYG{p}{(}\PYG{n}{geometry}\PYG{p}{,} \PYG{n}{basis}\PYG{p}{,} \PYG{n}{multiplicity}\PYG{o}{=}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n}{charge}\PYG{o}{=}\PYG{l+m+mi}{0}\PYG{p}{)}
+    \PYG{c+c1}{\PYGZsh{} 기하학적 구조와 basis, 그리고 H2분자의 spin과 전하를 고려하여 파라미터를 주고}
+    \PYG{c+c1}{\PYGZsh{} MolecularData() 함수를 통해 mol 이라는 객체를 생성}
+    \PYG{n}{energy\PYGZus{}g}\PYG{p}{,} \PYG{n}{energy\PYGZus{}e1} \PYG{o}{=} \PYG{n}{GBBD}\PYG{p}{(}\PYG{n}{mol}\PYG{p}{)}
+    \PYG{c+c1}{\PYGZsh{} 입력 : 분자의 기하학적인 구조를 담고있는 객체 (mol)}
+    \PYG{c+c1}{\PYGZsh{} 출력 : 바닥상태 에너지, 1차 여기상태 에너지}
+    \PYG{n}{H2\PYGZus{}energy\PYGZus{}arr\PYGZus{}g}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n}{energy\PYGZus{}g}\PYG{p}{)}
+    \PYG{n}{H2\PYGZus{}energy\PYGZus{}arr\PYGZus{}e1}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n}{energy\PYGZus{}e1}\PYG{p}{)}
+    \PYG{c+c1}{\PYGZsh{} GBBD 함수의 두 결과를 각각 다른 리스트에 저장}
+
+\end{MintedVerbatim}
