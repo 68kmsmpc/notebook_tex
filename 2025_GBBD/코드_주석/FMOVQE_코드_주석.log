@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.7.1)  25 SEP 2025 10:43
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.7.1)  26 SEP 2025 16:21
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -783,10 +783,10 @@ LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
 \pydata@fh@_90CCC508BD8912A5289CE06AF8BB3C2F.data.minted=\write6
 \openout6 = `_90CCC508BD8912A5289CE06AF8BB3C2F.data.minted'.
 
-runsystem(latexminted config  --timestamp 20250925104328 90CCC508BD8912A5289CE06AF8BB3C2F)...executed safely (allowed).
+runsystem(latexminted config  --timestamp 20250926162108 90CCC508BD8912A5289CE06AF8BB3C2F)...executed safely (allowed).
 
 (./_90CCC508BD8912A5289CE06AF8BB3C2F.config.minted)
-runsystem(latexminted cleanconfig  --timestamp 20250925104328 90CCC508BD8912A5289CE06AF8BB3C2F)...executed safely (allowed).
+runsystem(latexminted cleanconfig  --timestamp 20250926162108 90CCC508BD8912A5289CE06AF8BB3C2F)...executed safely (allowed).
 
  (./_minted/default.style.minted) (./_minted/8E750E134CF7FCF5F108C8583A842F5B.highlight.minted
 
@@ -833,16 +833,27 @@ File: /Users/choeyunho/Documents/mygit/2025_GBBD/코드_주석/fig/h_matrix.png 
 [5]
 \openout5 = `FMOVQE_코드_주석.listing'.
 
- (./_minted/124FC5D6753DD0474EB31F2A12138E79.highlight.minted)
+ (./_minted/5000EBF76CDAF33C3C01F2B16AA5E24C.highlight.minted)
+\openout5 = `FMOVQE_코드_주석.listing'.
+
+ (./_minted/3E78840892EEBE936F245A1CA04C2CE7.highlight.minted)
 
 [6]
 \openout5 = `FMOVQE_코드_주석.listing'.
 
- (./_minted/0C4D91AD1CD0C90C662BDAC11892379D.highlight.minted)
+ (./_minted/C990F7F9DB6DBB5529BC67E712856260.highlight.minted)
+\openout5 = `FMOVQE_코드_주석.listing'.
+
+ (./_minted/124FC5D6753DD0474EB31F2A12138E79.highlight.minted)
 
 [7]
 
-[8] (./FMOVQE_코드_주석.aux)
+[8]
+\openout5 = `FMOVQE_코드_주석.listing'.
+
+ (./_minted/0C4D91AD1CD0C90C662BDAC11892379D.highlight.minted)
+
+[9] (./FMOVQE_코드_주석.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2022/08/05>
@@ -856,12 +867,12 @@ LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 27632 strings out of 473832
- 678426 string characters out of 5729482
- 1244705 words of memory out of 5000000
- 50244 multiletter control sequences out of 15000+600000
- 564615 words of font info for 83 fonts, out of 8000000 for 9000
+ 27676 strings out of 473832
+ 680129 string characters out of 5729482
+ 1244636 words of memory out of 5000000
+ 50277 multiletter control sequences out of 15000+600000
+ 564631 words of font info for 85 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 116i,10n,121p,597b,1134s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 116i,11n,121p,630b,1134s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on FMOVQE_코드_주석.pdf (8 pages).
+Output written on FMOVQE_코드_주석.pdf (9 pages).

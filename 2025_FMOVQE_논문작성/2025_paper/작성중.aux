@@ -2,6 +2,8 @@
 \bibstyle{sn-mathphys-num}
 \providecommand\hyper@newdestlabel[2]{}
 \providecommand*\HyPL@Entry[1]{}
+\bibstyle{plain}
+\citation{RN50}
 \HyPL@Entry{0<</S/D>>}
 \Newlabel{1}{1}
 \Newlabel{2}{2}
@@ -26,17 +28,17 @@
 \newlabel{subsec2.2.1}{{2.2.1}{5}{Hamiltonian}{subsubsection.2.2.1}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {2.2.2}Ansatz}{5}{subsubsection.2.2.2}\protected@file@percent }
 \newlabel{subsec2.2.2}{{2.2.2}{5}{Ansatz}{subsubsection.2.2.2}{}}
-\@writefile{toc}{\contentsline {paragraph}{Two-local(Efficient SU2) Ansatz}{5}{section*.4}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces An example of a Two-Local Ansatz for a 4-Qubit system with 2 repetitions. The regions represented by dashed lines and the gray area distinguish the layers. The regions represent-ed by Rx and Ry gates, which include the parameter θ, represent the "rotation layer", while the regions represented by CNOT gates correspond to the "entanglement layer".}}{6}{figure.caption.5}\protected@file@percent }
-\newlabel{Fig.3}{{3}{6}{An example of a Two-Local Ansatz for a 4-Qubit system with 2 repetitions. The regions represented by dashed lines and the gray area distinguish the layers. The regions represent-ed by Rx and Ry gates, which include the parameter θ, represent the "rotation layer", while the regions represented by CNOT gates correspond to the "entanglement layer"}{figure.caption.5}{}}
+\@writefile{toc}{\contentsline {paragraph}{TwoLocal(Efficient SU2) Ansatz}{5}{section*.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces An example of a TwoLocal Ansatz for a 4-Qubit system with 2 repetitions. The regions represented by dashed lines and the gray area distinguish the layers. The regions represent-ed by Rx and Ry gates, which include the parameter θ, represent the "rotation layer", while the regions represented by CNOT gates correspond to the "entanglement layer".}}{6}{figure.caption.5}\protected@file@percent }
+\newlabel{Fig.3}{{3}{6}{An example of a TwoLocal Ansatz for a 4-Qubit system with 2 repetitions. The regions represented by dashed lines and the gray area distinguish the layers. The regions represent-ed by Rx and Ry gates, which include the parameter θ, represent the "rotation layer", while the regions represented by CNOT gates correspond to the "entanglement layer"}{figure.caption.5}{}}
 \@writefile{toc}{\contentsline {paragraph}{UCCSD(Unitary Coupled Cluster Singles and Doubles) Ansatz}{6}{section*.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.2.3}Energy calculation}{6}{subsubsection.2.2.3}\protected@file@percent }
-\newlabel{subsec2.2.3}{{2.2.3}{6}{Energy calculation}{subsubsection.2.2.3}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.2.3}Energy calculation}{7}{subsubsection.2.2.3}\protected@file@percent }
+\newlabel{subsec2.2.3}{{2.2.3}{7}{Energy calculation}{subsubsection.2.2.3}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.3}FMO (Fragmental Molecular orbital)}{7}{subsection.2.3}\protected@file@percent }
 \newlabel{subsec2.3}{{2.3}{7}{FMO (Fragmental Molecular orbital)}{subsection.2.3}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces An example of the FMO scheme in \(\mathrm  {LiCoO_2}\)}}{7}{figure.caption.7}\protected@file@percent }
 \newlabel{Fig.4}{{4}{7}{An example of the FMO scheme in \(\mathrm {LiCoO_2}\)}{figure.caption.7}{}}
-\newlabel{eq5}{{6}{7}{FMO (Fragmental Molecular orbital)}{equation.6}{}}
+\newlabel{eq5}{{8}{7}{FMO (Fragmental Molecular orbital)}{equation.8}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.4}FMO-VQE (Fragment molecular orbital-based Varational Quantum Eigensolver)}{9}{subsection.2.4}\protected@file@percent }
 \newlabel{subsec2.4}{{2.4}{9}{FMO-VQE (Fragment molecular orbital-based Varational Quantum Eigensolver)}{subsection.2.4}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces An illustration of applying the FMO/VQE method. 1) \(\mathrm  {LiCoO_2}\) compound in the cathode material forms a layered structure, However, assuming a gas-phase model, it is considered that a single compound exists as a molecule. 2) The FMO scheme is applied to form monomers and dimers. 3) The ground state energy of each fragment is calculated using VQE. 4) The ground state energy of the entire molecule is then calculated using the energies of each fragment.}}{9}{figure.caption.8}\protected@file@percent }
@@ -56,12 +58,13 @@
 \newlabel{tab4}{{4}{12}{Energy of Dimer for each Ansatz/Optimizer for each Oxidation State of \(\mathrm {Li_xCoO_2}\)}{table.caption.16}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Molecular Energy}{13}{subsection.3.2}\protected@file@percent }
 \newlabel{subsec3.2}{{3.2}{13}{Molecular Energy}{subsection.3.2}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces 빨간색의 $"\blacktriangle "$ 마크로 표시된 점선은 CASCI를 통해 계산된 에너지를 나타낸다. 여기서 CASCI 계산의 경우 Computational Cost와 Accuracy를 균형 있게 고려하기 위해, HOMO 근방의 8개 점유 오비탈과 LUMO 근방의 4개 비점유 오비탈을 활성공간으로 선택하였다. 파란색의 $"\blacksquare "$ 마크로 표시된 점선은 CCSD를 통해 계산된 에너지를 나타낸다. 마젠타색의 $"\mathsf  {X} "$ 마크로 표시된 점선은 FMO scheme을 사용하지 않고, 전체 시스템에 대해서 FMO-VQE의 계산에서와 같은 16개의 큐비트로 기술되는 시스템의 행렬의 대각화 문제를 풀어 얻은 결과이다. 초록색의 $"\bullet "$ 마크로 표시된 실선은 본 연구에서 제시하는 FMO-VQE 방식을 적용하여 얻은 결과이다. 그리고 주황색 $"\blacklozenge "$ 로 표시된 실선은 본 연구에서 제시한 FMO-VQE 방식의 헤밀토니안을 Exact하게 풀어낸 결과이다.}}{13}{figure.caption.19}\protected@file@percent }
-\newlabel{Fig.5}{{6}{13}{빨간색의 $"\blacktriangle "$ 마크로 표시된 점선은 CASCI를 통해 계산된 에너지를 나타낸다. 여기서 CASCI 계산의 경우 Computational Cost와 Accuracy를 균형 있게 고려하기 위해, HOMO 근방의 8개 점유 오비탈과 LUMO 근방의 4개 비점유 오비탈을 활성공간으로 선택하였다. 파란색의 $"\blacksquare "$ 마크로 표시된 점선은 CCSD를 통해 계산된 에너지를 나타낸다. 마젠타색의 $"\mathsf {X} "$ 마크로 표시된 점선은 FMO scheme을 사용하지 않고, 전체 시스템에 대해서 FMO-VQE의 계산에서와 같은 16개의 큐비트로 기술되는 시스템의 행렬의 대각화 문제를 풀어 얻은 결과이다. 초록색의 $"\bullet "$ 마크로 표시된 실선은 본 연구에서 제시하는 FMO-VQE 방식을 적용하여 얻은 결과이다. 그리고 주황색 $"\blacklozenge "$ 로 표시된 실선은 본 연구에서 제시한 FMO-VQE 방식의 헤밀토니안을 Exact하게 풀어낸 결과이다}{figure.caption.19}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces 빨간색의 $"\blacktriangle "$ 마크로 표시된 점선은 CASCI를 통해 계산된 에너지를 나타낸다. 여기서 CASCI 계산의 경우 Computational Cost와 Accuracy를 균형 있게 고려하기 위해, HOMO 근방의 8개 점유 오비탈과 LUMO 근방의 4개 비점유 오비탈을 활성공간으로 선택하였다. 파란색의 $"\blacksquare "$ 마크로 표시된 점선은 CCSD를 통해 계산된 에너지를 나타낸다. 마젠타색의 $"\mathsf  {X} "$ 마크로 표시된 점선은 FMO-VQE의 계산에서와 같은 16개의 큐비트로 계산한 VQE 알고리즘에 대응되는 결과를 나타낸다. 초록색의 $"\bullet "$ 마크로 표시된 실선은 본 연구에서 제시하는 FMO-VQE 방식을 적용하여 얻은 결과이다. 그리고 주황색 $"\blacklozenge "$ 로 표시된 실선은 본 연구에서 제시한 FMO-VQE 방식의 헤밀토니안을 Exact하게 풀어낸 결과이다.}}{13}{figure.caption.19}\protected@file@percent }
+\newlabel{Fig.5}{{6}{13}{빨간색의 $"\blacktriangle "$ 마크로 표시된 점선은 CASCI를 통해 계산된 에너지를 나타낸다. 여기서 CASCI 계산의 경우 Computational Cost와 Accuracy를 균형 있게 고려하기 위해, HOMO 근방의 8개 점유 오비탈과 LUMO 근방의 4개 비점유 오비탈을 활성공간으로 선택하였다. 파란색의 $"\blacksquare "$ 마크로 표시된 점선은 CCSD를 통해 계산된 에너지를 나타낸다. 마젠타색의 $"\mathsf {X} "$ 마크로 표시된 점선은 FMO-VQE의 계산에서와 같은 16개의 큐비트로 계산한 VQE 알고리즘에 대응되는 결과를 나타낸다. 초록색의 $"\bullet "$ 마크로 표시된 실선은 본 연구에서 제시하는 FMO-VQE 방식을 적용하여 얻은 결과이다. 그리고 주황색 $"\blacklozenge "$ 로 표시된 실선은 본 연구에서 제시한 FMO-VQE 방식의 헤밀토니안을 Exact하게 풀어낸 결과이다}{figure.caption.19}{}}
 \newlabel{RF2}{14}
 \@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces 각 Method로 계산한 산화상태별 바닥상태 에너지.}}{14}{table.caption.18}\protected@file@percent }
 \newlabel{tab4}{{5}{14}{각 Method로 계산한 산화상태별 바닥상태 에너지}{table.caption.18}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces 각 Method로 계산한 산화상태별 바닥상태 에너지와 FMO-VQE 방식으로 계산한 바닥상태 에너지의 차이 $dE$ (Ha) 와 Error Rate (\%)}}{14}{table.caption.18}\protected@file@percent }
 \newlabel{tab4}{{6}{14}{각 Method로 계산한 산화상태별 바닥상태 에너지와 FMO-VQE 방식으로 계산한 바닥상태 에너지의 차이 $dE$ (Ha) 와 Error Rate (\%)}{table.caption.18}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {4}Conclusions}{16}{section.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4}Conclusions}{15}{section.4}\protected@file@percent }
+\bibdata{FMOVQE_Ref}
 \gdef \@abspage@last{16}

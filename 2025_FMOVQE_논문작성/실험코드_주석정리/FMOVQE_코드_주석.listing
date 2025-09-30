@@ -1,0 +1,19 @@
+dimer_energy_arr = [O_Li_dimer_energy,O_Li_2_dimer_energy,Co_O_1_dimer_energy,Co_O_2_dimer_energy,O_O_dimer_energy,Co_Li_dimer_energy]
+#각 Dimer에 대한 에너지들로 이루어진 리스트
+#각 성분은 각 Dimer 계산에서 6개의 Ansatz와 Optimizer의 조합중 가장 작은 에너지에 대응된다.
+
+O_mon= -74.78751
+Co_mon = -1381.35417
+Li_mon = -7.43241
+# Monomer 에너지는 기하학적인 구조별로 다르지 않으므로
+# 한번 계산하여 미리 계산된 정보를 활용한다.
+
+FMO_VQE_energy = np.sum(dimer_energy_arr) - 2*(O_mon+Co_mon+Li_mon+O_mon)
+# FMO 계산의 정의를 통해 Dimer 에너지의 합에서 Monomer에너지를 (N-2)번 빼주게 된다.
+# 여기서 N 은 Fragment의 개수로, 이번 경우에는 4
+
+print(dimer_energy_arr)
+# 결과 저장을 위해 dimer_energy_arr를 프린트
+
+print("FMO_VQE_energy", FMO_VQE_energy)
+# 결과 저장을 위해 최종 결과인 FMO_VQE_energy 를 프린트
