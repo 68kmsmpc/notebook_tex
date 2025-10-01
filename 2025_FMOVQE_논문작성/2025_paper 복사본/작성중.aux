@@ -2,12 +2,16 @@
 \bibstyle{sn-mathphys-num}
 \providecommand\hyper@newdestlabel[2]{}
 \providecommand*\HyPL@Entry[1]{}
-\citation{RN50,RN48,RN47}
 \citation{RN66,RN69}
 \citation{RN117,RN118,RN75}
 \HyPL@Entry{0<</S/D>>}
 \Newlabel{1}{1}
 \Newlabel{2}{2}
+\citation{QPE1,QPE2,QPE3,QPE4,QPE5}
+\citation{NISQ1}
+\citation{VQE1,VQE2,VQE3,VQE4}
+\citation{FMOVQE}
+\citation{FMO1,FMO2,FMO3,FMO4}
 \@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{2}{section.1}\protected@file@percent }
 \newlabel{sec1}{{1}{2}{Introduction}{section.1}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {2}Methods}{3}{section.2}\protected@file@percent }
@@ -21,15 +25,21 @@
 \newlabel{sub@fig:second}{{b}{3}{\relax }{figure.caption.2}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces (a) a Schematic of battery charging and discharging. The red-colored elements represent the cathode, while the blue-colored elements represent the anode. The arrows represent the movement of lithium ions and electrons. (b) Depending on the oxidation state (denoted as x in \(\mathrm  {Li_xCoO_2}\)) of each compound, the upper figure represents the relative number of lithium ions separated from the cathode, while the lower figure illustrates the average geometry of \(\mathrm  {LiCoO_2}\).}}{3}{figure.caption.2}\protected@file@percent }
 \newlabel{fig:two_figures_side_by_side}{{1}{3}{(a) a Schematic of battery charging and discharging. The red-colored elements represent the cathode, while the blue-colored elements represent the anode. The arrows represent the movement of lithium ions and electrons. (b) Depending on the oxidation state (denoted as x in \(\mathrm {Li_xCoO_2}\)) of each compound, the upper figure represents the relative number of lithium ions separated from the cathode, while the lower figure illustrates the average geometry of \(\mathrm {LiCoO_2}\)}{figure.caption.2}{}}
+\citation{VQE1}
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.2}VQE(Variational Quantum Eigensolver)}{4}{subsection.2.2}\protected@file@percent }
 \newlabel{subsec2.2}{{2.2}{4}{VQE(Variational Quantum Eigensolver)}{subsection.2.2}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces VQE Pipeline. Starting from the Schrödinger equation of the system, the process involves finding an appropriate measurement basis using the Hamiltonian, constructing an Ansatz to represent an arbitrary state with a parameterized quantum circuit, and finding the ground state energy through the variational method by performing measurements and updating the parameters}}{4}{figure.caption.3}\protected@file@percent }
 \newlabel{Fig.2}{{2}{4}{VQE Pipeline. Starting from the Schrödinger equation of the system, the process involves finding an appropriate measurement basis using the Hamiltonian, constructing an Ansatz to represent an arbitrary state with a parameterized quantum circuit, and finding the ground state energy through the variational method by performing measurements and updating the parameters}{figure.caption.3}{}}
+\citation{2NDQ1,2NDQ2,2NDQ3}
+\citation{MAP1,MAP2}
+\citation{TL1,TL2}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {2.2.1}Hamiltonian}{5}{subsubsection.2.2.1}\protected@file@percent }
 \newlabel{subsec2.2.1}{{2.2.1}{5}{Hamiltonian}{subsubsection.2.2.1}{}}
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {2.2.2}Ansatz}{5}{subsubsection.2.2.2}\protected@file@percent }
 \newlabel{subsec2.2.2}{{2.2.2}{5}{Ansatz}{subsubsection.2.2.2}{}}
 \@writefile{toc}{\contentsline {paragraph}{TwoLocal(Efficient SU2) Ansatz}{5}{section*.4}\protected@file@percent }
+\citation{CC1,CC2}
+\citation{UCC1,UCC2}
 \@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces An example of a TwoLocal Ansatz for a 4-Qubit system with 2 repetitions. The regions represented by dashed lines and the gray area distinguish the layers. The regions represent-ed by Rx and Ry gates, which include the parameter θ, represent the "rotation layer", while the regions represented by CNOT gates correspond to the "entanglement layer".}}{6}{figure.caption.5}\protected@file@percent }
 \newlabel{Fig.3}{{3}{6}{An example of a TwoLocal Ansatz for a 4-Qubit system with 2 repetitions. The regions represented by dashed lines and the gray area distinguish the layers. The regions represent-ed by Rx and Ry gates, which include the parameter θ, represent the "rotation layer", while the regions represented by CNOT gates correspond to the "entanglement layer"}{figure.caption.5}{}}
 \@writefile{toc}{\contentsline {paragraph}{UCCSD(Unitary Coupled Cluster Singles and Doubles) Ansatz}{6}{section*.6}\protected@file@percent }
@@ -40,12 +50,14 @@
 \@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces An example of the FMO scheme in \(\mathrm  {LiCoO_2}\)}}{7}{figure.caption.7}\protected@file@percent }
 \newlabel{Fig.4}{{4}{7}{An example of the FMO scheme in \(\mathrm {LiCoO_2}\)}{figure.caption.7}{}}
 \newlabel{eq5}{{8}{7}{FMO (Fragmental Molecular orbital)}{equation.8}{}}
+\citation{AS1,AS2}
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.4}FMO-VQE (Fragment molecular orbital-based Varational Quantum Eigensolver)}{9}{subsection.2.4}\protected@file@percent }
 \newlabel{subsec2.4}{{2.4}{9}{FMO-VQE (Fragment molecular orbital-based Varational Quantum Eigensolver)}{subsection.2.4}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces An illustration of applying the FMO/VQE method. 1) \(\mathrm  {LiCoO_2}\) compound in the cathode material forms a layered structure, However, assuming a gas-phase model, it is considered that a single compound exists as a molecule. 2) The FMO scheme is applied to form monomers and dimers. 3) The ground state energy of each fragment is calculated using VQE. 4) The ground state energy of the entire molecule is then calculated using the energies of each fragment.}}{9}{figure.caption.8}\protected@file@percent }
 \newlabel{Fig.5}{{5}{9}{An illustration of applying the FMO/VQE method. 1) \(\mathrm {LiCoO_2}\) compound in the cathode material forms a layered structure, However, assuming a gas-phase model, it is considered that a single compound exists as a molecule. 2) The FMO scheme is applied to form monomers and dimers. 3) The ground state energy of each fragment is calculated using VQE. 4) The ground state energy of the entire molecule is then calculated using the energies of each fragment}{figure.caption.8}{}}
 \@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Orbital structure of each atom}}{9}{table.caption.10}\protected@file@percent }
 \newlabel{tab1}{{1}{9}{Orbital structure of each atom}{table.caption.10}{}}
+\citation{LICOO21}
 \@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Orbital structure of each Fragment}}{10}{table.caption.12}\protected@file@percent }
 \newlabel{tab2}{{2}{10}{Orbital structure of each Fragment}{table.caption.12}{}}
 \@writefile{toc}{\contentsline {section}{\numberline {3}Results}{10}{section.3}\protected@file@percent }
@@ -59,21 +71,50 @@
 \newlabel{tab4}{{4}{12}{Energy of Dimer for each Ansatz/Optimizer for each Oxidation State of \(\mathrm {Li_xCoO_2}\)}{table.caption.16}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Molecular Energy}{13}{subsection.3.2}\protected@file@percent }
 \newlabel{subsec3.2}{{3.2}{13}{Molecular Energy}{subsection.3.2}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces 빨간색의 $"\blacktriangle "$ 마크로 표시된 점선은 CASCI를 통해 계산된 에너지를 나타낸다. 여기서 CASCI 계산의 경우 Computational Cost와 Accuracy를 균형 있게 고려하기 위해, HOMO 근방의 8개 점유 오비탈과 LUMO 근방의 4개 비점유 오비탈을 활성공간으로 선택하였다. 파란색의 $"\blacksquare "$ 마크로 표시된 점선은 CCSD를 통해 계산된 에너지를 나타낸다. 마젠타색의 $"\mathsf  {X} "$ 마크로 표시된 점선은 FMO-VQE의 계산에서와 같은 16개의 큐비트로 계산한 VQE 알고리즘에 대응되는 결과를 나타낸다. 초록색의 $"\bullet "$ 마크로 표시된 실선은 본 연구에서 제시하는 FMO-VQE 방식을 적용하여 얻은 결과이다. 그리고 주황색 $"\blacklozenge "$ 로 표시된 실선은 본 연구에서 제시한 FMO-VQE 방식의 헤밀토니안을 Exact하게 풀어낸 결과이다.}}{13}{figure.caption.19}\protected@file@percent }
-\newlabel{Fig.5}{{6}{13}{빨간색의 $"\blacktriangle "$ 마크로 표시된 점선은 CASCI를 통해 계산된 에너지를 나타낸다. 여기서 CASCI 계산의 경우 Computational Cost와 Accuracy를 균형 있게 고려하기 위해, HOMO 근방의 8개 점유 오비탈과 LUMO 근방의 4개 비점유 오비탈을 활성공간으로 선택하였다. 파란색의 $"\blacksquare "$ 마크로 표시된 점선은 CCSD를 통해 계산된 에너지를 나타낸다. 마젠타색의 $"\mathsf {X} "$ 마크로 표시된 점선은 FMO-VQE의 계산에서와 같은 16개의 큐비트로 계산한 VQE 알고리즘에 대응되는 결과를 나타낸다. 초록색의 $"\bullet "$ 마크로 표시된 실선은 본 연구에서 제시하는 FMO-VQE 방식을 적용하여 얻은 결과이다. 그리고 주황색 $"\blacklozenge "$ 로 표시된 실선은 본 연구에서 제시한 FMO-VQE 방식의 헤밀토니안을 Exact하게 풀어낸 결과이다}{figure.caption.19}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces The red dashed line marked with $”\blacktriangle ”$ represents the energy obtained from CASCI calculations. For the CASCI calculation, the active space was chosen as eight occupied orbitals around the HOMO and four unoccupied orbitals around the LUMO, balancing computational cost and accuracy. The blue dashed line marked with $”\blacksquare ”$ corresponds to the energy obtained from CCSD calculations. The magenta dashed line marked with $”\mathsf  {X}”$ shows the result obtained by solving the diagonalization problem of a 16-qubit Hamiltonian (without the FMO scheme) corresponding to the same system as in the FMO-VQE calculation. The green solid line marked with $”\bullet ”$ denotes the result obtained using the proposed FMO-VQE method. Finally, the orange solid line marked with $”\blacklozenge ”$ corresponds to the exact solution of the Hamiltonian under the proposed FMO-VQE scheme.}}{13}{figure.caption.19}\protected@file@percent }
+\newlabel{Fig.5}{{6}{13}{The red dashed line marked with $”\blacktriangle ”$ represents the energy obtained from CASCI calculations. For the CASCI calculation, the active space was chosen as eight occupied orbitals around the HOMO and four unoccupied orbitals around the LUMO, balancing computational cost and accuracy. The blue dashed line marked with $”\blacksquare ”$ corresponds to the energy obtained from CCSD calculations. The magenta dashed line marked with $”\mathsf {X}”$ shows the result obtained by solving the diagonalization problem of a 16-qubit Hamiltonian (without the FMO scheme) corresponding to the same system as in the FMO-VQE calculation. The green solid line marked with $”\bullet ”$ denotes the result obtained using the proposed FMO-VQE method. Finally, the orange solid line marked with $”\blacklozenge ”$ corresponds to the exact solution of the Hamiltonian under the proposed FMO-VQE scheme}{figure.caption.19}{}}
 \newlabel{RF2}{14}
-\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces 각 Method로 계산한 산화상태별 바닥상태 에너지.}}{14}{table.caption.18}\protected@file@percent }
-\newlabel{tab4}{{5}{14}{각 Method로 계산한 산화상태별 바닥상태 에너지}{table.caption.18}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces 각 Method로 계산한 산화상태별 바닥상태 에너지와 FMO-VQE 방식으로 계산한 바닥상태 에너지의 차이 $dE$ (Ha) 와 Error Rate (\%)}}{14}{table.caption.18}\protected@file@percent }
-\newlabel{tab4}{{6}{14}{각 Method로 계산한 산화상태별 바닥상태 에너지와 FMO-VQE 방식으로 계산한 바닥상태 에너지의 차이 $dE$ (Ha) 와 Error Rate (\%)}{table.caption.18}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {4}Conclusions}{15}{section.4}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Ground-state energies for each oxidation state calculated by each method.}}{14}{table.caption.18}\protected@file@percent }
+\newlabel{tab4}{{5}{14}{Ground-state energies for each oxidation state calculated by each method}{table.caption.18}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces The difference $dE$ (Ha) between the ground-state energies calculated by each method and those obtained from the FMO-VQE approach, and the corresponding error rate(\%).}}{14}{table.caption.18}\protected@file@percent }
+\newlabel{tab4}{{6}{14}{The difference $dE$ (Ha) between the ground-state energies calculated by each method and those obtained from the FMO-VQE approach, and the corresponding error rate(\%)}{table.caption.18}{}}
+\citation{FMO10,FMO11}
 \bibdata{FMOVQE_Ref}
-\bibcite{RN50}{{1}{2018}{{Cao et~al.}}{{}}}
-\bibcite{RN48}{{2}{2024}{{Santagati et~al.}}{{}}}
-\bibcite{RN47}{{3}{}{{Mustafa et~al.}}{{}}}
-\bibcite{RN66}{{4}{2018}{{Williams-Noonan et~al.}}{{}}}
-\bibcite{RN69}{{5}{2020}{{Heifetz}}{{}}}
-\bibcite{RN117}{{6}{2021}{{Lyu et~al.}}{{}}}
-\bibcite{RN118}{{7}{2015}{{Li et~al.}}{{}}}
-\bibcite{RN75}{{8}{1980}{{Mizushima et~al.}}{{}}}
-\gdef \@abspage@last{16}
+\bibcite{RN66}{{1}{2018}{{Williams-Noonan et~al.}}{{}}}
+\bibcite{RN69}{{2}{2020}{{Heifetz}}{{}}}
+\bibcite{RN117}{{3}{2021}{{Lyu et~al.}}{{}}}
+\bibcite{RN118}{{4}{2015}{{Li et~al.}}{{}}}
+\bibcite{RN75}{{5}{1980}{{Mizushima et~al.}}{{}}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Conclusions}{16}{section.4}\protected@file@percent }
+\bibcite{QPE1}{{6}{1997}{{Abrams and Lloyd}}{{}}}
+\bibcite{QPE2}{{7}{1999}{{Abrams and Lloyd}}{{}}}
+\bibcite{QPE3}{{8}{2005}{{Aspuru-Guzik et~al.}}{{}}}
+\bibcite{QPE4}{{9}{1998}{{Cleve et~al.}}{{}}}
+\bibcite{QPE5}{{10}{1995}{{Kitaev}}{{}}}
+\bibcite{NISQ1}{{11}{2018}{{Preskill}}{{}}}
+\bibcite{VQE1}{{12}{2014}{{Peruzzo et~al.}}{{}}}
+\bibcite{VQE2}{{13}{2016}{{McClean et~al.}}{{}}}
+\bibcite{VQE3}{{14}{2022}{{Sharkey et~al.}}{{}}}
+\bibcite{VQE4}{{15}{2022}{{Tilly et~al.}}{{}}}
+\bibcite{FMOVQE}{{16}{2024}{{Lim et~al.}}{{}}}
+\bibcite{FMO1}{{17}{1999}{{Kitaura et~al.}}{{}}}
+\bibcite{FMO2}{{18}{2012}{{Fedorov et~al.}}{{}}}
+\bibcite{FMO3}{{19}{2017}{{Fedorov}}{{}}}
+\bibcite{FMO4}{{20}{2005}{{Fedorov and Kitaura}}{{}}}
+\bibcite{2NDQ1}{{21}{1970}{{Stewart}}{{}}}
+\bibcite{2NDQ2}{{22}{2012}{{Jørgensen}}{{}}}
+\bibcite{2NDQ3}{{23}{2020}{{Fermann and Valeev}}{{}}}
+\bibcite{MAP1}{{24}{2012}{{Seeley et~al.}}{{}}}
+\bibcite{MAP2}{{25}{2018}{{Tranter et~al.}}{{}}}
+\bibcite{TL1}{{26}{2017}{{Kandala et~al.}}{{}}}
+\bibcite{TL2}{{27}{2024}{{Buonaiuto et~al.}}{{}}}
+\bibcite{CC1}{{28}{2007}{{Bartlett and Musiał}}{{}}}
+\bibcite{CC2}{{29}{2007}{{Crawford and Schaefer~III}}{{}}}
+\bibcite{UCC1}{{30}{1988}{{Hoffmann and Simons}}{{}}}
+\bibcite{UCC2}{{31}{2018}{{Lee et~al.}}{{}}}
+\bibcite{AS1}{{32}{2000}{{Olsen}}{{}}}
+\bibcite{AS2}{{33}{2010}{{Piecuch}}{{}}}
+\bibcite{LICOO21}{{34}{2008}{{Hertz et~al.}}{{}}}
+\bibcite{FMO10}{{35}{2019}{{Herbert}}{{}}}
+\bibcite{FMO11}{{36}{2024}{{Sattasathuchana et~al.}}{{}}}
+\gdef \@abspage@last{19}

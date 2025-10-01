@@ -131,7 +131,7 @@
 %% Sample for unstructured abstract %%
 %%==================================%%
 
-\abstract{The Variational Quantum Eigensolver (VQE) is a quantum algorithm for estimating ground-state energies, with promising applications in material science, drug discovery, and battery research. A key challenge is the limited number of qubits available on current quantum devices, which restricts the size of molecular systems that can be studied. To address this limitation, we apply the Fragment Molecular Orbital (FMO) method in combination with VQE, referred to as FMO-VQE. This approach divides a system into smaller fragments, making the quantum calculations more tractable. While earlier studies demonstrated this method only for hydrogen clusters, we extend the application to lithium cobalt oxide, a widely used cathode material in lithium-ion batteries. Using FMO-VQE, we estimate the ground-state energy of this complex system while reducing the number of required qubits from 24 to 14, without significant loss of accuracy compared to classical methods. This reduction highlights the potential of FMO-VQE to overcome hardware limitations and make quantum simulations of larger molecules feasible. The results suggest a practical path for applying near-term quantum computers to real-world challenges, opening opportunities for advancements in battery Industry and pharmaceutical design.}
+\abstract{The Variational Quantum Eigensolver (VQE) is a quantum algorithm for estimating ground-state energies, with promising applications in material science, drug discovery, and battery research. A key challenge is the limited number of qubits available on current quantum devices, which restricts the size of molecular systems that can be studied. To address this limitation, we apply the Fragment Molecular Orbital (FMO) method in combination with VQE, referred to as FMO-VQE. This approach divides a system into smaller fragments, making the quantum calculations more tractable. While earlier studies demonstrated this method only for hydrogen clusters, we extend the application to lithium cobalt oxide, a widely used cathode material in lithium-ion batteries. Using FMO-VQE, we estimate the ground-state energy of this complex system while reducing the number of required qubits from 24 to 14, without significant loss of accuracy compared to classical methods. This reduction highlights the potential of FMO-VQE to overcome hardware limitations and make quantum simulations of larger molecules feasible. The results suggest a practical path for applying near-term quantum computers to real-world challenges, opening opportunities for advancements in battery Industry and Drug design.}
 
 %%================================%%
 %% Sample for structured abstract %%
@@ -155,24 +155,23 @@
 \maketitle
 
 \section{Introduction}\label{sec1}
-\cite{RN50,RN48,RN47}
 The ground-state energy of a molecule is fundamental to understanding molecular bonds and their structural properties. 
 This information is essential across a wide range of chemical research areas, including the development of new drugs materials\cite{RN66,RN69}, and advanced cathode materials for secondary batteries \cite{RN117,RN118,RN75}. 
 Currently, classical computers are used to calculate the ground-state energy of molecules.
-However, as the number of atoms in a molecule increases, or as the atomic number of the elements involved grows, the complexity of the system also increases exponentially.
+However, as the number of atoms in a molecule increases, or as the atomic number of the constituent elements grows, the computational cost rises steeply, often scaling polynomially with a high power, while the size of the underlying electronic Hilbert space itself grows exponentially.
 This results in a rapid rise in the number of particles and their interactions, which are represented in the molecule’s Hamiltonian. 
 The need to process these interactions requires significant computational resources and memory. 
 Consequently, calculating the ground-state energy of large molecules becomes increasingly challenging on classical computers.
 
-Quantum computers, which are an emerging technology, offer a promising alternative. Unlike classical computers, quantum computers use qubits, having superpositions of  0 and 1 states. 
+Quantum computers, which are an emerging technology, offer a promising alternative. Unlike classical computers, quantum computers use qubits, having superpositions of 0 and 1 states. 
 This allows quantum computers to potentially calculate the ground-state energy of a molecule much more efficiently. 
 While classical computers require exponential increases in memory as the system size grows, quantum computers only need a polynomial increase in qubits to handle the same task. 
 This enables quantum computers to process large molecules that would be infeasible for classical computers.
-One approach to calculating the ground-state energy of a molecule on a quantum computer is the Quantum Phase Estimation (QPE) algorithm, which determines the eigenvalues and eigenstates of a unitary matrix [12-16]. 
-However, QPE is highly accurate but requires a large number of qubits, which makes it impractical for current quantum devices, particularly noisy intermediate-scale quantum (NISQ) devices [17]. 
+One approach to calculating the ground-state energy of a molecule on a quantum computer is the Quantum Phase Estimation (QPE) algorithm, which determines the eigenvalues and eigenstates of a unitary matrix \cite{QPE1,QPE2,QPE3,QPE4,QPE5}. 
+However, QPE is highly accurate but requires a large number of qubits, which makes it impractical for current quantum devices, particularly noisy intermediate-scale quantum (NISQ) devices \cite{NISQ1}. 
 These devices are limited by noise, lack of precision, and a relatively small number of qubits, making it difficult to implement QPE effectively.
 
-The Variational Quantum Eigensolver (VQE) is another algorithm designed to solve eigenvalue problems on NISQ-level quantum computers by combining both quantum and classical computing [18-21].
+The Variational Quantum Eigensolver (VQE) is another algorithm designed to solve eigenvalue problems on NISQ-level quantum computers by combining both quantum and classical computing\cite{VQE1,VQE2,VQE3,VQE4}.
 VQE uses a variational approach with constructing a parameterized trial wavefunction as a Quantum Circuit, 
 which is iteratively adjusted until it converges to provide an upper bound for the ground-state energy. 
 The quantum computer performs the expectation value calculations, while the classical computer optimizes the parameters of trial wavefunction.
@@ -181,7 +180,7 @@ making it a promising candidate for commercial quantum computing applications in
 Despite its potential, current quantum computers still face significant challenges, including errors and decreased accuracy as circuit depth increases. 
 Additionally, the limited number of available qubits restricts the ability to calculate the ground-state energy of very large molecules. 
 To address these issues, one promising approach is the Fragment Molecular Orbital-based Variational Quantum Eigensolver (FMO-VQE).
-Initially proposed by Lim et al. [1], the FMO-VQE method applies the classical FMO technique, which divides a molecule into smaller fragments and calculates the ground-state energy for individual monomers and dimers [22-25]. 
+Initially proposed by Lim et al.\cite{FMOVQE}, the FMO-VQE method applies the classical FMO technique, which divides a molecule into smaller fragments and calculates the ground-state energy for individual monomers and dimers \cite{FMO1,FMO2,FMO3,FMO4}. 
 These results are then used to estimate the total ground-state energy of the entire molecule. 
 While Lim et al. demonstrated the FMO-VQE method on hydrogen clusters, its application to more complex molecules remain unexplored. 
 This raises the question of whether the FMO-VQE approach is effective for real-world applications. 
@@ -226,7 +225,7 @@ The energy of the molecule is calculated by assuming a gas-phase model, which tr
 \includegraphics[width=0.8\textwidth]{fig/VQE_pipeline.png}
 \caption{VQE Pipeline. Starting from the Schrödinger equation of the system, the process involves finding an appropriate measurement basis using the Hamiltonian, constructing an Ansatz to represent an arbitrary state with a parameterized quantum circuit, and finding the ground state energy through the variational method by performing measurements and updating the parameters}\label{Fig.2}
 \end{figure}
-The Variational Quantum Eigensolver (VQE) algorithm is an eigenvalue problem-solving method first proposed by Peruzzo et al [18]. 
+The Variational Quantum Eigensolver (VQE) algorithm is an eigenvalue problem-solving method first proposed by Peruzzo et al \cite{VQE1}. 
 It works by computing the energy in Hilbert space, providing an upper bound on the ground state energy according to the variational principle. 
 VQE calculates the ground state energy of a system by measuring the energy on a quantum computer and performing optimization on a classical computer. 
 To measure the energy of a system on a quantum computer, the Hamiltonian must be mapped to a form that can be represented as a quantum circuit. 
@@ -242,7 +241,7 @@ The Hamiltonian of a molecule is represented by the Electronic Structure Hamilto
 \end{align}
 where \(r_i\) denotes the position vector of the i-th electron, 
 \(R_I\) denotes the position of the I-th nucleus, and \(Z_I\) is the atomic number of the I-th nucleus. 
-To map this Hamiltonian to the Pauli gates, we express it in second quantized form using fermionic creation/annihilation operators [7-9], as follows:
+To map this Hamiltonian to the Pauli gates, we express it in second quantized form using fermionic creation/annihilation operators\cite{2NDQ1,2NDQ2,2NDQ3}, as follows:
 \begin{align}
 \hat{H} 
 &= \sum_{p,q} h_{pq} \, \hat{a}_p^{\dagger} \hat{a}_q
@@ -253,7 +252,7 @@ To map this Hamiltonian to the Pauli gates, we express it in second quantized fo
 h_{pq} = \langle \phi_p \vert \hat{H}_{\mathrm{el}} \vert \phi_q \rangle, \quad
 h_{pqrs} = \langle \phi_p \, \phi_q \vert \hat{H}_{\mathrm{el}} \vert \phi_r \, \phi_s \rangle
 \end{equation*}
-Fermionic operators can be mapped to Pauli gates through widely adopted mapping methods such as Jordan-Wigner mapping, Parity mapping, and bravyi-kitaev mapping [10, 11]. 
+Fermionic operators can be mapped to Pauli gates through widely adopted mapping methods such as Jordan-Wigner mapping, Parity mapping, and bravyi-kitaev mapping \cite{MAP1,MAP2}. 
 In this experiment, we will use the Parity mapping method. 
 Parity mapping expresses the creation/annihilation operator through a Pauli gate by corresponding the parity of the i-th qubit to the parity of the electron occupancy of the i-th orbital. 
 In this case, the parity of the \(\alpha-\) spin and \(\beta-\) spin of the molecule can be utilized to reduce the number of qubits required by two. 
@@ -271,7 +270,7 @@ In this experiment, we compare two representative types of Ansatz, one hardware-
 \paragraph{TwoLocal(Efficient SU2) Ansatz} \leavevmode \newline
 Since the quantum state of a single qubit can be represented on the Bloch sphere with two rotation gate, we take this idea as a basis. 
 By treating the rotation gate angles as variational parameters and introducing entanglement—a defining property of multi-qubit systems—through CNOT gates, 
-the quantum state of an arbitrary multi-qubit system can then be efficiently expressed in terms of these parameters.
+the quantum state of an arbitrary multi-qubit system can then be efficiently expressed in terms of these parameters\cite{TL1,TL2}.
 
 \begin{figure}[htbp]
 \centering
@@ -281,11 +280,11 @@ the quantum state of an arbitrary multi-qubit system can then be efficiently exp
 The construction of the TwoLocal Ansatz does not require an interpretation of the Hamiltonian. It is a representation of an arbitrary quantum state that is encoded in hardware, making it hardware-efficient.
 
 \paragraph{UCCSD(Unitary Coupled Cluster Singles and Doubles) Ansatz} \leavevmode \newline
-Through second quantization, we express the Hamiltonian operator in terms of the basis of the molecular orbitals of the system. Ultimately, 
-the state we are looking for is represented in the same Hilbert space as the Hamiltonian. By using the same spin-orbitals as the basis, 
+Through second quantization, we express the Hamiltonian operator in terms of the basis of the molecular orbitals of the system. 
+Ultimately, the state we are looking for is represented in the same Hilbert space as the Hamiltonian. By using the same spin-orbitals as the basis, 
 we can express any quantum state in the Hilbert space where the Hamiltonian exists. 
 
-When the spin-orbital wavefunctions of a molecule are used as the basis, the quantum state can be represented in the CCSD form—incorporating only singles and doubles—within the Coupled-Cluster framework [12,13]. Furthermore, to encode this representation on a quantum circuit, it can be recast as a unitary operator, yielding the UCCSD (Unitary Coupled-Cluster Singles and Doubles) ansatz as shown below [14].
+When the spin-orbital wavefunctions of a molecule are used as the basis, the quantum state can be represented in the CCSD form—incorporating only singles and doubles—within the Coupled-Cluster framework \cite{CC1,CC2}. Furthermore, to encode this representation on a quantum circuit, it can be recast as a unitary operator, yielding the UCCSD (Unitary Coupled-Cluster Singles and Doubles) ansatz as shown below \cite{UCC1,UCC2}.
 
 \begin{equation}
 \vert \Phi(\mathbf{\theta})\rangle_{UCCSD} = e^{T-T^{\dagger}}\vert \Phi_{HF} \rangle
@@ -386,7 +385,7 @@ FMO-VQE is an algorithm first introduced by Lim et al. that combines the VQE alg
 We compare the number of qubits required with and without the FMO method. 
 In both cases, an Active Space was employed by selecting only the valence orbitals of each atom. 
 The core orbitals, which are less likely to participate in bonding, were treated as constant contributions, 
-while the Hilbert space was defined as the subspace constructed by only the valence spin orbitals. 
+while the Hilbert space was defined as the subspace constructed by only the valence spin orbitals\cite{AS1,AS2}. 
 Under these assumptions, the number of orbtal required for a conventional VQE calculation is shown in Table 1.
 
 \begin{table}[h]
@@ -493,7 +492,7 @@ $\mathrm{"Co-O"}$\footnotemark[1] & -1439.38835 & -1439.75818 & -1439.85708 & -1
 $\mathrm{"Co-O"}$\footnotemark[2] & -1439.27606 & -1439.99437 & \underline{-1440.02488} & -1439.29817 & -1439.29598 & -1439.92656 \\
 \botrule
 \end{tabular*}
-\footnotetext{All values in the Table 3, Table 4 are in Ha units. The underlined values represent the lowest convergence values for each Dimer. The Fragment with superscripts refer to different dimers with the same composition but different geometric structures(The geometric structure refers to [42]).}
+\footnotetext{All values in the Table 3, Table 4 are in Ha units. The underlined values represent the lowest convergence values for each Dimer. The Fragment with superscripts refer to different dimers with the same composition but different geometric structures(The geometric structure refers to \cite{LICOO21}).}
 $\mathrm{"Li-O"}$\footnotemark[1]{A dimer consisting of O and Li atoms that form a bond.}
 
 $\mathrm{"Li-O"}$\footnotemark[2]{A dimer consisting of O and Li atoms that do not form a bond.}
@@ -516,7 +515,7 @@ These results suggest that even for similar systems, the Ansatz that best descri
 
 \subsection{Molecular Energy}\label{subsec3.2}
 \begin{sidewaystable}
-\caption{각 Method로 계산한 산화상태별 바닥상태 에너지.}\label{tab4}
+\caption{Ground-state energies for each oxidation state calculated by each method.}\label{tab4}
 \begin{tabular*}{\textwidth}{@{\extracolsep\fill}lcccccc}
 \toprule%
 & \multicolumn{4}{@{}c@{}}{Oxidation Number} \\\cmidrule(lr){2-5}%
@@ -532,7 +531,7 @@ CCSD & -1521.42181 & -1521.41163 & -1521.41806 & -1521.40465 \\
 
 \vspace{3em}
 
-\caption{각 Method로 계산한 산화상태별 바닥상태 에너지와 FMO-VQE 방식으로 계산한 바닥상태 에너지의 차이 $dE$ (Ha) 와 Error Rate (\%)}\label{tab4}
+\caption{The difference $dE$ (Ha) between the ground-state energies calculated by each method and those obtained from the FMO-VQE approach, and the corresponding error rate(\%).}\label{tab4}
 \begin{tabular*}{\textwidth}{@{\extracolsep\fill}lcccccccc}
 \toprule%
 & \multicolumn{8}{@{}c@{}}{Oxidation Number} \\\cmidrule(lr){2-9}%
@@ -548,61 +547,38 @@ CCSD & 0.21794 & 0.014 & 0.16129 & 0.011 & 0.16772 & 0.011 & 0.00244 & 0.000 \\
 \end{tabular*}
 \footnotetext{* All values in the Table 5, Table 6 are in Ha units.}
 
-$dE$\footnotemark[1] : {FMO-VQE 를 통해 계산된 에너지 와 각 Method를 통해 계산된 에너지의 차이, 값이 양수일때 FMO-VQE보다 더 낮은 에너지를 계산함을 의미.}
+$dE$\footnotemark[1] : {Difference between the energy obtained by FMO-VQE and each method (a positive value indicates that the method yields a lower energy than FMO-VQE)}
 
-error\footnotemark[2] : {FMO-VQE 를 통해 계산된 에너지 와 각 Method를 통해 계산된 에너지의 차이의 오차를 백분율 단위로 표기.}
+error\footnotemark[2] : {Error of the energy difference, expressed in percentage.}
 
 \end{sidewaystable}
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.8\textwidth]{fig/result2.png}
-\caption{빨간색의 $"\blacktriangle"$ 마크로 표시된 점선은 CASCI를 통해 계산된 에너지를 나타낸다. 여기서 CASCI 계산의 경우 Computational Cost와 Accuracy를 균형 있게 고려하기 위해, HOMO 근방의 8개 점유 오비탈과 LUMO 근방의 4개 비점유 오비탈을 활성공간으로 선택하였다. 
-파란색의 $"\blacksquare"$ 마크로 표시된 점선은 CCSD를 통해 계산된 에너지를 나타낸다. 
-마젠타색의 $"\mathsf{X} "$ 마크로 표시된 점선은 FMO-VQE의 계산에서와 같은 16개의 큐비트로 계산한 VQE 알고리즘에 대응되는 결과를 나타낸다.
-초록색의 $"\bullet  "$ 마크로 표시된 실선은 본 연구에서 제시하는 FMO-VQE 방식을 적용하여 얻은 결과이다. 
-그리고 주황색 $"\blacklozenge "$ 로 표시된 실선은 본 연구에서 제시한 FMO-VQE 방식의 헤밀토니안을 Exact하게 풀어낸 결과이다.}\label{Fig.5}
+\caption{The red dashed line marked with $”\blacktriangle”$ represents the energy obtained from CASCI calculations. For the CASCI calculation, the active space was chosen as eight occupied orbitals around the HOMO and four unoccupied orbitals around the LUMO, balancing computational cost and accuracy. The blue dashed line marked with $”\blacksquare”$ corresponds to the energy obtained from CCSD calculations. The magenta dashed line marked with $”\mathsf{X}”$ shows the result obtained by solving the diagonalization problem of a 16-qubit Hamiltonian (without the FMO scheme) corresponding to the same system as in the FMO-VQE calculation. The green solid line marked with $”\bullet”$ denotes the result obtained using the proposed FMO-VQE method. Finally, the orange solid line marked with $”\blacklozenge”$ corresponds to the exact solution of the Hamiltonian under the proposed FMO-VQE scheme.}\label{Fig.5}
 \end{figure}
 
-본 연구에서는 FMO-VQE 방식을 통해 제한된 큐비트 수 하에서도 보다 큰 분자 시스템의 바닥상태 에너지를 근사적으로 계산할 수 있는지를 검증하고자 하였다. 
+In this study, we examined whether the FMO-VQE approach can approximately calculate the ground-state energy of larger molecular systems under a limited number of qubits.
+To evaluate the performance of conventional VQE with restricted qubit resources, we obtained the optimal result achievable by VQE using the same number of qubits as in the FMO-VQE calculation. Specifically, a Hamiltonian corresponding to 14 qubits was constructed and classically diagonalized to obtain the exact value. This value serves as a reference, representing the ideal outcome of the VQE algorithm under the assumption of error-free operations and full convergence of the optimization process. The result is shown in magenta in Figure~1. The conventional VQE results yielded relatively higher energies compared to classical simulators such as CCSD and FCI. This indicates that even if optimization issues and quantum circuit errors are disregarded, conventional VQE cannot achieve accuracy comparable to classical methods under qubit limitations. In contrast, the ground-state energies obtained using the FMO-VQE method were consistent with CASCI simulation results.
 
-제한된 큐비트 수에서 전통적인 VQE의 성능을 평가하기 위하여, FMO-VQE에서 사용한 것과 동일한 큐비트 수를 적용하여 VQE로부터 얻을 수 있는 최적의 결과를 산출하였다. 이를 위해 14 큐비트에 대응되도록 Hamiltonian을 구성하고, 해당 Hamiltonian을 고전적으로 대각화하여 정확한 값을 구하였다. 이 값은 VQE 알고리즘 내에서 모든 연산이 오차 없이 수행되고, 최적화 과정이 완전히 수렴한 경우에 도달할 수 있는 기준(reference) 값을 의미한다. 해당 결과는 Figure 1에서 자홍색(Magenta)으로 표시하였다. 이 전통적인 VQE 결과는 고전적 시뮬레이터(CCSD 및 FCI) 결과보다 상대적으로 높은 에너지를 나타내었으며, 이는 큐비트 수가 제한될 경우 VQE에서 생기는 최적화문제, 양자회로에 의한 오차등을 극복하더라도 전통적인 VQE 방식으로는 고전적인 계산보다 높은 정확도를 확보하기 어려움을 의미한다. 반면 FMO-VQE 방식으로 계산한 바닥상태 에너지는 CASCI 시뮬레이션 결과와 유사한 수준을 보인다. 
+The orange curve in Figure~1 represents the ground-state energy obtained by exactly diagonalizing the Hamiltonian of each fragment within the FMO scheme adopted in this work. This value corresponds to the ideal reference achievable under the assumed FMO framework, providing the benchmark for the FMO-VQE algorithm. A noticeable discrepancy was observed between the results obtained with the FMO scheme and those obtained without it (CCSD, UCCSD, and conventional VQE), depending on the oxidation state. This discrepancy can be attributed to errors intrinsic to the FMO method, suggesting that certain inter-fragment interactions were either underestimated or overestimated. The omission of potential terms representing fragment–fragment interactions is considered the main source of this error. Furthermore, the difference between the FMO-VQE results and the orange benchmark curve may arise from convergence issues in the VQE optimization or from phenomena such as barren plateaus. These errors, however, are expected to be mitigated by improving optimization strategies or employing more expressive Ansatzes.
 
-주황색 곡선은 본연구에서 사용한 FMO scheme을 사용하며 각 fragment의 Hamiltonian을 고전적으로 완전히 대각화하여 얻은 바닥상태 에너지를 나타낸다. 이는 이번실험에서 가정한 FMO 환경에서 VQE 계산을 통해 얻을 수 있는 가장 이상적인 결과이며 FMO-VQE 알고리즘의 기준값에 해당한다. FMO Method 를 사용한 두 결과와 FMO를 사용하지 않은 계산방법들(CCSD,UCCSD,VQE)과 비교했을 때 산화 상태에 따른 에너지 차이가 크다. 따라서 이 오차는 FMO Method 에 의한 오차라고 판단 할 수있고, 이는 본연구에서 사용한 FMO 방식에서 어떠한 상호작용이 덜 고려되었거나 더 고려되었음을 짐작할 수 있다. 그리고 이러한 오차의 이유는 fragment 간 상호작용을 나타내는 퍼텐셜 항을 생략한 데 기인하는 것으로 판단할 수 있다. 한편, FMO-VQE 결과와 주황색 기준값 사이에도 차이가 존재하는데, 이는 VQE의 최적화 과정에서 발생한 수렴 문제 또는 Barren Plateau와 같은 현상에 기인할 수 있다. 해당 오차는 최적화 전략이나 Ansatz의 개선을 통해 완화 가능할 것으로 예상된다.
+Although the FMO-VQE approach still requires improvements, its potential is noteworthy. Exact FCI calculations are infeasible for large systems due to exponential scaling of computational cost, and methods such as CCSD and CASCI have been developed as approximations aimed at reducing cost while maintaining near-FCI accuracy. The Fragment Molecular Orbital (FMO) method, which partitions a system into fragments, has been proposed in this context. However, in classical implementations, its efficiency has often been regarded as insufficient \cite{FMO10,FMO11}. By contrast, the quantum implementation of the FMO scheme offers a key advantage: the reduction of qubit requirements, which is critical in the NISQ era.
 
-이렇듯 FMO-VQE 방식은 보완할 점이 남아 있지만, 그럼에도 주목해야 하는 이유는 이 알고리즘이 가진 잠재력에 있다. 실제 계산에서는 시스템 크기에 따른 계산량 증가로 인해 완전한 FCI 계산이 사실상 불가능하며, 이에 따라 CCSD, CASCI 등 적절한 근사 기법이 연구되어 왔다. 이러한 접근들의 공통 목표는 FCI에 근접한 정확도를 유지하면서 계산 비용을 낮추는 것이다. 이 맥락에서 시스템을 조각(fragment)으로 분할해 계산하는 Fragment Molecular Orbital(FMO) 방식이 제안되었으나, 고전적 접근만으로는 계산 효율 면에서 기대에 미치지 못한다는 의견이 제시되고있다[ref. 필요함].
-반면 양자적 접근에서 FMO 방식은 필요한 큐비트 수를 줄일 수 있어 NISQ 환경에서 큰 잠재력을 보인다. 
-[Lim et al.]에서 제안되어 본 연구에 적용된 FMO-VQE는 전체 시스템을 작은 fragment로 분할하고 각 fragment에 VQE를 적용함으로써,
-정밀도측면으로는 Fig 6. 에서 볼 수 있듯이 CASCI, CCSD 등의 기존의 계산방식과 비교하여 경쟁력 있는 결과를 얻을 수 있었으며, 계산 Cost 측면에서는 
-전체 에너지 계산에 요구되는 큐비트 수를 효과적으로 감소시켰다. 특히 시스템 규모가 커질수록 필요 큐비트가 sublinear하게 증가하는 특성을 보여, NISQ 장치의 한계를 완화할 가능성을 제시한다.
+The FMO-VQE approach, proposed by Lim et al. and applied in this study, divides the system into smaller fragments and applies VQE to each fragment. As shown in Figure~6, the method yielded results competitive with CASCI and CCSD in terms of accuracy, while substantially reducing the number of qubits required for the overall energy calculation. Notably, the required number of qubits exhibits sublinear growth with system size, suggesting the potential to alleviate the limitations of NISQ hardware.
 
-물론 본 연구의 FMO-VQE 구현은 외부 전기장 항을 통한 fragment 간 상호작용의 정밀 반영, VQE 최적화 수렴 안정성 확보 등 여러 측면에서 추가 개선이 필요하다. 그럼에도 기존 VQE만으로는 접근이 어려운 시스템에 대해 근사적 에너지 계산을 수행함으로써, 복잡한 분자로의 확장 가능성과 FMO-VQE 알고리즘의 일관된 규모 확장성을 확인하였다. 비록 아직 완전하지는 않지만, 고전적으로는 사실상 불가능한 규모에서도 FMO-VQE를 통해 유효한 에너지 추정이 가능하다는 점은 향후 응용 가능성을 뒷받침한다.
+Of course, the present implementation of FMO-VQE requires further refinement, including the incorporation of external field terms to more accurately capture inter-fragment interactions and the stabilization of convergence in VQE optimization. Nevertheless, by enabling approximate energy calculations for systems that are otherwise inaccessible with conventional VQE, this work demonstrates both the scalability and applicability of FMO-VQE to increasingly complex molecular systems. Although not yet complete, the fact that FMO-VQE provides valid energy estimates for system sizes that are effectively intractable by classical approaches underscores its potential for future applications.
 
-% 이렇듯 FMO-VQE 방식은 보완할 점이 아직 많지만, 그럼에도 FMO-VQE 방식을 주목해야 하는 이유는, 이 방식이 가진 잠재력 때문이다. 
-% 실제 계산에서는 시스템의 크기에 따라 계산량 증가로 인해 완전한 FCI 계산은 사실상 불가능하며, 적절한 근사 하에서 계산을 수행하는 방법인 CCSD, CASCI등의 방법이 연구되고있다. 
-% 이러한 방식들의 주된 목적은 FCI 에 근접한 정밀도를 유지하면서 계산 Cost를 줄이는것이 주된연구분야이다. 
-
-
-% 복잡한 분자 시스템의 바닥상태 에너지를 정확히 계산하는 것은 배터리 소재 설계나 신약 개발 등 다양한 분야에서 필수적인 과제가 되고 있다. 
-% 그러나 시스템의 크기가 커질수록 전통적인 방법, 특히 Full Configuration Interaction(FCI)과 같은 정확한 계산 방식은 계산 자원의 급격한 증가로 인해 사실상 적용이 불가능하다.
-% 이러한 맥락에서, 시스템을 조각(fragment)으로 나누어 계산하는 Fragment Molecular Orbital(FMO) 방식이 제안되어 왔으나, 고전적인 접근에서는 계산 효율성 측면에서 기대에 미치지 못한다는 의견이 제시되고있다[ref. 필요함]. 
-% 하지만 양자적 접근에서 FMO 방식은 계산에 필요한 큐비트 수를 줄일 수 있으며, 이는 현재의 NISQ 환경에서 큰 잠재력을 갖는다. [Lim et al.]에서 제안되어 본 연구에 적용된 FMO-VQE 방식은 전체 시스템을 작은 fragment로 분할하고 각 fragment에 VQE를 적용함으로써 전체 에너지 계산에 요구되는 큐비트 수를 효과적으로 감소시킨다. 특히 시스템 규모가 커질수록 필요한 큐비트 수가 sublinear하게 증가하는 특성을 보여, NISQ 장치의 한계를 극복할 수 있는 가능성을 제시한다.
-% 물론 본 연구에서 사용한 FMO-VQE 방식은 외부 전기장 항의 도입을 통한 fragment 간 상호작용의 정밀한 반영, VQE 최적화 과정에서의 수렴 안정성 확보 등 아직 여러 측면에서 보완이 필요하다. 그럼에도 불구하고, 본 연구는 기존 VQE 방식만으로는 사실상 접근이 어려운 시스템에 대해 근사적인 에너지 계산을 시도하였으며, 그 결과를 통해 점점 복잡한 분자를 다뤄야하는 상황에서 FMO-VQE 알고리즘이 갖는 잠재력을 확인할 수 있었다. FMO-VQE 알고리즘은 아직 완전하지는 않지만 시스템 크기 증가에 Consistent한 특징을 가지므로, 고전적으로는 계산 불가능한 상황에서 FMO-VQE 방식으로는 유효한 에너지를 계산해 낼 수 있음을 기대할 수 있다. 
-
-
-% 실제 계산에서는 시스템의 크기에 따라 계산량 증가로 인해 완전한 FCI 계산은 사실상 불가능하며, 적절한 근사 하에서 계산을 수행하게 된다. 
-% %이번계산에서도 FCI 로는 계산을 수행 할 수 없어 적절한 Active space를 정의하여 CASCI 방식으로 고전값을 계산하였다. 
-% %따라서 지금의 양자화학 계산에서 중요한 연구는 더 좋은 근사방식을 찾는것이다. 
-% 따라서, 지금의 더 복잡한 분자에 대해 양자화학 계산을 수행하기 위해서는 FMO-VQE 방식이 CASCI 나 CCSD 등의 여러 계산방법과 비교하였을때 얼마나 경쟁력있는지를 판단하는것이 중요하며, Figure 1 의 결과는 FMO-VQE 방식이 경쟁력 있는 대안이 될 수 있음을 시사한다. 
-% 특히, 아직까지는 FMO-VQE 방식이 정밀도 측면에서 개선의 여지가 있음에도 불구하고, 큐비트 수가 제한된 상황에서도 비교적 정확한 에너지를 근사할 수 있다는 점은 주목할 만하다.
 
 \section{Conclusions}
-본 연구에서는 양자 알고리즘인 FMO-VQE 방식을 적용하여, \(\mathrm{LiCoO_2}\)  분자의 바닥상태 에너지를 고전적인 시뮬레이터와 비교하였다. 본 연구에서는 아직 초기단계의 시도로써, 작은 basis sets을 사용하였고, FMO 방식에서 Fragment의 외부 전기장 항을 무시하여, 화학적인 해석에 있어서 유의미한 결과는 얻지는 못하였지만, 
-동일하게 제한된 큐비트를 사용한 VQE 알고리즘의 Optimal 한 결과와 고전적 양자화학 계산 알고리즘 (CCSD, CASCI 등)와의 비교를 통해 통해 FMO-VQE 방식의 정밀도와 신뢰성을 평가할 수 있었다.
-기존의 계산량 문제에 대한 해결책으로 VQE 알고리즘이 제안되었으나, 현재의 NISQ(Noisy Intermediate-Scale Quantum) 시대에는 제한된 양자 하드웨어 성능으로 인해 그 실용성에 대한 기대가 다소 약화된 상황이다. 그러나 본 연구에서 제안하는 FMO-VQE 방식은, 이러한 하드웨어 제약 하에서도 양자 하드웨어의 이점을 실제 계산에 활용할 수 있는 가능성을 제시한다.
-즉, 더욱 복잡한 분자를 다룰 때 기존의 알고리즘으로는 유효한 에너지를 계산할 수 없는 경우에도, FMO-VQE 방식에서는 양자 하드웨어의 이점을 이용하여 동일한 수준의 근사 하에서 보다 정확한 에너지를 계산할 수 있을 것으로 기대된다. 이러한 결과는 향후 신약 합성 및 신소재 개발과 같은 복잡한 분자 시스템이 요구되는 분야에서, 계산량의 제약으로 인해 발생할 수 있는 문제에 대한 해결책으로 FMO-VQE가 활용될 수 있음을 시사한다. 
-본 연구는 아직 초기 단계의 시도로써, 고전적으로는 큰 효과가 없는 FMO 방식이 양자적으로 VQE와 함께 적용할때는 계산에 필요한 큐비트를 줄이면서 고전적인 계산방법과 비슷한 정밀도를 얻을수 있음을 기대할 수 있는 결과를 얻었다. 즉, 이번 연구는 FMO-VQE 방식이 복잡한 분자의 양자화학 계산에 새로운 계산 패러다임으로 작용할 수 있음을 제시하며, 향후 FMO 방식의 개선을 통해 다양한 양자 시스템 및 화학적 조건에 대한 확장 가능성을 보여준다.
+In this study, we applied the quantum algorithm FMO-VQE to the calculation of the ground-state energy of the \(\mathrm{LiCoO_2}\) molecule and compared the results with those obtained from classical simulators. As this work represents an early-stage attempt, small basis sets were employed and external field terms in the FMO scheme were neglected; thus, chemically meaningful interpretations were not pursued. Nevertheless, by comparing with the optimal results of conventional VQE under the same qubit constraints as well as with classical quantum chemistry methods such as CCSD and CASCI, we were able to assess the accuracy and reliability of the FMO-VQE approach.
 
+Although the VQE algorithm has been proposed as a solution to the computational scaling problem, its practical utility has been somewhat diminished in the current NISQ (Noisy Intermediate-Scale Quantum) era due to limitations of quantum hardware. The FMO-VQE method presented in this study, however, demonstrates the potential to exploit quantum hardware advantages even under such constraints.
+
+In particular, for complex molecular systems where conventional algorithms may fail to provide valid energy estimates, FMO-VQE is expected to deliver more accurate results under the same level of approximation by leveraging quantum resources. These findings suggest that FMO-VQE can serve as a practical strategy to overcome computational bottlenecks in areas such as drug discovery and materials design, where increasingly complex molecular systems are of central importance.
+
+Although this study remains at an early stage, the results indicate that while the FMO method alone may not yield significant benefits in classical computations, its combination with VQE in the quantum setting reduces the required number of qubits while maintaining accuracy comparable to that of classical methods. Thus, this work highlights the potential of FMO-VQE as a new computational paradigm for quantum chemistry of complex molecular systems and points to future opportunities for extending its applicability through further improvements of the FMO framework to incorporate diverse quantum systems and chemical conditions.
 % \bibliographystyle{plain}
 \bibliography{FMOVQE_Ref}
 

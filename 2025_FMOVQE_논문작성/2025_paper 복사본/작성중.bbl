@@ -1,6 +1,6 @@
 %% BioMed_Central_Bib_Style_v1.01
 
-\begin{thebibliography}{8}
+\begin{thebibliography}{36}
 % BibTex style file: bmc-mathphys.bst (version 2.1), 2014-07-24
 \ifx \bisbn   \undefined \def \bisbn  #1{ISBN #1}\fi
 \ifx \binits  \undefined \def \binits#1{#1}\fi
@@ -44,55 +44,6 @@
 \csname PreBibitemsHook\endcsname
 
 %%% 1
-\bibitem[\protect\citeauthoryear{Cao et~al.}{2018}]{RN50}
-\begin{barticle}
-\bauthor{\bsnm{Cao}, \binits{Y.}},
-\bauthor{\bsnm{Romero}, \binits{J.}},
-\bauthor{\bsnm{Aspuru-Guzik}, \binits{A.}}:
-\batitle{Potential of quantum computing for drug discovery}.
-\bjtitle{IBM Journal of Research and Development}
-\bvolume{62}(\bissue{6}),
-\bfpage{6}--\blpage{1620}
-(\byear{2018})
-\end{barticle}
-\endbibitem
-
-%%% 2
-\bibitem[\protect\citeauthoryear{Santagati et~al.}{2024}]{RN48}
-\begin{barticle}
-\bauthor{\bsnm{Santagati}, \binits{R.}},
-\bauthor{\bsnm{Aspuru-Guzik}, \binits{A.}},
-\bauthor{\bsnm{Babbush}, \binits{R.}},
-\bauthor{\bsnm{Degroote}, \binits{M.}},
-\bauthor{\bsnm{González}, \binits{L.}},
-\bauthor{\bsnm{Kyoseva}, \binits{E.}},
-\bauthor{\bsnm{Moll}, \binits{N.}},
-\bauthor{\bsnm{Oppel}, \binits{M.}},
-\bauthor{\bsnm{Parrish}, \binits{R.M.}},
-\bauthor{\bsnm{Rubin}, \binits{N.C.}}:
-\batitle{Drug design on quantum computers}.
-\bjtitle{Nature Physics}
-\bvolume{20}(\bissue{4}),
-\bfpage{549}--\blpage{557}
-(\byear{2024})
-\end{barticle}
-\endbibitem
-
-%%% 3
-\bibitem[\protect\citeauthoryear{Mustafa et~al.}{}]{RN47}
-\begin{botherref}
-\oauthor{\bsnm{Mustafa}, \binits{H.}},
-\oauthor{\bsnm{Morapakula}, \binits{S.N.}},
-\oauthor{\bsnm{Jain}, \binits{P.}},
-\oauthor{\bsnm{Ganguly}, \binits{S.}}:
-Variational quantum algorithms for chemical simulation and drug discovery.
-In: 2022 International Conference on Trends in Quantum Computing and Emerging Business Technologies (TQCEBT),
-pp. 1--8.
-IEEE
-\end{botherref}
-\endbibitem
-
-%%% 4
 \bibitem[\protect\citeauthoryear{Williams-Noonan et~al.}{2018}]{RN66}
 \begin{barticle}
 \bauthor{\bsnm{Williams-Noonan}, \binits{B.J.}},
@@ -106,7 +57,7 @@ IEEE
 \end{barticle}
 \endbibitem
 
-%%% 5
+%%% 2
 \bibitem[\protect\citeauthoryear{Heifetz}{2020}]{RN69}
 \begin{bbook}
 \bauthor{\bsnm{Heifetz}, \binits{A.}}:
@@ -117,7 +68,7 @@ vol. \bseriesno{2114}.
 \end{bbook}
 \endbibitem
 
-%%% 6
+%%% 3
 \bibitem[\protect\citeauthoryear{Lyu et~al.}{2021}]{RN117}
 \begin{barticle}
 \bauthor{\bsnm{Lyu}, \binits{Y.}},
@@ -138,7 +89,7 @@ vol. \bseriesno{2114}.
 \end{barticle}
 \endbibitem
 
-%%% 7
+%%% 4
 \bibitem[\protect\citeauthoryear{Li et~al.}{2015}]{RN118}
 \begin{barticle}
 \bauthor{\bsnm{Li}, \binits{G.}},
@@ -153,7 +104,7 @@ vol. \bseriesno{2114}.
 \end{barticle}
 \endbibitem
 
-%%% 8
+%%% 5
 \bibitem[\protect\citeauthoryear{Mizushima et~al.}{1980}]{RN75}
 \begin{barticle}
 \bauthor{\bsnm{Mizushima}, \binits{K.}},
@@ -165,6 +116,446 @@ vol. \bseriesno{2114}.
 \bvolume{15}(\bissue{6}),
 \bfpage{783}--\blpage{789}
 (\byear{1980})
+\end{barticle}
+\endbibitem
+
+%%% 6
+\bibitem[\protect\citeauthoryear{Abrams and Lloyd}{1997}]{QPE1}
+\begin{barticle}
+\bauthor{\bsnm{Abrams}, \binits{D.S.}},
+\bauthor{\bsnm{Lloyd}, \binits{S.}}:
+\batitle{Simulation of many-body fermi systems on a universal quantum computer}.
+\bjtitle{Physical Review Letters}
+\bvolume{79}(\bissue{13}),
+\bfpage{2586}
+(\byear{1997})
+\end{barticle}
+\endbibitem
+
+%%% 7
+\bibitem[\protect\citeauthoryear{Abrams and Lloyd}{1999}]{QPE2}
+\begin{barticle}
+\bauthor{\bsnm{Abrams}, \binits{D.S.}},
+\bauthor{\bsnm{Lloyd}, \binits{S.}}:
+\batitle{Quantum algorithm providing exponential speed increase for finding eigenvalues and eigenvectors}.
+\bjtitle{Physical Review Letters}
+\bvolume{83}(\bissue{24}),
+\bfpage{5162}
+(\byear{1999})
+\end{barticle}
+\endbibitem
+
+%%% 8
+\bibitem[\protect\citeauthoryear{Aspuru-Guzik et~al.}{2005}]{QPE3}
+\begin{barticle}
+\bauthor{\bsnm{Aspuru-Guzik}, \binits{A.}},
+\bauthor{\bsnm{Dutoi}, \binits{A.D.}},
+\bauthor{\bsnm{Love}, \binits{P.J.}},
+\bauthor{\bsnm{Head-Gordon}, \binits{M.}}:
+\batitle{Simulated quantum computation of molecular energies}.
+\bjtitle{Science}
+\bvolume{309}(\bissue{5741}),
+\bfpage{1704}--\blpage{1707}
+(\byear{2005})
+\end{barticle}
+\endbibitem
+
+%%% 9
+\bibitem[\protect\citeauthoryear{Cleve et~al.}{1998}]{QPE4}
+\begin{barticle}
+\bauthor{\bsnm{Cleve}, \binits{R.}},
+\bauthor{\bsnm{Ekert}, \binits{A.}},
+\bauthor{\bsnm{Macchiavello}, \binits{C.}},
+\bauthor{\bsnm{Mosca}, \binits{M.}}:
+\batitle{Quantum algorithms revisited}.
+\bjtitle{Proceedings of the Royal Society of London. Series A: Mathematical, Physical and Engineering Sciences}
+\bvolume{454}(\bissue{1969}),
+\bfpage{339}--\blpage{354}
+(\byear{1998})
+\end{barticle}
+\endbibitem
+
+%%% 10
+\bibitem[\protect\citeauthoryear{Kitaev}{1995}]{QPE5}
+\begin{botherref}
+\oauthor{\bsnm{Kitaev}, \binits{A.Y.}}:
+Quantum measurements and the abelian stabilizer problem.
+arXiv preprint quant-ph/9511026
+(1995)
+\end{botherref}
+\endbibitem
+
+%%% 11
+\bibitem[\protect\citeauthoryear{Preskill}{2018}]{NISQ1}
+\begin{barticle}
+\bauthor{\bsnm{Preskill}, \binits{J.}}:
+\batitle{Quantum computing in the nisq era and beyond}.
+\bjtitle{Quantum}
+\bvolume{2},
+\bfpage{79}
+(\byear{2018})
+\end{barticle}
+\endbibitem
+
+%%% 12
+\bibitem[\protect\citeauthoryear{Peruzzo et~al.}{2014}]{VQE1}
+\begin{barticle}
+\bauthor{\bsnm{Peruzzo}, \binits{A.}},
+\bauthor{\bsnm{McClean}, \binits{J.}},
+\bauthor{\bsnm{Shadbolt}, \binits{P.}},
+\bauthor{\bsnm{Yung}, \binits{M.-H.}},
+\bauthor{\bsnm{Zhou}, \binits{X.-Q.}},
+\bauthor{\bsnm{Love}, \binits{P.J.}},
+\bauthor{\bsnm{Aspuru-Guzik}, \binits{A.}},
+\bauthor{\bsnm{O’brien}, \binits{J.L.}}:
+\batitle{A variational eigenvalue solver on a photonic quantum processor}.
+\bjtitle{Nature communications}
+\bvolume{5}(\bissue{1}),
+\bfpage{4213}
+(\byear{2014})
+\end{barticle}
+\endbibitem
+
+%%% 13
+\bibitem[\protect\citeauthoryear{McClean et~al.}{2016}]{VQE2}
+\begin{barticle}
+\bauthor{\bsnm{McClean}, \binits{J.R.}},
+\bauthor{\bsnm{Romero}, \binits{J.}},
+\bauthor{\bsnm{Babbush}, \binits{R.}},
+\bauthor{\bsnm{Aspuru-Guzik}, \binits{A.}}:
+\batitle{The theory of variational hybrid quantum-classical algorithms}.
+\bjtitle{New Journal of Physics}
+\bvolume{18}(\bissue{2}),
+\bfpage{023023}
+(\byear{2016})
+\end{barticle}
+\endbibitem
+
+%%% 14
+\bibitem[\protect\citeauthoryear{Sharkey et~al.}{2022}]{VQE3}
+\begin{bbook}
+\bauthor{\bsnm{Sharkey}, \binits{K.L.}},
+\bauthor{\bsnm{Chancé}, \binits{A.}},
+\bauthor{\bsnm{Khan}, \binits{A.}}:
+\bbtitle{Quantum Chemistry and Computing for the Curious: Illustrated with Python and Qiskit® Code}.
+\bpublisher{Packt Publishing Ltd}, \blocation{???}
+(\byear{2022})
+\end{bbook}
+\endbibitem
+
+%%% 15
+\bibitem[\protect\citeauthoryear{Tilly et~al.}{2022}]{VQE4}
+\begin{barticle}
+\bauthor{\bsnm{Tilly}, \binits{J.}},
+\bauthor{\bsnm{Chen}, \binits{H.}},
+\bauthor{\bsnm{Cao}, \binits{S.}},
+\bauthor{\bsnm{Picozzi}, \binits{D.}},
+\bauthor{\bsnm{Setia}, \binits{K.}},
+\bauthor{\bsnm{Li}, \binits{Y.}},
+\bauthor{\bsnm{Grant}, \binits{E.}},
+\bauthor{\bsnm{Wossnig}, \binits{L.}},
+\bauthor{\bsnm{Rungger}, \binits{I.}},
+\bauthor{\bsnm{Booth}, \binits{G.H.}}:
+\batitle{The variational quantum eigensolver: a review of methods and best practices}.
+\bjtitle{Physics Reports}
+\bvolume{986},
+\bfpage{1}--\blpage{128}
+(\byear{2022})
+\end{barticle}
+\endbibitem
+
+%%% 16
+\bibitem[\protect\citeauthoryear{Lim et~al.}{2024}]{FMOVQE}
+\begin{barticle}
+\bauthor{\bsnm{Lim}, \binits{H.}},
+\bauthor{\bsnm{Kang}, \binits{D.H.}},
+\bauthor{\bsnm{Kim}, \binits{J.}},
+\bauthor{\bsnm{Pellow-Jarman}, \binits{A.}},
+\bauthor{\bsnm{McFarthing}, \binits{S.}},
+\bauthor{\bsnm{Pellow-Jarman}, \binits{R.}},
+\bauthor{\bsnm{Jeon}, \binits{H.-N.}},
+\bauthor{\bsnm{Oh}, \binits{B.}},
+\bauthor{\bsnm{Rhee}, \binits{J.-K.K.}},
+\bauthor{\bsnm{No}, \binits{K.T.}}:
+\batitle{Fragment molecular orbital-based variational quantum eigensolver for quantum chemistry in the age of quantum computing}.
+\bjtitle{Scientific reports}
+\bvolume{14}(\bissue{1}),
+\bfpage{2422}
+(\byear{2024})
+\end{barticle}
+\endbibitem
+
+%%% 17
+\bibitem[\protect\citeauthoryear{Kitaura et~al.}{1999}]{FMO1}
+\begin{barticle}
+\bauthor{\bsnm{Kitaura}, \binits{K.}},
+\bauthor{\bsnm{Ikeo}, \binits{E.}},
+\bauthor{\bsnm{Asada}, \binits{T.}},
+\bauthor{\bsnm{Nakano}, \binits{T.}},
+\bauthor{\bsnm{Uebayasi}, \binits{M.}}:
+\batitle{Fragment molecular orbital method: an approximate computational method for large molecules}.
+\bjtitle{Chemical Physics Letters}
+\bvolume{313}(\bissue{3-4}),
+\bfpage{701}--\blpage{706}
+(\byear{1999})
+\end{barticle}
+\endbibitem
+
+%%% 18
+\bibitem[\protect\citeauthoryear{Fedorov et~al.}{2012}]{FMO2}
+\begin{barticle}
+\bauthor{\bsnm{Fedorov}, \binits{D.G.}},
+\bauthor{\bsnm{Nagata}, \binits{T.}},
+\bauthor{\bsnm{Kitaura}, \binits{K.}}:
+\batitle{Exploring chemistry with the fragment molecular orbital method}.
+\bjtitle{Physical Chemistry Chemical Physics}
+\bvolume{14}(\bissue{21}),
+\bfpage{7562}--\blpage{7577}
+(\byear{2012})
+\end{barticle}
+\endbibitem
+
+%%% 19
+\bibitem[\protect\citeauthoryear{Fedorov}{2017}]{FMO3}
+\begin{barticle}
+\bauthor{\bsnm{Fedorov}, \binits{D.G.}}:
+\batitle{The fragment molecular orbital method: theoretical development, implementation in gamess, and applications}.
+\bjtitle{Wiley Interdisciplinary Reviews: Computational Molecular Science}
+\bvolume{7}(\bissue{6}),
+\bfpage{1322}
+(\byear{2017})
+\end{barticle}
+\endbibitem
+
+%%% 20
+\bibitem[\protect\citeauthoryear{Fedorov and Kitaura}{2005}]{FMO4}
+\begin{botherref}
+\oauthor{\bsnm{Fedorov}, \binits{D.G.}},
+\oauthor{\bsnm{Kitaura}, \binits{K.}}:
+Coupled-cluster theory based upon the fragment molecular-orbital method.
+The Journal of chemical physics
+\textbf{123}(13)
+(2005)
+\end{botherref}
+\endbibitem
+
+%%% 21
+\bibitem[\protect\citeauthoryear{Stewart}{1970}]{2NDQ1}
+\begin{barticle}
+\bauthor{\bsnm{Stewart}, \binits{R.F.}}:
+\batitle{Small gaussian expansions of slater‐type orbitals}.
+\bjtitle{The Journal of Chemical Physics}
+\bvolume{52}(\bissue{1}),
+\bfpage{431}--\blpage{438}
+(\byear{1970})
+\end{barticle}
+\endbibitem
+
+%%% 22
+\bibitem[\protect\citeauthoryear{Jørgensen}{2012}]{2NDQ2}
+\begin{bbook}
+\bauthor{\bsnm{Jørgensen}, \binits{P.}}:
+\bbtitle{Second Quantization-based Methods in Quantum Chemistry}.
+\bpublisher{Elsevier}, \blocation{???}
+(\byear{2012})
+\end{bbook}
+\endbibitem
+
+%%% 23
+\bibitem[\protect\citeauthoryear{Fermann and Valeev}{2020}]{2NDQ3}
+\begin{botherref}
+\oauthor{\bsnm{Fermann}, \binits{J.T.}},
+\oauthor{\bsnm{Valeev}, \binits{E.F.}}:
+Fundamentals of molecular integrals evaluation.
+arXiv preprint arXiv:2007.12057
+(2020)
+\end{botherref}
+\endbibitem
+
+%%% 24
+\bibitem[\protect\citeauthoryear{Seeley et~al.}{2012}]{MAP1}
+\begin{botherref}
+\oauthor{\bsnm{Seeley}, \binits{J.T.}},
+\oauthor{\bsnm{Richard}, \binits{M.J.}},
+\oauthor{\bsnm{Love}, \binits{P.J.}}:
+The bravyi-kitaev transformation for quantum computation of electronic structure.
+The Journal of chemical physics
+\textbf{137}(22)
+(2012)
+\end{botherref}
+\endbibitem
+
+%%% 25
+\bibitem[\protect\citeauthoryear{Tranter et~al.}{2018}]{MAP2}
+\begin{barticle}
+\bauthor{\bsnm{Tranter}, \binits{A.}},
+\bauthor{\bsnm{Love}, \binits{P.J.}},
+\bauthor{\bsnm{Mintert}, \binits{F.}},
+\bauthor{\bsnm{Coveney}, \binits{P.V.}}:
+\batitle{A comparison of the bravyi–kitaev and jordan–wigner transformations for the quantum simulation of quantum chemistry}.
+\bjtitle{Journal of chemical theory and computation}
+\bvolume{14}(\bissue{11}),
+\bfpage{5617}--\blpage{5630}
+(\byear{2018})
+\end{barticle}
+\endbibitem
+
+%%% 26
+\bibitem[\protect\citeauthoryear{Kandala et~al.}{2017}]{TL1}
+\begin{barticle}
+\bauthor{\bsnm{Kandala}, \binits{A.}},
+\bauthor{\bsnm{Mezzacapo}, \binits{A.}},
+\bauthor{\bsnm{Temme}, \binits{K.}},
+\bauthor{\bsnm{Takita}, \binits{M.}},
+\bauthor{\bsnm{Brink}, \binits{M.}},
+\bauthor{\bsnm{Chow}, \binits{J.M.}},
+\bauthor{\bsnm{Gambetta}, \binits{J.M.}}:
+\batitle{Hardware-efficient variational quantum eigensolver for small molecules and quantum magnets}.
+\bjtitle{nature}
+\bvolume{549}(\bissue{7671}),
+\bfpage{242}--\blpage{246}
+(\byear{2017})
+\end{barticle}
+\endbibitem
+
+%%% 27
+\bibitem[\protect\citeauthoryear{Buonaiuto et~al.}{2024}]{TL2}
+\begin{barticle}
+\bauthor{\bsnm{Buonaiuto}, \binits{G.}},
+\bauthor{\bsnm{Gargiulo}, \binits{F.}},
+\bauthor{\bsnm{De~Pietro}, \binits{G.}},
+\bauthor{\bsnm{Esposito}, \binits{M.}},
+\bauthor{\bsnm{Pota}, \binits{M.}}:
+\batitle{The effects of quantum hardware properties on the performances of variational quantum learning algorithms}.
+\bjtitle{Quantum Machine Intelligence}
+\bvolume{6}(\bissue{1}),
+\bfpage{9}
+(\byear{2024})
+\end{barticle}
+\endbibitem
+
+%%% 28
+\bibitem[\protect\citeauthoryear{Bartlett and Musiał}{2007}]{CC1}
+\begin{barticle}
+\bauthor{\bsnm{Bartlett}, \binits{R.J.}},
+\bauthor{\bsnm{Musiał}, \binits{M.}}:
+\batitle{Coupled-cluster theory in quantum chemistry}.
+\bjtitle{Reviews of Modern Physics}
+\bvolume{79}(\bissue{1}),
+\bfpage{291}--\blpage{352}
+(\byear{2007})
+\end{barticle}
+\endbibitem
+
+%%% 29
+\bibitem[\protect\citeauthoryear{Crawford and Schaefer~III}{2007}]{CC2}
+\begin{barticle}
+\bauthor{\bsnm{Crawford}, \binits{T.D.}},
+\bauthor{\bsnm{Schaefer~III}, \binits{H.F.}}:
+\batitle{An introduction to coupled cluster theory for computational chemists}.
+\bjtitle{Reviews in computational chemistry}
+\bvolume{14},
+\bfpage{33}--\blpage{136}
+(\byear{2007})
+\end{barticle}
+\endbibitem
+
+%%% 30
+\bibitem[\protect\citeauthoryear{Hoffmann and Simons}{1988}]{UCC1}
+\begin{barticle}
+\bauthor{\bsnm{Hoffmann}, \binits{M.R.}},
+\bauthor{\bsnm{Simons}, \binits{J.}}:
+\batitle{A unitary multiconfigurational coupled‐cluster method: Theory and applications}.
+\bjtitle{The Journal of chemical physics}
+\bvolume{88}(\bissue{2}),
+\bfpage{993}--\blpage{1002}
+(\byear{1988})
+\end{barticle}
+\endbibitem
+
+%%% 31
+\bibitem[\protect\citeauthoryear{Lee et~al.}{2018}]{UCC2}
+\begin{barticle}
+\bauthor{\bsnm{Lee}, \binits{J.}},
+\bauthor{\bsnm{Huggins}, \binits{W.J.}},
+\bauthor{\bsnm{Head-Gordon}, \binits{M.}},
+\bauthor{\bsnm{Whaley}, \binits{K.B.}}:
+\batitle{Generalized unitary coupled cluster wave functions for quantum computation}.
+\bjtitle{Journal of chemical theory and computation}
+\bvolume{15}(\bissue{1}),
+\bfpage{311}--\blpage{324}
+(\byear{2018})
+\end{barticle}
+\endbibitem
+
+%%% 32
+\bibitem[\protect\citeauthoryear{Olsen}{2000}]{AS1}
+\begin{barticle}
+\bauthor{\bsnm{Olsen}, \binits{J.}}:
+\batitle{The initial implementation and applications of a general active space coupled cluster method}.
+\bjtitle{The Journal of Chemical Physics}
+\bvolume{113}(\bissue{17}),
+\bfpage{7140}--\blpage{7148}
+(\byear{2000})
+\end{barticle}
+\endbibitem
+
+%%% 33
+\bibitem[\protect\citeauthoryear{Piecuch}{2010}]{AS2}
+\begin{barticle}
+\bauthor{\bsnm{Piecuch}, \binits{P.}}:
+\batitle{Active-space coupled-cluster methods}.
+\bjtitle{Molecular Physics}
+\bvolume{108}(\bissue{21-23}),
+\bfpage{2987}--\blpage{3015}
+(\byear{2010})
+\end{barticle}
+\endbibitem
+
+%%% 34
+\bibitem[\protect\citeauthoryear{Hertz et~al.}{2008}]{LICOO21}
+\begin{barticle}
+\bauthor{\bsnm{Hertz}, \binits{J.T.}},
+\bauthor{\bsnm{Huang}, \binits{Q.}},
+\bauthor{\bsnm{Mcqueen}, \binits{T.}},
+\bauthor{\bsnm{Klimczuk}, \binits{T.}},
+\bauthor{\bsnm{Bos}, \binits{J.}},
+\bauthor{\bsnm{Viciu}, \binits{L.}},
+\bauthor{\bsnm{Cava}, \binits{R.J.}}:
+\batitle{Magnetism and structure of li x co o 2 and comparison to na x co o 2}.
+\bjtitle{Physical Review B—Condensed Matter and Materials Physics}
+\bvolume{77}(\bissue{7}),
+\bfpage{075119}
+(\byear{2008})
+\end{barticle}
+\endbibitem
+
+%%% 35
+\bibitem[\protect\citeauthoryear{Herbert}{2019}]{FMO10}
+\begin{botherref}
+\oauthor{\bsnm{Herbert}, \binits{J.M.}}:
+Fantasy versus reality in fragment-based quantum chemistry.
+The Journal of chemical physics
+\textbf{151}(17)
+(2019)
+\end{botherref}
+\endbibitem
+
+%%% 36
+\bibitem[\protect\citeauthoryear{Sattasathuchana et~al.}{2024}]{FMO11}
+\begin{barticle}
+\bauthor{\bsnm{Sattasathuchana}, \binits{T.}},
+\bauthor{\bsnm{Xu}, \binits{P.}},
+\bauthor{\bsnm{Bertoni}, \binits{C.}},
+\bauthor{\bsnm{Kim}, \binits{Y.L.}},
+\bauthor{\bsnm{Leang}, \binits{S.S.}},
+\bauthor{\bsnm{Pham}, \binits{B.Q.}},
+\bauthor{\bsnm{Gordon}, \binits{M.S.}}:
+\batitle{The effective fragment molecular orbital method: Achieving high scalability and accuracy for large systems}.
+\bjtitle{Journal of Chemical Theory and Computation}
+\bvolume{20}(\bissue{6}),
+\bfpage{2445}--\blpage{2461}
+(\byear{2024})
 \end{barticle}
 \endbibitem
 

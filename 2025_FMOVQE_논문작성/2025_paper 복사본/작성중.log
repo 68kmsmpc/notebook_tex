@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.7.1)  30 SEP 2025 19:21
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.7.1)  1 OCT 2025 14:49
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -873,11 +873,11 @@ File: fig/FMO_VQE_schme.png Graphic file (type bmp)
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [8]
-LaTeX Font Info:    Calculating math sizes for size <8.03> on input line 394.
+LaTeX Font Info:    Calculating math sizes for size <8.03> on input line 393.
 
 
 LaTeX Font Warning: Font shape `U/rsfs/m/n' in size <4.015> not available
-(Font)              size <5> substituted on input line 394.
+(Font)              size <5> substituted on input line 393.
 
 
 
@@ -885,13 +885,13 @@ LaTeX Font Warning: Font shape `U/rsfs/m/n' in size <4.015> not available
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [9]
-Overfull \hbox (2.11436pt too wide) in alignment at lines 444--453
+Overfull \hbox (2.11436pt too wide) in alignment at lines 443--452
 [] [] [] [] [] [] []
  []
 
 
 LaTeX Warning: No positions in optional float specifier.
-               Default added (so using `tbp') on input line 457.
+               Default added (so using `tbp') on input line 456.
 
 
 
@@ -911,7 +911,7 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
  [12]
 
 LaTeX Warning: No positions in optional float specifier.
-               Default added (so using `tbp') on input line 519.
+               Default added (so using `tbp') on input line 518.
 
 File: fig/result2.png Graphic file (type bmp)
 <fig/result2.png>
@@ -930,12 +930,27 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [15] (./작성중.bbl)
+ [15] (./작성중.bbl
 
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [16] (./작성중.aux)
+ [16]
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [17]
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [18])
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [19] (./작성중.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2022/08/05>
@@ -952,12 +967,12 @@ Package rerunfilecheck Info: File `작성중.out' has not changed.
 (rerunfilecheck)             Checksum: 0BEE522242B06D2D3F6233EB43584CB3;2716.
  ) 
 Here is how much of TeX's memory you used:
- 19522 strings out of 473832
- 384211 string characters out of 5729482
- 843352 words of memory out of 5000000
- 42248 multiletter control sequences out of 15000+600000
- 584842 words of font info for 183 fonts, out of 8000000 for 9000
+ 19603 strings out of 473832
+ 385131 string characters out of 5729482
+ 838780 words of memory out of 5000000
+ 42330 multiletter control sequences out of 15000+600000
+ 584834 words of font info for 182 fonts, out of 8000000 for 9000
  1358 hyphenation exceptions out of 8191
  87i,17n,93p,1430b,670s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on 작성중.pdf (16 pages).
+Output written on 작성중.pdf (19 pages).
