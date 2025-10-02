@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.7.1)  1 OCT 2025 14:49
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2025.7.1)  2 OCT 2025 18:20
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -542,7 +542,12 @@ Package: fontspec-xetex 2024/05/11 v2.9e Font selection for XeLaTeX and LuaLaTeX
 \l__fontspec_tmpc_dim=\dimen272
  (/usr/local/texlive/2025/texmf-dist/tex/latex/base/fontenc.sty
 Package: fontenc 2021/04/29 v2.0v Standard LaTeX package
-) (/usr/local/texlive/2025/texmf-dist/tex/latex/fontspec/fontspec.cfg))) (/usr/local/texlive/2025/texmf-dist/tex/xelatex/xecjk/xeCJK.sty
+) (/usr/local/texlive/2025/texmf-dist/tex/latex/fontspec/fontspec.cfg))) (/usr/local/texlive/2025/texmf-dist/tex/latex/tools/afterpage.sty
+Package: afterpage 2023/07/04 v1.08 After-Page Package (DPC)
+\AP@output=\toks39
+\AP@partial=\box79
+\AP@footins=\box80
+) (/usr/local/texlive/2025/texmf-dist/tex/xelatex/xecjk/xeCJK.sty
 Package: xeCJK 2022/08/05 v3.9.1 Typesetting CJK scripts with XeLaTeX
  (/usr/local/texlive/2025/texmf-dist/tex/latex/ctex/ctexhook.sty
 Package: ctexhook 2022/07/14 v2.5.10 Document and package hooks (CTEX)
@@ -550,7 +555,7 @@ Package: ctexhook 2022/07/14 v2.5.10 Document and package hooks (CTEX)
 Package: xtemplate 2024-08-16 L3 Experimental prototype document functions
 )
 \l__xeCJK_tmp_int=\count351
-\l__xeCJK_tmp_box=\box79
+\l__xeCJK_tmp_box=\box81
 \l__xeCJK_tmp_dim=\dimen273
 \l__xeCJK_tmp_skip=\skip73
 \g__xeCJK_space_factor_int=\count352
@@ -576,7 +581,7 @@ Package: xtemplate 2024-08-16 L3 Experimental prototype document functions
 \l__xeCJK_ccglue_skip=\skip76
 \l__xeCJK_ecglue_skip=\skip77
 \l__xeCJK_punct_kern_skip=\skip78
-\l__xeCJK_indent_box=\box80
+\l__xeCJK_indent_box=\box82
 \l__xeCJK_last_penalty_int=\count357
 \l__xeCJK_last_bound_dim=\dimen279
 \l__xeCJK_last_kern_dim=\dimen280
@@ -873,11 +878,11 @@ File: fig/FMO_VQE_schme.png Graphic file (type bmp)
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [8]
-LaTeX Font Info:    Calculating math sizes for size <8.03> on input line 393.
+LaTeX Font Info:    Calculating math sizes for size <8.03> on input line 383.
 
 
 LaTeX Font Warning: Font shape `U/rsfs/m/n' in size <4.015> not available
-(Font)              size <5> substituted on input line 393.
+(Font)              size <5> substituted on input line 383.
 
 
 
@@ -885,13 +890,13 @@ LaTeX Font Warning: Font shape `U/rsfs/m/n' in size <4.015> not available
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [9]
-Overfull \hbox (2.11436pt too wide) in alignment at lines 443--452
+Overfull \hbox (2.11436pt too wide) in alignment at lines 433--442
 [] [] [] [] [] [] []
  []
 
 
 LaTeX Warning: No positions in optional float specifier.
-               Default added (so using `tbp') on input line 456.
+               Default added (so using `tbp') on input line 446.
 
 
 
@@ -911,7 +916,7 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
  [12]
 
 LaTeX Warning: No positions in optional float specifier.
-               Default added (so using `tbp') on input line 518.
+               Default added (so using `tbp') on input line 507.
 
 File: fig/result2.png Graphic file (type bmp)
 <fig/result2.png>
@@ -936,6 +941,11 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [16]
+Underfull \hbox (badness 1867) in paragraph at lines 140--147
+[]\TU/lmr/m/n/10.03749 Szabo, A., Ostlund, N.S.: Modern Quantum Chemistry: Introduction to
+ []
+
+
 
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
@@ -945,12 +955,17 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [18])
+ [18]
 
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [19] (./작성중.aux)
+ [19])
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [20] (./작성중.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2022/08/05>
@@ -967,12 +982,12 @@ Package rerunfilecheck Info: File `작성중.out' has not changed.
 (rerunfilecheck)             Checksum: 0BEE522242B06D2D3F6233EB43584CB3;2716.
  ) 
 Here is how much of TeX's memory you used:
- 19603 strings out of 473832
- 385131 string characters out of 5729482
- 838780 words of memory out of 5000000
- 42330 multiletter control sequences out of 15000+600000
- 584834 words of font info for 182 fonts, out of 8000000 for 9000
+ 19647 strings out of 473832
+ 384688 string characters out of 5729482
+ 839740 words of memory out of 5000000
+ 42368 multiletter control sequences out of 15000+600000
+ 584842 words of font info for 183 fonts, out of 8000000 for 9000
  1358 hyphenation exceptions out of 8191
- 87i,17n,93p,1430b,670s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 87i,19n,93p,1498b,670s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on 작성중.pdf (19 pages).
+Output written on 작성중.pdf (20 pages).

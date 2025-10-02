@@ -1,6 +1,6 @@
 %% BioMed_Central_Bib_Style_v1.01
 
-\begin{thebibliography}{36}
+\begin{thebibliography}{47}
 % BibTex style file: bmc-mathphys.bst (version 2.1), 2014-07-24
 \ifx \bisbn   \undefined \def \bisbn  #1{ISBN #1}\fi
 \ifx \binits  \undefined \def \binits#1{#1}\fi
@@ -44,82 +44,108 @@
 \csname PreBibitemsHook\endcsname
 
 %%% 1
-\bibitem[\protect\citeauthoryear{Williams-Noonan et~al.}{2018}]{RN66}
+\bibitem[\protect\citeauthoryear{Guan et~al.}{2025}]{DRUG1}
 \begin{barticle}
-\bauthor{\bsnm{Williams-Noonan}, \binits{B.J.}},
-\bauthor{\bsnm{Yuriev}, \binits{E.}},
-\bauthor{\bsnm{Chalmers}, \binits{D.K.}}:
-\batitle{Free energy methods in drug design: prospects of “alchemical perturbation” in medicinal chemistry: miniperspective}.
-\bjtitle{Journal of medicinal chemistry}
-\bvolume{61}(\bissue{3}),
-\bfpage{638}--\blpage{649}
-(\byear{2018})
+\bauthor{\bsnm{Guan}, \binits{H.}},
+\bauthor{\bsnm{Sun}, \binits{H.}},
+\bauthor{\bsnm{Zhao}, \binits{X.}}:
+\batitle{Application of density functional theory to molecular engineering of pharmaceutical formulations}.
+\bjtitle{International Journal of Molecular Sciences}
+\bvolume{26}(\bissue{7}),
+\bfpage{3262}
+(\byear{2025})
 \end{barticle}
 \endbibitem
 
 %%% 2
-\bibitem[\protect\citeauthoryear{Heifetz}{2020}]{RN69}
-\begin{bbook}
-\bauthor{\bsnm{Heifetz}, \binits{A.}}:
-\bbtitle{Quantum Mechanics in Drug Discovery}
-vol. \bseriesno{2114}.
-\bpublisher{Springer}, \blocation{???}
-(\byear{2020})
-\end{bbook}
+\bibitem[\protect\citeauthoryear{Paneru et~al.}{2024}]{DRUG2}
+\begin{barticle}
+\bauthor{\bsnm{Paneru}, \binits{T.R.}},
+\bauthor{\bsnm{Chaudhary}, \binits{M.K.}},
+\bauthor{\bsnm{Tandon}, \binits{P.}},
+\bauthor{\bsnm{Chaudhary}, \binits{T.}},
+\bauthor{\bsnm{Joshi}, \binits{B.D.}}:
+\batitle{Theoretical study on molecular stability, reactivity, and drug potential of cirsilineol from dft and molecular docking methods}.
+\bjtitle{Chemical Physics Impact}
+\bvolume{8},
+\bfpage{100641}
+(\byear{2024})
+\end{barticle}
 \endbibitem
 
 %%% 3
-\bibitem[\protect\citeauthoryear{Lyu et~al.}{2021}]{RN117}
+\bibitem[\protect\citeauthoryear{He et~al.}{2019}]{BAT1}
 \begin{barticle}
-\bauthor{\bsnm{Lyu}, \binits{Y.}},
-\bauthor{\bsnm{Wu}, \binits{X.}},
-\bauthor{\bsnm{Wang}, \binits{K.}},
-\bauthor{\bsnm{Feng}, \binits{Z.}},
-\bauthor{\bsnm{Cheng}, \binits{T.}},
-\bauthor{\bsnm{Liu}, \binits{Y.}},
-\bauthor{\bsnm{Wang}, \binits{M.}},
-\bauthor{\bsnm{Chen}, \binits{R.}},
-\bauthor{\bsnm{Xu}, \binits{L.}},
-\bauthor{\bsnm{Zhou}, \binits{J.}}:
-\batitle{An overview on the advances of licoo2 cathodes for lithium‐ion batteries}.
-\bjtitle{Advanced Energy Materials}
-\bvolume{11}(\bissue{2}),
-\bfpage{2000982}
-(\byear{2021})
+\bauthor{\bsnm{He}, \binits{Q.}},
+\bauthor{\bsnm{Yu}, \binits{B.}},
+\bauthor{\bsnm{Li}, \binits{Z.}},
+\bauthor{\bsnm{Zhao}, \binits{Y.}}:
+\batitle{Density functional theory for battery materials}.
+\bjtitle{Energy \& Environmental Materials}
+\bvolume{2}(\bissue{4}),
+\bfpage{264}--\blpage{279}
+(\byear{2019})
 \end{barticle}
 \endbibitem
 
 %%% 4
-\bibitem[\protect\citeauthoryear{Li et~al.}{2015}]{RN118}
+\bibitem[\protect\citeauthoryear{Schipper et~al.}{2017}]{BAT2}
 \begin{barticle}
-\bauthor{\bsnm{Li}, \binits{G.}},
-\bauthor{\bsnm{Zhou}, \binits{S.}},
-\bauthor{\bsnm{Wang}, \binits{P.}},
-\bauthor{\bsnm{Zhao}, \binits{J.}}:
-\batitle{Halogen-doping in licoo 2 cathode materials for li-ion batteries: insights from ab initio calculations}.
-\bjtitle{RSC advances}
-\bvolume{5}(\bissue{130}),
-\bfpage{107326}--\blpage{107332}
-(\byear{2015})
+\bauthor{\bsnm{Schipper}, \binits{F.}},
+\bauthor{\bsnm{Nayak}, \binits{P.K.}},
+\bauthor{\bsnm{Erickson}, \binits{E.M.}},
+\bauthor{\bsnm{Amalraj}, \binits{S.F.}},
+\bauthor{\bsnm{Srur-Lavi}, \binits{O.}},
+\bauthor{\bsnm{Penki}, \binits{T.R.}},
+\bauthor{\bsnm{Talianker}, \binits{M.}},
+\bauthor{\bsnm{Grinblat}, \binits{J.}},
+\bauthor{\bsnm{Sclar}, \binits{H.}},
+\bauthor{\bsnm{Breuer}, \binits{O.}}, \betal:
+\batitle{Study of cathode materials for lithium-ion batteries: Recent progress and new challenges}.
+\bjtitle{Inorganics}
+\bvolume{5}(\bissue{2}),
+\bfpage{32}
+(\byear{2017})
 \end{barticle}
 \endbibitem
 
 %%% 5
-\bibitem[\protect\citeauthoryear{Mizushima et~al.}{1980}]{RN75}
-\begin{barticle}
-\bauthor{\bsnm{Mizushima}, \binits{K.}},
-\bauthor{\bsnm{Jones}, \binits{P.C.}},
-\bauthor{\bsnm{Wiseman}, \binits{P.J.}},
-\bauthor{\bsnm{Goodenough}, \binits{J.B.}}:
-\batitle{Lixcoo2 (0< x<-1): A new cathode material for batteries of high energy density}.
-\bjtitle{Materials Research Bulletin}
-\bvolume{15}(\bissue{6}),
-\bfpage{783}--\blpage{789}
-(\byear{1980})
-\end{barticle}
+\bibitem[\protect\citeauthoryear{Helgaker et~al.}{2013}]{CLACOM1}
+\begin{bbook}
+\bauthor{\bsnm{Helgaker}, \binits{T.}},
+\bauthor{\bsnm{Jorgensen}, \binits{P.}},
+\bauthor{\bsnm{Olsen}, \binits{J.}}:
+\bbtitle{Molecular Electronic-structure Theory}.
+\bpublisher{John Wiley \& Sons}, \blocation{???}
+(\byear{2013})
+\end{bbook}
 \endbibitem
 
 %%% 6
+\bibitem[\protect\citeauthoryear{Bartlett and Musia{\l}}{2007}]{CLACOM2}
+\begin{barticle}
+\bauthor{\bsnm{Bartlett}, \binits{R.J.}},
+\bauthor{\bsnm{Musia{\l}}, \binits{M.}}:
+\batitle{Coupled-cluster theory in quantum chemistry}.
+\bjtitle{Reviews of Modern Physics}
+\bvolume{79}(\bissue{1}),
+\bfpage{291}--\blpage{352}
+(\byear{2007})
+\end{barticle}
+\endbibitem
+
+%%% 7
+\bibitem[\protect\citeauthoryear{Szabo and Ostlund}{1996}]{FCIDIM1}
+\begin{bbook}
+\bauthor{\bsnm{Szabo}, \binits{A.}},
+\bauthor{\bsnm{Ostlund}, \binits{N.S.}}:
+\bbtitle{Modern Quantum Chemistry: Introduction to Advanced Electronic Structure Theory}.
+\bpublisher{Courier Corporation}, \blocation{???}
+(\byear{1996})
+\end{bbook}
+\endbibitem
+
+%%% 8
 \bibitem[\protect\citeauthoryear{Abrams and Lloyd}{1997}]{QPE1}
 \begin{barticle}
 \bauthor{\bsnm{Abrams}, \binits{D.S.}},
@@ -132,7 +158,7 @@ vol. \bseriesno{2114}.
 \end{barticle}
 \endbibitem
 
-%%% 7
+%%% 9
 \bibitem[\protect\citeauthoryear{Abrams and Lloyd}{1999}]{QPE2}
 \begin{barticle}
 \bauthor{\bsnm{Abrams}, \binits{D.S.}},
@@ -145,7 +171,7 @@ vol. \bseriesno{2114}.
 \end{barticle}
 \endbibitem
 
-%%% 8
+%%% 10
 \bibitem[\protect\citeauthoryear{Aspuru-Guzik et~al.}{2005}]{QPE3}
 \begin{barticle}
 \bauthor{\bsnm{Aspuru-Guzik}, \binits{A.}},
@@ -160,7 +186,7 @@ vol. \bseriesno{2114}.
 \end{barticle}
 \endbibitem
 
-%%% 9
+%%% 11
 \bibitem[\protect\citeauthoryear{Cleve et~al.}{1998}]{QPE4}
 \begin{barticle}
 \bauthor{\bsnm{Cleve}, \binits{R.}},
@@ -175,7 +201,7 @@ vol. \bseriesno{2114}.
 \end{barticle}
 \endbibitem
 
-%%% 10
+%%% 12
 \bibitem[\protect\citeauthoryear{Kitaev}{1995}]{QPE5}
 \begin{botherref}
 \oauthor{\bsnm{Kitaev}, \binits{A.Y.}}:
@@ -185,7 +211,7 @@ arXiv preprint quant-ph/9511026
 \end{botherref}
 \endbibitem
 
-%%% 11
+%%% 13
 \bibitem[\protect\citeauthoryear{Preskill}{2018}]{NISQ1}
 \begin{barticle}
 \bauthor{\bsnm{Preskill}, \binits{J.}}:
@@ -197,7 +223,7 @@ arXiv preprint quant-ph/9511026
 \end{barticle}
 \endbibitem
 
-%%% 12
+%%% 14
 \bibitem[\protect\citeauthoryear{Peruzzo et~al.}{2014}]{VQE1}
 \begin{barticle}
 \bauthor{\bsnm{Peruzzo}, \binits{A.}},
@@ -216,7 +242,7 @@ arXiv preprint quant-ph/9511026
 \end{barticle}
 \endbibitem
 
-%%% 13
+%%% 15
 \bibitem[\protect\citeauthoryear{McClean et~al.}{2016}]{VQE2}
 \begin{barticle}
 \bauthor{\bsnm{McClean}, \binits{J.R.}},
@@ -231,7 +257,7 @@ arXiv preprint quant-ph/9511026
 \end{barticle}
 \endbibitem
 
-%%% 14
+%%% 16
 \bibitem[\protect\citeauthoryear{Sharkey et~al.}{2022}]{VQE3}
 \begin{bbook}
 \bauthor{\bsnm{Sharkey}, \binits{K.L.}},
@@ -243,7 +269,7 @@ arXiv preprint quant-ph/9511026
 \end{bbook}
 \endbibitem
 
-%%% 15
+%%% 17
 \bibitem[\protect\citeauthoryear{Tilly et~al.}{2022}]{VQE4}
 \begin{barticle}
 \bauthor{\bsnm{Tilly}, \binits{J.}},
@@ -264,7 +290,68 @@ arXiv preprint quant-ph/9511026
 \end{barticle}
 \endbibitem
 
-%%% 16
+%%% 18
+\bibitem[\protect\citeauthoryear{Santagati et~al.}{2024}]{VQEAPL1}
+\begin{barticle}
+\bauthor{\bsnm{Santagati}, \binits{R.}},
+\bauthor{\bsnm{Aspuru-Guzik}, \binits{A.}},
+\bauthor{\bsnm{Babbush}, \binits{R.}},
+\bauthor{\bsnm{Degroote}, \binits{M.}},
+\bauthor{\bsnm{González}, \binits{L.}},
+\bauthor{\bsnm{Kyoseva}, \binits{E.}},
+\bauthor{\bsnm{Moll}, \binits{N.}},
+\bauthor{\bsnm{Oppel}, \binits{M.}},
+\bauthor{\bsnm{Parrish}, \binits{R.M.}},
+\bauthor{\bsnm{Rubin}, \binits{N.C.}}:
+\batitle{Drug design on quantum computers}.
+\bjtitle{Nature Physics}
+\bvolume{20}(\bissue{4}),
+\bfpage{549}--\blpage{557}
+(\byear{2024})
+\end{barticle}
+\endbibitem
+
+%%% 19
+\bibitem[\protect\citeauthoryear{Mustafa et~al.}{}]{VQEAPL2}
+\begin{botherref}
+\oauthor{\bsnm{Mustafa}, \binits{H.}},
+\oauthor{\bsnm{Morapakula}, \binits{S.N.}},
+\oauthor{\bsnm{Jain}, \binits{P.}},
+\oauthor{\bsnm{Ganguly}, \binits{S.}}:
+Variational quantum algorithms for chemical simulation and drug discovery.
+In: 2022 International Conference on Trends in Quantum Computing and Emerging Business Technologies (TQCEBT),
+pp. 1--8.
+IEEE
+\end{botherref}
+\endbibitem
+
+%%% 20
+\bibitem[\protect\citeauthoryear{Farag and Ghosh}{2022}]{VQEAPL3}
+\begin{botherref}
+\oauthor{\bsnm{Farag}, \binits{M.H.}},
+\oauthor{\bsnm{Ghosh}, \binits{J.}}:
+Towards the simulation of transition-metal oxides of the cathode battery materials using vqe methods.
+arXiv preprint arXiv:2208.07977
+(2022)
+\end{botherref}
+\endbibitem
+
+%%% 21
+\bibitem[\protect\citeauthoryear{Fedorov et~al.}{2022}]{VQEAPL4}
+\begin{barticle}
+\bauthor{\bsnm{Fedorov}, \binits{D.A.}},
+\bauthor{\bsnm{Peng}, \binits{B.}},
+\bauthor{\bsnm{Govind}, \binits{N.}},
+\bauthor{\bsnm{Alexeev}, \binits{Y.}}:
+\batitle{Vqe method: a short survey and recent developments}.
+\bjtitle{Materials Theory}
+\bvolume{6}(\bissue{1}),
+\bfpage{2}
+(\byear{2022})
+\end{barticle}
+\endbibitem
+
+%%% 22
 \bibitem[\protect\citeauthoryear{Lim et~al.}{2024}]{FMOVQE}
 \begin{barticle}
 \bauthor{\bsnm{Lim}, \binits{H.}},
@@ -285,7 +372,7 @@ arXiv preprint quant-ph/9511026
 \end{barticle}
 \endbibitem
 
-%%% 17
+%%% 23
 \bibitem[\protect\citeauthoryear{Kitaura et~al.}{1999}]{FMO1}
 \begin{barticle}
 \bauthor{\bsnm{Kitaura}, \binits{K.}},
@@ -301,7 +388,7 @@ arXiv preprint quant-ph/9511026
 \end{barticle}
 \endbibitem
 
-%%% 18
+%%% 24
 \bibitem[\protect\citeauthoryear{Fedorov et~al.}{2012}]{FMO2}
 \begin{barticle}
 \bauthor{\bsnm{Fedorov}, \binits{D.G.}},
@@ -315,7 +402,7 @@ arXiv preprint quant-ph/9511026
 \end{barticle}
 \endbibitem
 
-%%% 19
+%%% 25
 \bibitem[\protect\citeauthoryear{Fedorov}{2017}]{FMO3}
 \begin{barticle}
 \bauthor{\bsnm{Fedorov}, \binits{D.G.}}:
@@ -327,7 +414,7 @@ arXiv preprint quant-ph/9511026
 \end{barticle}
 \endbibitem
 
-%%% 20
+%%% 26
 \bibitem[\protect\citeauthoryear{Fedorov and Kitaura}{2005}]{FMO4}
 \begin{botherref}
 \oauthor{\bsnm{Fedorov}, \binits{D.G.}},
@@ -339,7 +426,95 @@ The Journal of chemical physics
 \end{botherref}
 \endbibitem
 
-%%% 21
+%%% 27
+\bibitem[\protect\citeauthoryear{Mizushima et~al.}{1980}]{LI4}
+\begin{barticle}
+\bauthor{\bsnm{Mizushima}, \binits{K.}},
+\bauthor{\bsnm{Jones}, \binits{P.C.}},
+\bauthor{\bsnm{Wiseman}, \binits{P.J.}},
+\bauthor{\bsnm{Goodenough}, \binits{J.B.}}:
+\batitle{Lixcoo2 (0< x<-1): A new cathode material for batteries of high energy density}.
+\bjtitle{Materials Research Bulletin}
+\bvolume{15}(\bissue{6}),
+\bfpage{783}--\blpage{789}
+(\byear{1980})
+\end{barticle}
+\endbibitem
+
+%%% 28
+\bibitem[\protect\citeauthoryear{Lyu et~al.}{2021}]{LI5}
+\begin{barticle}
+\bauthor{\bsnm{Lyu}, \binits{Y.}},
+\bauthor{\bsnm{Wu}, \binits{X.}},
+\bauthor{\bsnm{Wang}, \binits{K.}},
+\bauthor{\bsnm{Feng}, \binits{Z.}},
+\bauthor{\bsnm{Cheng}, \binits{T.}},
+\bauthor{\bsnm{Liu}, \binits{Y.}},
+\bauthor{\bsnm{Wang}, \binits{M.}},
+\bauthor{\bsnm{Chen}, \binits{R.}},
+\bauthor{\bsnm{Xu}, \binits{L.}},
+\bauthor{\bsnm{Zhou}, \binits{J.}}:
+\batitle{An overview on the advances of licoo2 cathodes for lithium‐ion batteries}.
+\bjtitle{Advanced Energy Materials}
+\bvolume{11}(\bissue{2}),
+\bfpage{2000982}
+(\byear{2021})
+\end{barticle}
+\endbibitem
+
+%%% 29
+\bibitem[\protect\citeauthoryear{Tabelin et~al.}{2021}]{LI1}
+\begin{barticle}
+\bauthor{\bsnm{Tabelin}, \binits{C.B.}},
+\bauthor{\bsnm{Dallas}, \binits{J.}},
+\bauthor{\bsnm{Casanova}, \binits{S.}},
+\bauthor{\bsnm{Pelech}, \binits{T.}},
+\bauthor{\bsnm{Bournival}, \binits{G.}},
+\bauthor{\bsnm{Saydam}, \binits{S.}},
+\bauthor{\bsnm{Canbulat}, \binits{I.}}:
+\batitle{Towards a low-carbon society: A review of lithium resource availability, challenges and innovations in mining, extraction and recycling, and future perspectives}.
+\bjtitle{Minerals Engineering}
+\bvolume{163},
+\bfpage{106743}
+(\byear{2021})
+\end{barticle}
+\endbibitem
+
+%%% 30
+\bibitem[\protect\citeauthoryear{Tarascon and Armand}{2001}]{LI2}
+\begin{barticle}
+\bauthor{\bsnm{Tarascon}, \binits{J.-M.}},
+\bauthor{\bsnm{Armand}, \binits{M.}}:
+\batitle{Issues and challenges facing rechargeable lithium batteries}.
+\bjtitle{nature}
+\bvolume{414}(\bissue{6861}),
+\bfpage{359}--\blpage{367}
+(\byear{2001})
+\end{barticle}
+\endbibitem
+
+%%% 31
+\bibitem[\protect\citeauthoryear{He et~al.}{2021}]{LI3}
+\begin{barticle}
+\bauthor{\bsnm{He}, \binits{W.}},
+\bauthor{\bsnm{Guo}, \binits{W.}},
+\bauthor{\bsnm{Wu}, \binits{H.}},
+\bauthor{\bsnm{Lin}, \binits{L.}},
+\bauthor{\bsnm{Liu}, \binits{Q.}},
+\bauthor{\bsnm{Han}, \binits{X.}},
+\bauthor{\bsnm{Xie}, \binits{Q.}},
+\bauthor{\bsnm{Liu}, \binits{P.}},
+\bauthor{\bsnm{Zheng}, \binits{H.}},
+\bauthor{\bsnm{Wang}, \binits{L.}}:
+\batitle{Challenges and recent advances in high capacity li‐rich cathode materials for high energy density lithium‐ion batteries}.
+\bjtitle{Advanced Materials}
+\bvolume{33}(\bissue{50}),
+\bfpage{2005937}
+(\byear{2021})
+\end{barticle}
+\endbibitem
+
+%%% 32
 \bibitem[\protect\citeauthoryear{Stewart}{1970}]{2NDQ1}
 \begin{barticle}
 \bauthor{\bsnm{Stewart}, \binits{R.F.}}:
@@ -351,7 +526,7 @@ The Journal of chemical physics
 \end{barticle}
 \endbibitem
 
-%%% 22
+%%% 33
 \bibitem[\protect\citeauthoryear{Jørgensen}{2012}]{2NDQ2}
 \begin{bbook}
 \bauthor{\bsnm{Jørgensen}, \binits{P.}}:
@@ -361,7 +536,7 @@ The Journal of chemical physics
 \end{bbook}
 \endbibitem
 
-%%% 23
+%%% 34
 \bibitem[\protect\citeauthoryear{Fermann and Valeev}{2020}]{2NDQ3}
 \begin{botherref}
 \oauthor{\bsnm{Fermann}, \binits{J.T.}},
@@ -372,7 +547,7 @@ arXiv preprint arXiv:2007.12057
 \end{botherref}
 \endbibitem
 
-%%% 24
+%%% 35
 \bibitem[\protect\citeauthoryear{Seeley et~al.}{2012}]{MAP1}
 \begin{botherref}
 \oauthor{\bsnm{Seeley}, \binits{J.T.}},
@@ -385,7 +560,7 @@ The Journal of chemical physics
 \end{botherref}
 \endbibitem
 
-%%% 25
+%%% 36
 \bibitem[\protect\citeauthoryear{Tranter et~al.}{2018}]{MAP2}
 \begin{barticle}
 \bauthor{\bsnm{Tranter}, \binits{A.}},
@@ -400,7 +575,7 @@ The Journal of chemical physics
 \end{barticle}
 \endbibitem
 
-%%% 26
+%%% 37
 \bibitem[\protect\citeauthoryear{Kandala et~al.}{2017}]{TL1}
 \begin{barticle}
 \bauthor{\bsnm{Kandala}, \binits{A.}},
@@ -418,7 +593,7 @@ The Journal of chemical physics
 \end{barticle}
 \endbibitem
 
-%%% 27
+%%% 38
 \bibitem[\protect\citeauthoryear{Buonaiuto et~al.}{2024}]{TL2}
 \begin{barticle}
 \bauthor{\bsnm{Buonaiuto}, \binits{G.}},
@@ -434,7 +609,7 @@ The Journal of chemical physics
 \end{barticle}
 \endbibitem
 
-%%% 28
+%%% 39
 \bibitem[\protect\citeauthoryear{Bartlett and Musiał}{2007}]{CC1}
 \begin{barticle}
 \bauthor{\bsnm{Bartlett}, \binits{R.J.}},
@@ -447,7 +622,7 @@ The Journal of chemical physics
 \end{barticle}
 \endbibitem
 
-%%% 29
+%%% 40
 \bibitem[\protect\citeauthoryear{Crawford and Schaefer~III}{2007}]{CC2}
 \begin{barticle}
 \bauthor{\bsnm{Crawford}, \binits{T.D.}},
@@ -460,7 +635,7 @@ The Journal of chemical physics
 \end{barticle}
 \endbibitem
 
-%%% 30
+%%% 41
 \bibitem[\protect\citeauthoryear{Hoffmann and Simons}{1988}]{UCC1}
 \begin{barticle}
 \bauthor{\bsnm{Hoffmann}, \binits{M.R.}},
@@ -473,7 +648,7 @@ The Journal of chemical physics
 \end{barticle}
 \endbibitem
 
-%%% 31
+%%% 42
 \bibitem[\protect\citeauthoryear{Lee et~al.}{2018}]{UCC2}
 \begin{barticle}
 \bauthor{\bsnm{Lee}, \binits{J.}},
@@ -488,7 +663,7 @@ The Journal of chemical physics
 \end{barticle}
 \endbibitem
 
-%%% 32
+%%% 43
 \bibitem[\protect\citeauthoryear{Olsen}{2000}]{AS1}
 \begin{barticle}
 \bauthor{\bsnm{Olsen}, \binits{J.}}:
@@ -500,7 +675,7 @@ The Journal of chemical physics
 \end{barticle}
 \endbibitem
 
-%%% 33
+%%% 44
 \bibitem[\protect\citeauthoryear{Piecuch}{2010}]{AS2}
 \begin{barticle}
 \bauthor{\bsnm{Piecuch}, \binits{P.}}:
@@ -512,7 +687,7 @@ The Journal of chemical physics
 \end{barticle}
 \endbibitem
 
-%%% 34
+%%% 45
 \bibitem[\protect\citeauthoryear{Hertz et~al.}{2008}]{LICOO21}
 \begin{barticle}
 \bauthor{\bsnm{Hertz}, \binits{J.T.}},
@@ -530,7 +705,7 @@ The Journal of chemical physics
 \end{barticle}
 \endbibitem
 
-%%% 35
+%%% 46
 \bibitem[\protect\citeauthoryear{Herbert}{2019}]{FMO10}
 \begin{botherref}
 \oauthor{\bsnm{Herbert}, \binits{J.M.}}:
@@ -541,7 +716,7 @@ The Journal of chemical physics
 \end{botherref}
 \endbibitem
 
-%%% 36
+%%% 47
 \bibitem[\protect\citeauthoryear{Sattasathuchana et~al.}{2024}]{FMO11}
 \begin{barticle}
 \bauthor{\bsnm{Sattasathuchana}, \binits{T.}},
